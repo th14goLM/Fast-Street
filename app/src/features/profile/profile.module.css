@@ -1,0 +1,201 @@
+.screen {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: env(safe-area-inset-top);
+}
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.identity {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: -20px;
+}
+.avatar {
+  width: 88px;
+  height: 88px;
+  flex: none;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--fs-primary), 0 0 0 5px var(--fs-bg), 0 0 0 6px var(--fs-line);
+  overflow: hidden;
+  position: relative;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.stats > div {
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--fs-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stats > div > span:first-child {
+  font-size: 30px;
+  line-height: 1;
+}
+.stats > div > span:last-child {
+  font-size: 12px;
+  color: var(--fs-text-secondary);
+}
+.orgCard {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--fs-surface);
+  box-shadow: 0 0 0 1px rgba(233, 93, 44, 0.4);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  color: var(--fs-text);
+  text-decoration: none;
+  font-size: 14px;
+}
+.orgCard:hover {
+  color: var(--fs-text);
+  background: var(--fs-surface-hover);
+}
+.achGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: -8px;
+}
+.ach {
+  padding: 14px 8px 12px;
+  border-radius: 14px;
+  border: 0;
+  background: var(--fs-surface);
+  box-shadow: 0 0 0 1px var(--fs-surface-elevated);
+  color: var(--fs-text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  min-height: 132px;
+}
+.ach:hover {
+  background: var(--fs-surface-hover);
+}
+.ach[data-on] {
+  box-shadow: 0 0 0 1px rgba(176, 206, 226, 0.3);
+  color: var(--fs-text);
+}
+.achIcon,
+.achIconLg {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: var(--fs-bg);
+  color: var(--fs-text-muted);
+  border: 1px solid var(--fs-surface-elevated);
+  flex: none;
+}
+.ach[data-on] .achIcon,
+.achIconLg[data-on] {
+  background: var(--fs-secondary-tint);
+  color: var(--fs-secondary);
+  border-color: rgba(176, 206, 226, 0.4);
+}
+.achIconLg {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+}
+.achName {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+}
+.achProg {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+  font-size: 10px;
+  color: var(--fs-text-secondary);
+}
+.achBar {
+  width: 80%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--fs-surface-elevated);
+}
+.achBar > span {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--fs-text-muted);
+}
+.resultCard {
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--fs-surface);
+  box-shadow: 0 0 0 1px var(--fs-surface-elevated);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: center;
+}
+.resultCard[data-top] {
+  background: rgba(176, 206, 226, 0.08);
+  box-shadow: 0 0 0 1px rgba(176, 206, 226, 0.4);
+}
+.tableRow {
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  box-shadow: inset 0 -1px 0 var(--fs-surface);
+}
+.tableRow[data-me] {
+  background: rgba(233, 93, 44, 0.08);
+  padding: 0 8px;
+  border-radius: 10px;
+}
+.group {
+  display: flex;
+  flex-direction: column;
+}
+.groupTitle {
+  font: 600 12px/1 var(--fs-font-display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fs-text-secondary);
+  margin-bottom: 4px;
+}
+.settingRow {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: inset 0 -1px 0 var(--fs-surface);
+  border: 0;
+  background: transparent;
+  color: var(--fs-text);
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  width: 100%;
+}
+.settingRow:hover {
+  color: inherit;
+}

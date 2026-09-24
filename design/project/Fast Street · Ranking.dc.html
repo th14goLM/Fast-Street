@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/styles.css">
+<script src="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>*{scrollbar-width:none}*::-webkit-scrollbar{display:none}body{margin:0;background:#141F27;color:#F5F7FA;font-family:Inter,system-ui,sans-serif}a{color:#F28A62}a:hover{color:#E95D2C}</style>
+</helmet>
+<div style="min-height:100vh;padding:48px;display:flex;gap:64px;flex-wrap:wrap;align-items:flex-start;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;background:#141F27">
+
+<aside style="width:340px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-08</span>
+    <h1 style="margin:0;font:600 40px/1 'Barlow Condensed';text-transform:uppercase">Ranking</h1>
+    <p style="margin:0;font-size:14px;line-height:1.55;color:#9AA4B2;text-wrap:pretty">Os controles funcionam. Em "Por categoria", o segundo nível escolhe a categoria. A linha "Sua posição" fica fixa no rodapé.</p>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px">
+    <span style="font-size:12px;color:#9AA4B2;margin-bottom:6px">Estados</span>
+    <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="5"><button onClick="{{ j.go }}" style="min-height:36px;padding:0 12px;border:0;border-radius:10px;text-align:left;background:{{ j.bg }};color:{{ j.color }};box-shadow:{{ j.bar }};font:500 13px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">{{ j.label }}</button></sc-for>
+  </nav>
+</aside>
+
+<div style="flex:none;width:390px;height:844px;border-radius:52px;box-shadow:0 0 0 10px #0F171D,0 0 0 11px #45586C,0 40px 80px rgba(0,0,0,.5);position:relative;overflow:hidden;background:#1A2730" data-screen-label="{{ screenLabel }}">
+  <div style="position:absolute;top:0;left:0;right:0;height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 34px;z-index:60;pointer-events:none;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="ph-fill ph-cell-signal-full"></i><i class="{{ wifiIcon }}"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#0F171D;z-index:61"></div>
+
+  <div style="position:absolute;inset:47px 0 0 0;display:flex;flex-direction:column">
+    <header style="padding:12px 20px 12px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between"><h1 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Ranking</h1><span style="font-size:12px;color:#9AA4B2">{{ periodLabel }}</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="display:flex;padding:4px;gap:4px;border-radius:12px;background:#22323E"><sc-for list="{{ scope }}" as="o" hint-placeholder-count="2"><button onClick="{{ o.pick }}" style="flex:1;min-height:36px;border-radius:9px;border:1px solid {{ o.border }};background:{{ o.bg }};color:{{ o.color }};font:500 12px Inter;cursor:pointer">{{ o.label }}</button></sc-for></div>
+        <div style="display:flex;padding:4px;gap:4px;border-radius:12px;background:#22323E"><sc-for list="{{ period }}" as="o" hint-placeholder-count="2"><button onClick="{{ o.pick }}" style="flex:1;min-height:36px;border-radius:9px;border:1px solid {{ o.border }};background:{{ o.bg }};color:{{ o.color }};font:500 12px Inter;cursor:pointer">{{ o.label }}</button></sc-for></div>
+      </div>
+      <sc-if value="{{ byCat }}"><div style="display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;margin:0 -20px;padding:0 20px"><sc-for list="{{ cats }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.pick }}" style="flex:none;min-height:36px;padding:0 12px;border-radius:8px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 12px Inter;cursor:pointer">{{ c.label }}</button></sc-for></div></sc-if>
+    </header>
+
+    <div style="flex:1;overflow-y:auto;padding:0 20px 16px;display:flex;flex-direction:column;gap:16px">
+      <sc-if value="{{ isOffline }}"><div role="status" style="padding:10px 14px;border-radius:12px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.35);display:flex;gap:10px;align-items:center;font-size:13px;color:#FCD34D"><i class="ph ph-wifi-slash" style="font-size:18px"></i>Exibindo dados salvos · atualizado há 1 h</div></sc-if>
+      <sc-if value="{{ isLoading }}"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end"><div style="height:130px;border-radius:14px;background:#22323E"></div><div style="height:160px;border-radius:14px;background:#22323E"></div><div style="height:115px;border-radius:14px;background:#22323E"></div></div><sc-for list="{{ skel }}" as="k" hint-placeholder-count="5"><div style="height:56px;border-radius:12px;background:#22323E"></div></sc-for></sc-if>
+      <sc-if value="{{ isError }}"><div style="padding:16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;gap:12px;align-items:flex-start;margin-top:24px"><i class="ph ph-cloud-warning" style="font-size:24px;color:#F87171"></i><div style="display:flex;flex-direction:column;gap:8px;flex:1"><span style="font-size:14px;font-weight:500">Não foi possível carregar o ranking</span><button onClick="{{ retry }}" style="align-self:flex-start;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center"><i class="ph ph-arrow-clockwise"></i>Tentar novamente</button></div></div></sc-if>
+      <sc-if value="{{ isEmpty }}">
+        <div style="padding:32px 24px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;flex-direction:column;gap:12px;align-items:flex-start;margin-top:24px">
+          <div style="width:56px;height:56px;border-radius:16px;border:1px solid #45586C;display:grid;place-items:center;color:#B0CEE2"><i class="ph ph-trophy" style="font-size:28px"></i></div>
+          <h3 style="margin:0;font:600 28px/1.05 'Barlow Condensed';text-transform:uppercase">Sem resultados neste período</h3>
+          <p style="margin:0;font-size:14px;line-height:1.5;color:#9AA4B2">Nenhum organizador publicou resultados de {{ emptyCat }} ainda. Os pontos aparecem assim que o primeiro evento for encerrado.</p>
+          <button onClick="{{ toGeral }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer">Ver ranking geral</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasData }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end">
+          <sc-for list="{{ podium }}" as="p" hint-placeholder-count="3">
+            <div style="padding:12px 10px;border-radius:14px;background:{{ p.bg }};box-shadow:0 0 0 1px {{ p.ring }};display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:{{ p.h }}">
+              <span style="padding:1px 7px;border-radius:6px;background:{{ p.badge }};color:#1A2730;font:700 16px 'Barlow Condensed'">P{{ p.pos }}</span>
+              <span style="flex:1"></span>
+              <span style="width:40px;height:40px;border-radius:50%;background:#45586C;display:grid;place-items:center;font:600 13px Inter;box-shadow:0 0 0 2px {{ p.ring }}">{{ p.ini }}</span>
+              <span style="font-size:13px;font-weight:500;line-height:1.25">{{ p.name }}</span>
+              <span style="font-size:11px;color:#9AA4B2;line-height:1.25">{{ p.car }}</span>
+              <span style="font:600 22px/1 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ p.pts }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div role="list" style="display:flex;flex-direction:column">
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="7">
+            <div role="listitem" style="min-height:60px;display:grid;grid-template-columns:28px 36px 40px 1fr auto;gap:8px;align-items:center;box-shadow:inset 0 -1px 0 #22323E;background:{{ r.bg }};padding:0 {{ r.pad }};border-radius:{{ r.radius }}">
+              <span style="font:600 20px 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ r.pos }}</span>
+              <span style="display:inline-flex;gap:2px;align-items:center;font:600 12px Inter;color:{{ r.varColor }}"><i class="{{ r.varIcon }}" style="font-size:11px"></i>{{ r.varN }}</span>
+              <span style="width:36px;height:36px;border-radius:50%;background:#45586C;display:grid;place-items:center;font:600 12px Inter">{{ r.ini }}</span>
+              <span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span><span style="font-size:12px;color:#9AA4B2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.car }}</span></span>
+              <span style="font:600 18px 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ r.pts }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ hasMe }}">
+      <div style="margin:0 12px 8px;padding:10px 14px;border-radius:14px;background:#2C3D4B;box-shadow:0 0 0 1px #E95D2C,0 -8px 24px rgba(0,0,0,.35);display:grid;grid-template-columns:auto 36px 1fr auto;gap:10px;align-items:center">
+        <span style="display:flex;flex-direction:column;align-items:flex-start"><span style="font-size:10px;color:#F28A62;letter-spacing:.08em;text-transform:uppercase">Sua posição</span><span style="font:600 24px/1 'Barlow Condensed'">{{ me.pos }}º</span></span>
+        <span style="width:36px;height:36px;border-radius:50%;background:#45586C;display:grid;place-items:center;font:600 12px Inter">LA</span>
+        <span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:14px;font-weight:500">Lucas Andrade</span><span style="font-size:12px;color:{{ me.varColor }};display:flex;gap:4px;align-items:center"><i class="{{ me.varIcon }}" style="font-size:11px"></i>{{ me.varText }}</span></span>
+        <span style="font:600 20px 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ me.pts }} PTS</span>
+      </div>
+    </sc-if>
+    <nav style="padding:8px 8px 26px;background:#1A2730;box-shadow:0 -1px 0 #2C3D4B;display:grid;grid-template-columns:repeat(5,1fr)">
+      <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-house-simple" style="font-size:22px"></i>Feed</button>
+      <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-map-trifold" style="font-size:22px"></i>Mapa</button>
+      <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-garage" style="font-size:22px"></i>Garagem</button>
+      <button style="min-height:52px;border:0;background:transparent;color:#F28A62;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter;position:relative"><span style="position:absolute;top:-8px;width:24px;height:2px;border-radius:1px;background:#E95D2C"></span><i class="ph-fill ph-trophy" style="font-size:22px"></i>Ranking</button>
+      <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-user-circle" style="font-size:22px"></i>Perfil</button>
+    </nav>
+  </div>
+  <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#F5F7FA;opacity:.8;z-index:70;pointer-events:none"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const R = (name, car, cat, m, sm, dm, ds) => ({ name, car, cat, m, s: sm, dm, ds });
+const PILOTS = [
+  R('Patrícia Weber', 'BMW 330i', 'Turismo', 75, 212, 0, 1), R('Fernanda Zanella', 'Honda Civic Si 2008', 'Aspirado', 68, 190, 1, 0), R('Ana Beatriz Moraes', 'Toyota Supra MK4', 'Turbo', 61, 176, 2, 2),
+  R('Rafael Kowalski', 'VW Golf GTI', 'Turbo', 68, 201, -1, -1), R('Leonardo Brandt', 'Subaru WRX STI', 'Turbo', 58, 168, -2, 0), R('Gustavo Andreatta', 'Peugeot 206 RC', 'Aspirado', 55, 150, 0, 1),
+  R('Camila Rocha', 'Audi S3', 'Turbo', 55, 149, 1, -1), R('Marcos Vinícius Lopes', 'Ford Mustang GT', 'Turismo', 51, 160, 0, 0), R('Bruno Takahashi', 'VW Gol GTI', 'Aspirado', 51, 132, -1, -2),
+  R('Otávio Lemos', 'Chevrolet Cruze', 'Turismo', 44, 140, -2, 1), R('Lucas Andrade', 'Honda Civic Si', 'Turbo', 43, 121, 3, 2), R('Eduardo Sartori', 'Toyota Corolla GR', 'Turismo', 40, 118, 1, 0),
+  R('Diego Farias', 'VW Jetta GLI', 'Turbo', 40, 110, 0, -1), R('Rogério Casagrande', 'Ford Maverick V8', 'Street Legal', 36, 98, 2, 0), R('Letícia Hoffmann', 'Honda Civic Touring', 'Turismo', 22, 80, 0, 0),
+  R('Juliana Pacheco', 'VW Polo GTS', 'Turbo', 22, 64, -1, 0), R('Priscila Nunes', 'Fiat Uno Turbo', 'Street Legal', 25, 70, 0, 1)
+];
+const CATS = ['Street Legal', 'Turismo', 'Aspirado', 'Turbo', 'Clássicos'];
+const ini = n => n.split(' ').map(x => x[0]).slice(0, 2).join('');
+
+class Component extends DCLogic {
+  state = { scope: 'geral', period: 'm', cat: 'Turbo', view: 'ok', jump: 'ok' };
+  componentWillUnmount() { clearTimeout(this.l); }
+  renderVals() {
+    const st = this.state, v = st.view;
+    const seg = (a) => ({ border: a ? '#E95D2C' : 'transparent', bg: a ? 'rgba(233,93,44,.12)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC' });
+    const key = st.period === 'm' ? 'm' : 's', dk = st.period === 'm' ? 'dm' : 'ds';
+    const pool = (st.scope === 'geral' ? PILOTS : PILOTS.filter(p => p.cat === st.cat)).slice().sort((a, b) => b[key] - a[key]);
+    const ready = v === 'ok' || v === 'offline';
+    const hasData = ready && pool.length > 0;
+    const vr = (d) => ({ varIcon: d > 0 ? 'ph-bold ph-arrow-up' : d < 0 ? 'ph-bold ph-arrow-down' : 'ph ph-minus', varColor: d > 0 ? '#4ADE80' : d < 0 ? '#F87171' : '#6B7F95', varN: d ? String(Math.abs(d)) : '' });
+    const top = pool.slice(0, 3);
+    const podium = [1, 0, 2].filter(i => top[i]).map(i => { const p = top[i]; const pos = i + 1; return { pos, name: p.name, car: p.car, ini: ini(p.name), pts: p[key] + ' PTS', h: pos === 1 ? '200px' : pos === 2 ? '176px' : '160px', ring: pos === 1 ? '#B0CEE2' : '#2C3D4B', bg: pos === 1 ? 'rgba(176,206,226,.08)' : '#22323E', badge: pos === 1 ? '#B0CEE2' : pos === 2 ? '#C9D2DC' : '#9AA4B2' }; });
+    const rows = pool.slice(3).map((p, i) => { const me = p.name === 'Lucas Andrade'; return { pos: i + 4, name: me ? p.name + ' (você)' : p.name, car: st.scope === 'geral' ? p.cat + ' · ' + p.car : p.car, ini: ini(p.name), pts: p[key], ...vr(p[dk]), bg: me ? 'rgba(233,93,44,.08)' : 'transparent', pad: me ? '8px' : '0', radius: me ? '10px' : '0' }; });
+    const mi = pool.findIndex(p => p.name === 'Lucas Andrade'), mp = pool[mi];
+    const md = mp ? mp[dk] : 0;
+    const J = [['ok', 'Sucesso · Geral mensal'], ['cat', 'Por categoria · Turbo'], ['empty', 'Vazio · Sem resultados'], ['loading', 'Carregando'], ['error', 'Erro com retry'], ['offline', 'Offline (cache)']];
+    const go = (k) => {
+      const b = { jump: k, view: 'ok' };
+      if (k === 'ok') return this.setState({ ...b, scope: 'geral', period: 'm' });
+      if (k === 'cat') return this.setState({ ...b, scope: 'cat', cat: 'Turbo' });
+      if (k === 'empty') return this.setState({ ...b, scope: 'cat', cat: 'Clássicos' });
+      if (k === 'loading') { clearTimeout(this.l); this.l = setTimeout(() => this.setState({ view: 'ok', jump: 'ok' }), 1500); }
+      this.setState({ ...b, view: k });
+    };
+    return {
+      jumps: J.map(([k, label]) => { const a = st.jump === k; return { label, bg: a ? 'rgba(233,93,44,.10)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', bar: a ? 'inset 2px 0 0 #E95D2C' : 'none', go: () => go(k) }; }),
+      screenLabel: 'UC-08 · Ranking · ' + (J.find(j => j[0] === st.jump) || J[0])[1],
+      wifiIcon: v === 'offline' ? 'ph ph-wifi-slash' : 'ph ph-wifi-high',
+      periodLabel: st.period === 'm' ? 'Outubro 2026' : '2º semestre 2026',
+      scope: [['geral', 'Geral'], ['cat', 'Por categoria']].map(([id, label]) => ({ label, ...seg(st.scope === id), pick: () => this.setState({ scope: id }) })),
+      period: [['m', 'Mensal'], ['s', 'Semestral']].map(([id, label]) => ({ label, ...seg(st.period === id), pick: () => this.setState({ period: id }) })),
+      byCat: st.scope === 'cat', cats: CATS.map(c => { const a = st.cat === c; return { label: c, border: a ? '#E95D2C' : '#45586C', bg: a ? 'rgba(233,93,44,.12)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', pick: () => this.setState({ cat: c }) }; }),
+      isOffline: v === 'offline', isLoading: v === 'loading', isError: v === 'error', isEmpty: ready && !pool.length, hasData, skel: [1, 2, 3, 4, 5],
+      emptyCat: st.cat, toGeral: () => this.setState({ scope: 'geral', jump: 'ok' }),
+      retry: () => { this.setState({ view: 'loading' }); clearTimeout(this.l); this.l = setTimeout(() => this.setState({ view: 'ok', jump: 'ok' }), 900); },
+      podium, rows,
+      hasMe: hasData && !!mp, me: mp ? { pos: mi + 1, pts: mp[key], ...vr(md), varText: md > 0 ? 'Subiu ' + md + (md > 1 ? ' posições' : ' posição') : md < 0 ? 'Caiu ' + -md : 'Sem variação' } : {}
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/styles.css">
+<script src="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="./image-slot.js"></script>
+<style>*{scrollbar-width:none}*::-webkit-scrollbar{display:none}body{margin:0;background:#141F27;color:#F5F7FA;font-family:Inter,system-ui,sans-serif}a{color:#F28A62}a:hover{color:#E95D2C}input::placeholder,textarea::placeholder{color:#6B7F95}select option{background:#22323E}</style>
+</helmet>
+<div style="min-height:100vh;padding:48px;display:flex;gap:64px;flex-wrap:wrap;align-items:flex-start;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;background:#141F27">
+
+<aside style="width:340px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-01 · 02 · 17 · 19 · 20 · 21</span>
+    <h1 style="margin:0;font:600 40px/1 'Barlow Condensed';text-transform:uppercase">Garagem</h1>
+    <p style="margin:0;font-size:14px;line-height:1.55;color:#9AA4B2;text-wrap:pretty">Lista, cadastro com upload individual, detalhe com histórico, edição e "Tornar principal". A foto 2 do cadastro falha de propósito para mostrar o "Tentar novamente".</p>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px">
+    <span style="font-size:12px;color:#9AA4B2;margin-bottom:6px">Telas e estados</span>
+    <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="10"><button onClick="{{ j.go }}" style="min-height:36px;padding:0 12px;border:0;border-radius:10px;text-align:left;background:{{ j.bg }};color:{{ j.color }};box-shadow:{{ j.bar }};font:500 13px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">{{ j.label }}</button></sc-for>
+  </nav>
+</aside>
+
+<div style="flex:none;width:390px;height:844px;border-radius:52px;box-shadow:0 0 0 10px #0F171D,0 0 0 11px #45586C,0 40px 80px rgba(0,0,0,.5);position:relative;overflow:hidden;background:#1A2730" data-screen-label="{{ screenLabel }}">
+  <div style="position:absolute;top:0;left:0;right:0;height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 34px;z-index:60;pointer-events:none;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="ph-fill ph-cell-signal-full"></i><i class="{{ wifiIcon }}"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#0F171D;z-index:61"></div>
+
+  <sc-if value="{{ s.list }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:47px 0 0 0;display:flex;flex-direction:column">
+      <header style="padding:12px 16px 8px 20px;display:flex;align-items:center;gap:8px"><h1 style="margin:0;flex:1;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Garagem</h1><sc-if value="{{ hasCars }}"><button onClick="{{ toNew }}" style="min-height:44px;padding:0 14px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center" style-hover="background:rgba(233,93,44,.12)"><i class="ph ph-plus" style="font-size:16px"></i>Veículo</button></sc-if></header>
+      <div style="flex:1;overflow-y:auto;padding:8px 20px 24px;display:flex;flex-direction:column;gap:12px">
+        <sc-if value="{{ isOffline }}"><div role="status" style="padding:10px 14px;border-radius:12px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.35);display:flex;gap:10px;align-items:center;font-size:13px;color:#FCD34D"><i class="ph ph-wifi-slash" style="font-size:18px"></i>Exibindo dados salvos · atualizado há 3 min</div></sc-if>
+        <sc-if value="{{ isLoading }}"><sc-for list="{{ skel }}" as="k" hint-placeholder-count="3"><div style="height:112px;border-radius:16px;background:#22323E;display:flex;overflow:hidden"><div style="width:132px;background:#2C3D4B"></div><div style="flex:1;padding:16px;display:flex;flex-direction:column;gap:10px"><div style="width:40%;height:12px;border-radius:4px;background:#2C3D4B"></div><div style="width:80%;height:18px;border-radius:6px;background:#2C3D4B"></div><div style="width:50%;height:12px;border-radius:4px;background:#2C3D4B"></div></div></div></sc-for></sc-if>
+        <sc-if value="{{ isError }}"><div style="padding:16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;gap:12px;align-items:flex-start"><i class="ph ph-cloud-warning" style="font-size:24px;color:#F87171"></i><div style="display:flex;flex-direction:column;gap:8px;flex:1"><span style="font-size:14px;font-weight:500">Não foi possível carregar sua garagem</span><button onClick="{{ retry }}" style="align-self:flex-start;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center"><i class="ph ph-arrow-clockwise"></i>Tentar novamente</button></div></div></sc-if>
+        <sc-if value="{{ isEmpty }}">
+          <div style="padding:32px 24px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;flex-direction:column;gap:12px;align-items:flex-start;margin-top:40px">
+            <div style="width:56px;height:56px;border-radius:16px;border:1px solid #45586C;display:grid;place-items:center;color:#B0CEE2"><i class="ph ph-garage" style="font-size:28px"></i></div>
+            <h3 style="margin:0;font:600 28px/1.05 'Barlow Condensed';text-transform:uppercase">Sua garagem está vazia</h3>
+            <p style="margin:0;font-size:14px;line-height:1.5;color:#9AA4B2">Cadastre seu primeiro veículo para se inscrever em eventos. Leva cerca de 1 minuto.</p>
+            <button onClick="{{ toNew }}" style="min-height:48px;padding:0 20px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center" style-hover="background:rgba(233,93,44,.12)"><i class="ph ph-plus" style="font-size:16px"></i>Cadastrar veículo</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showCars }}">
+          <sc-for list="{{ cars }}" as="c" hint-placeholder-count="3">
+            <button onClick="{{ c.open }}" style="border:0;padding:0;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px {{ c.ring }};overflow:hidden;display:flex;color:#F5F7FA;text-align:left;cursor:pointer;min-height:112px" style-hover="background:#263845">
+              <div style="width:132px;flex:none;position:relative"><image-slot id="{{ c.slot }}" shape="rect" placeholder="Foto do carro"></image-slot></div>
+              <div style="flex:1;padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0">
+                <sc-if value="{{ c.main }}"><span style="align-self:flex-start;display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:6px;background:rgba(176,206,226,.14);color:#B0CEE2;font:500 11px Inter"><i class="ph-fill ph-star" style="font-size:11px"></i>Principal</span></sc-if>
+                <span style="font:600 22px/1.05 'Barlow Condensed';text-transform:uppercase">{{ c.name }}</span>
+                <span style="font-size:12px;color:#9AA4B2">{{ c.year }} · {{ c.color }}</span>
+                <div style="display:flex;gap:6px;align-items:center"><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px">{{ c.cat }}</span><span style="font-size:12px;color:#C9D2DC">{{ c.specLine }}</span></div>
+              </div>
+            </button>
+          </sc-for>
+        </sc-if>
+      </div>
+      <nav style="padding:8px 8px 26px;background:#1A2730;box-shadow:0 -1px 0 #2C3D4B;display:grid;grid-template-columns:repeat(5,1fr)">
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-house-simple" style="font-size:22px"></i>Feed</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-map-trifold" style="font-size:22px"></i>Mapa</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#F28A62;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter;position:relative"><span style="position:absolute;top:-8px;width:24px;height:2px;border-radius:1px;background:#E95D2C"></span><i class="ph-fill ph-garage" style="font-size:22px"></i>Garagem</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-trophy" style="font-size:22px"></i>Ranking</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-user-circle" style="font-size:22px"></i>Perfil</button>
+      </nav>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.detail }}">
+    <div style="position:absolute;inset:0;overflow-y:auto;padding-bottom:40px">
+      <div style="height:280px;position:relative"><image-slot id="{{ d.slotMain }}" shape="rect" placeholder="Foto principal"></image-slot><div style="position:absolute;inset:0;background:linear-gradient(to top,#1A2730,rgba(26,39,48,0) 50%,rgba(26,39,48,.5));pointer-events:none"></div>
+        <div style="position:absolute;top:52px;left:12px;right:12px;display:flex;justify-content:space-between"><button onClick="{{ toList }}" aria-label="Voltar" style="width:44px;height:44px;border-radius:12px;border:0;background:rgba(26,39,48,.75);color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-arrow-left" style="font-size:22px"></i></button><button onClick="{{ toEdit }}" style="min-height:44px;padding:0 14px;border-radius:12px;border:0;background:rgba(26,39,48,.75);color:#F5F7FA;font:500 14px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center"><i class="ph ph-pencil-simple" style="font-size:16px"></i>Editar</button></div>
+      </div>
+      <div style="padding:0 20px;margin-top:-28px;position:relative;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none"><sc-for list="{{ d.thumbs }}" as="t" hint-placeholder-count="3"><div style="width:72px;height:56px;flex:none;border-radius:10px;overflow:hidden;position:relative;box-shadow:0 0 0 2px #1A2730"><image-slot id="{{ t }}" shape="rect" placeholder=" "></image-slot></div></sc-for></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;gap:8px;align-items:center"><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:12px">{{ d.cat }}</span><sc-if value="{{ d.main }}"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:6px;background:rgba(176,206,226,.14);color:#B0CEE2;font:500 12px Inter"><i class="ph-fill ph-star" style="font-size:11px"></i>Principal</span></sc-if></div><h1 style="margin:0;font:600 40px/0.95 'Barlow Condensed';text-transform:uppercase">{{ d.name }}</h1><span style="font-size:14px;color:#9AA4B2">{{ d.year }} · {{ d.color }}</span></div>
+        <sc-if value="{{ d.notMain }}"><button onClick="{{ makeMain }}" style="min-height:48px;border-radius:12px;border:1px solid #B0CEE2;background:transparent;color:#B0CEE2;font:500 15px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center" style-hover="background:rgba(176,206,226,.08)"><i class="ph ph-star" style="font-size:18px"></i>Tornar principal</button></sc-if>
+        <section style="display:flex;flex-direction:column;gap:10px"><h3 style="margin:0;font:600 22px/1 'Barlow Condensed';text-transform:uppercase">Especificações</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><sc-for list="{{ d.specs }}" as="sp" hint-placeholder-count="5"><div style="padding:12px 14px;border-radius:12px;background:#22323E;display:flex;flex-direction:column;gap:2px;grid-column:{{ sp.span }}"><span style="font-size:12px;color:#9AA4B2">{{ sp.k }}</span><span style="font:600 20px/1.1 'Barlow Condensed';text-transform:uppercase">{{ sp.v }}</span></div></sc-for></div>
+          <sc-if value="{{ d.mods }}"><div style="padding:12px 14px;border-radius:12px;background:#22323E;display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:#9AA4B2">Modificações</span><sc-for list="{{ d.mods }}" as="m" hint-placeholder-count="3"><span style="font-size:14px;display:flex;gap:8px"><i class="ph ph-wrench" style="color:#B0CEE2;margin-top:3px"></i>{{ m }}</span></sc-for></div></sc-if>
+        </section>
+        <section style="display:flex;flex-direction:column;gap:6px"><h3 style="margin:0 0 4px;font:600 22px/1 'Barlow Condensed';text-transform:uppercase">Histórico de eventos</h3>
+          <sc-if value="{{ d.noHistory }}"><span style="font-size:14px;color:#9AA4B2">Este veículo ainda não participou de eventos.</span></sc-if>
+          <sc-for list="{{ d.history }}" as="h" hint-placeholder-count="3"><div style="min-height:60px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 -1px 0 #22323E"><span style="width:44px;flex:none;padding:2px 0;border-radius:6px;background:{{ h.badgeBg }};color:{{ h.badgeInk }};font:700 16px 'Barlow Condensed';text-align:center">{{ h.pos }}</span><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:500">{{ h.name }}</span><span style="font-size:12px;color:#9AA4B2">{{ h.date }} · {{ h.cat }}</span></span><span style="font:600 16px 'Barlow Condensed'">+{{ h.pts }} PTS</span></div></sc-for>
+        </section>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.form }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding-top:47px;background:#1A2730">
+      <div style="padding:4px 12px 0;display:flex;align-items:center;gap:8px"><button onClick="{{ formBack }}" aria-label="Voltar" style="width:44px;height:44px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-x" style="font-size:22px"></i></button><span style="flex:1;font:600 13px 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">{{ formKicker }}</span></div>
+      <div style="flex:1;overflow-y:auto;padding:4px 24px 24px;display:flex;flex-direction:column;gap:18px">
+        <h2 style="margin:0;font:600 38px/0.95 'Barlow Condensed';text-transform:uppercase">{{ formTitle }}</h2>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;color:#C9D2DC">Fotos · mínimo 3</span><span style="font-size:12px;color:{{ photoColor }}">{{ photoDone }}/3</span></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="3">
+              <div style="aspect-ratio:1;border-radius:12px;position:relative;overflow:hidden;background:#22323E;border:1px solid {{ t.border }}">
+                <sc-if value="{{ t.done }}"><image-slot id="{{ t.slot }}" shape="rect" placeholder="Foto"></image-slot><button onClick="{{ t.del }}" aria-label="Remover foto" style="position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(26,39,48,.85);color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-x" style="font-size:13px"></i></button></sc-if>
+                <sc-if value="{{ t.up }}"><div style="position:absolute;inset:0;display:grid;place-items:center;font:600 22px 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ t.pct }}</div><div style="position:absolute;left:0;bottom:0;height:4px;width:{{ t.pct }};background:#E95D2C"></div></sc-if>
+                <sc-if value="{{ t.err }}"><button onClick="{{ t.retry }}" style="position:absolute;inset:0;border:0;background:rgba(239,68,68,.08);color:#F87171;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 12px Inter;cursor:pointer"><i class="ph ph-arrow-clockwise" style="font-size:22px"></i>Tentar novamente</button></sc-if>
+                <sc-if value="{{ t.add }}"><button onClick="{{ addPhoto }}" style="position:absolute;inset:0;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 12px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.05)"><i class="ph ph-camera-plus" style="font-size:24px"></i>Adicionar</button></sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ photoErr }}"><span role="alert" style="font-size:12px;color:#F87171">Falha no envio de uma foto. O formulário continua preenchido; toque na foto para tentar de novo.</span></sc-if>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Marca</span><div style="position:relative"><select value="{{ fm.marca }}" onChange="{{ on.marca }}" style="width:100%;appearance:none;min-height:48px;padding:0 36px 0 14px;border-radius:12px;border:1px solid {{ fb.marca }};background:#22323E;color:#F5F7FA;font:15px Inter;outline:none"><option value="">Selecione</option><option>Chevrolet</option><option>Ford</option><option>Honda</option><option>Toyota</option><option>Volkswagen</option></select><i class="ph ph-caret-down" style="position:absolute;right:12px;top:14px;font-size:18px;color:#9AA4B2;pointer-events:none"></i></div></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Modelo</span><input value="{{ fm.modelo }}" onChange="{{ on.modelo }}" placeholder="Ex.: Golf GTI" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ fb.modelo }};background:#22323E;color:#F5F7FA;font:15px Inter;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Ano</span><input inputmode="numeric" maxlength="4" value="{{ fm.ano }}" onChange="{{ on.ano }}" placeholder="2016" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ fb.ano }};background:#22323E;color:#F5F7FA;font:15px Inter;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Cor</span><input value="{{ fm.cor }}" onChange="{{ on.cor }}" placeholder="Branco" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px Inter;outline:none"></label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#C9D2DC">Categoria</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ catChips }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.pick }}" style="min-height:40px;padding:0 14px;border-radius:8px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 13px Inter;cursor:pointer">{{ c.label }}</button></sc-for></div></div>
+        <div style="border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden">
+          <button onClick="{{ toggleSpecs }}" aria-expanded="{{ specsAria }}" style="width:100%;min-height:56px;padding:0 16px;border:0;background:transparent;color:#F5F7FA;display:flex;align-items:center;gap:12px;font:500 15px Inter;cursor:pointer;text-align:left"><i class="ph ph-wrench" style="font-size:20px;color:#B0CEE2"></i><span style="flex:1">Especificações técnicas <span style="color:#9AA4B2;font-weight:400">· opcional</span></span><i class="{{ specsIcon }}" style="font-size:18px;color:#9AA4B2"></i></button>
+          <sc-if value="{{ specsOpen }}">
+            <div style="padding:4px 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <label style="display:flex;flex-direction:column;gap:6px;grid-column:1 / -1"><span style="font-size:13px;color:#C9D2DC">Motor</span><input value="{{ fm.motor }}" onChange="{{ on.motor }}" placeholder="2.0 TSI" style="min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px Inter;outline:none"></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Potência (cv)</span><input value="{{ fm.pot }}" onChange="{{ on.pot }}" placeholder="230" style="min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px Inter;outline:none"></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Torque (kgfm)</span><input value="{{ fm.torque }}" onChange="{{ on.torque }}" placeholder="35,7" style="min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px Inter;outline:none"></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Peso (kg)</span><input value="{{ fm.peso }}" onChange="{{ on.peso }}" placeholder="1.380" style="min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px Inter;outline:none"></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Transmissão</span><input value="{{ fm.trans }}" onChange="{{ on.trans }}" placeholder="DSG 6" style="min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px Inter;outline:none"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;grid-column:1 / -1"><span style="font-size:13px;color:#C9D2DC">Modificações · uma por linha</span><textarea value="{{ fm.mods }}" onChange="{{ on.mods }}" placeholder="Intake, escape inox, pastilhas de competição" style="min-height:80px;padding:10px 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px/1.5 Inter;outline:none;resize:none"></textarea></label>
+            </div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ isEdit }}"><button onClick="{{ askDelete }}" style="align-self:flex-start;min-height:44px;padding:0 14px;border-radius:12px;border:0;background:transparent;color:#F87171;font:500 14px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center" style-hover="background:rgba(239,68,68,.10)"><i class="ph ph-trash" style="font-size:16px"></i>Excluir veículo</button></sc-if>
+      </div>
+      <div style="padding:12px 24px 34px;display:flex;flex-direction:column;gap:8px;box-shadow:0 -1px 0 #22323E">
+        <sc-if value="{{ missing }}"><span style="font-size:12px;color:#9AA4B2;text-align:center">Falta: {{ missing }}</span></sc-if>
+        <button onClick="{{ save }}" disabled="{{ invalid }}" style="min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer;opacity:{{ saveOp }}" style-hover="background:rgba(233,93,44,.12)">{{ saveLabel }}</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ confirmDel }}">
+    <div style="position:absolute;inset:0;z-index:50;background:rgba(10,15,19,.6);display:grid;place-items:center;padding:24px"><div role="dialog" style="padding:20px;border-radius:16px;background:#2C3D4B;box-shadow:0 0 0 1px #5D7189,0 16px 40px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:12px"><h3 style="margin:0;font:600 24px/1 'Barlow Condensed';text-transform:uppercase">Excluir veículo?</h3><p style="margin:0;font-size:14px;line-height:1.5;color:#C9D2DC">O histórico de eventos permanece no seu perfil. Inscrições futuras com este carro serão canceladas.</p><div style="display:flex;gap:8px;justify-content:flex-end"><button onClick="{{ cancelDel }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer">Cancelar</button><button onClick="{{ doDelete }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #EF4444;background:transparent;color:#F87171;font:500 14px Inter;cursor:pointer">Excluir</button></div></div></div>
+  </sc-if>
+  <sc-if value="{{ toast }}"><div role="status" style="position:absolute;top:60px;left:16px;right:16px;z-index:55;padding:12px 14px;border-radius:12px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);display:flex;gap:12px;align-items:center;font-size:14px"><i class="ph-fill ph-check-circle" style="font-size:20px;color:#22C55E"></i><span style="flex:1">{{ toast }}</span></div></sc-if>
+  <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#F5F7FA;opacity:.8;z-index:70;pointer-events:none"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const CARS = () => [
+  { id: 'civic', name: 'Honda Civic Si', marca: 'Honda', modelo: 'Civic Si', year: '2019', color: 'Cinza Grafite', cat: 'Turbo', main: true, motor: '1.5 Turbo 16V', pot: '205', torque: '26,5', peso: '1.335', trans: 'Manual 6M', mods: 'Intake de fibra\nEscape inox 2,5"\nPastilhas de competição', history: [['Track Day Zilmar Beux · Etapa 3', '12 out', 'Turbo', 'P3', 15], ['Track Day Zilmar Beux · Etapa 2', '14 set', 'Turbo', 'P5', 10], ['Desafio em Pista · Turbo', '24 ago', 'Turbo', 'P2', 18]] },
+  { id: 'golf', name: 'VW Golf GTI', marca: 'Volkswagen', modelo: 'Golf GTI', year: '2016', color: 'Branco Puro', cat: 'Turbo', motor: '2.0 TSI', pot: '230', torque: '35,7', peso: '1.380', trans: 'DSG 6', mods: '', history: [['Arrancada Toledo · Street', '10 ago', 'Turbo', 'P7', 6]] },
+  { id: 'opala', name: 'Chevrolet Opala SS', marca: 'Chevrolet', modelo: 'Opala SS', year: '1976', color: 'Vermelho', cat: 'Clássicos', motor: '4.1 6 cilindros', pot: '171', torque: '', peso: '1.250', trans: 'Manual 4M', mods: 'Carburação dupla', history: [] }
+];
+const EMPTY = { marca: '', modelo: '', ano: '', cor: '', cat: '', motor: '', pot: '', torque: '', peso: '', trans: '', mods: '' };
+const CATS = ['Street Legal', 'Turismo', 'Aspirado', 'Turbo', 'Clássicos'];
+
+class Component extends DCLogic {
+  state = { screen: 'list', view: 'ok', cars: CARS(), sel: 'civic', fm: { ...EMPTY }, specs: false, photos: [], editing: null, del: false, toast: null, jump: 'list', failNext: true };
+  componentDidMount() { this.iv = setInterval(() => this.tick(), 200); }
+  componentWillUnmount() { clearInterval(this.iv); clearTimeout(this.t); clearTimeout(this.l); }
+  tick() {
+    const ph = this.state.photos; if (!ph.some(p => p.st === 'up')) return;
+    this.setState({ photos: ph.map(p => { if (p.st !== 'up') return p; const n = p.p + 10 + Math.random() * 10; if (p.fail && n > 55) return { ...p, st: 'err', p: 0, fail: false }; return n >= 100 ? { ...p, st: 'done', p: 100 } : { ...p, p: n }; }) });
+  }
+  flash(m) { clearTimeout(this.t); this.setState({ toast: m }); this.t = setTimeout(() => this.setState({ toast: null }), 2800); }
+  renderVals() {
+    const st = this.state, fm = st.fm, v = st.view;
+    const tint = (a) => ({ bg: a ? 'rgba(233,93,44,.10)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', bar: a ? 'inset 2px 0 0 #E95D2C' : 'none' });
+    const s = { list: st.screen === 'list', detail: st.screen === 'detail', form: st.screen === 'form' };
+    const cars = [...st.cars].sort((a, b) => (b.main ? 1 : 0) - (a.main ? 1 : 0));
+    const ready = v === 'ok' || v === 'offline';
+    const car = st.cars.find(c => c.id === st.sel) || st.cars[0];
+    const specs = car ? [['Motor', car.motor, '1 / -1'], ['Potência', car.pot ? car.pot + ' cv' : '—'], ['Torque', car.torque ? car.torque + ' kgfm' : '—'], ['Peso', car.peso ? car.peso + ' kg' : '—'], ['Transmissão', car.trans || '—']].filter(x => x[1]).map(([k, val, span]) => ({ k, v: val, span: span || 'auto' })) : [];
+    const done = st.photos.filter(p => p.st === 'done').length;
+    const tiles = st.photos.map((p, i) => ({ done: p.st === 'done', up: p.st === 'up', err: p.st === 'err', add: false, pct: Math.round(p.p) + '%', slot: 'gr-foto-' + (st.editing || 'novo') + '-' + i, border: p.st === 'err' ? '#EF4444' : '#2C3D4B',
+      retry: () => this.setState(x => ({ photos: x.photos.map((y, j) => j === i ? { st: 'up', p: 0 } : y) })), del: () => this.setState(x => ({ photos: x.photos.filter((y, j) => j !== i) })) }));
+    if (st.photos.length < 6) tiles.push({ add: true, border: '#45586C' });
+    const miss = []; if (done < 3) miss.push((3 - done) + ' foto' + (3 - done > 1 ? 's' : '')); if (!fm.marca) miss.push('marca'); if (!fm.modelo.trim()) miss.push('modelo'); if (!/^\d{4}$/.test(fm.ano)) miss.push('ano'); if (!fm.cat) miss.push('categoria');
+    const set = (k) => (e) => { const val = e.target.value; this.setState(x => ({ fm: { ...x.fm, [k]: val } })); };
+    const J = [['list', 'UC-02 · Lista com principal'], ['empty', 'UC-02 · Vazio'], ['loading', 'Carregando'], ['error', 'Erro com retry'], ['offline', 'Offline (cache)'], ['new', 'UC-01 · Cadastro'], ['uploadErr', 'UC-01 · Erro no upload'], ['detail', 'UC-19 · Detalhe · principal'], ['detail2', 'UC-19 · Detalhe · tornar principal'], ['edit', 'UC-20/21 · Edição com especificações']];
+    const go = (k) => {
+      const base = { jump: k, del: false, view: 'ok' };
+      if (k === 'list') return this.setState({ ...base, screen: 'list', cars: st.cars.length ? st.cars : CARS() });
+      if (k === 'empty') return this.setState({ ...base, screen: 'list', cars: [] });
+      if (['loading', 'error', 'offline'].includes(k)) { if (k === 'loading') { clearTimeout(this.l); this.l = setTimeout(() => this.setState({ view: 'ok', jump: 'list' }), 1500); } return this.setState({ ...base, screen: 'list', view: k, cars: st.cars.length ? st.cars : CARS() }); }
+      if (k === 'new') return this.setState({ ...base, screen: 'form', editing: null, fm: { ...EMPTY }, photos: [], specs: false, failNext: true });
+      if (k === 'uploadErr') return this.setState({ ...base, screen: 'form', editing: null, fm: { ...EMPTY, marca: 'Volkswagen', modelo: 'Gol GTI', ano: '1994', cor: 'Preto', cat: 'Aspirado' }, photos: [{ st: 'done', p: 100 }, { st: 'err', p: 0 }, { st: 'done', p: 100 }], specs: false });
+      if (k === 'detail') return this.setState({ ...base, screen: 'detail', sel: 'civic', cars: CARS() });
+      if (k === 'detail2') return this.setState({ ...base, screen: 'detail', sel: 'golf', cars: CARS() });
+      if (k === 'edit') { const c = CARS()[0]; return this.setState({ ...base, screen: 'form', editing: 'civic', sel: 'civic', cars: CARS(), fm: { ...c, ano: c.year, cor: c.color }, photos: [0, 1, 2, 3].map(() => ({ st: 'done', p: 100 })), specs: true }); }
+    };
+    return {
+      s, jumps: J.map(([k, label]) => ({ label, ...tint(st.jump === k), go: () => go(k) })), screenLabel: (J.find(j => j[0] === st.jump) || J[0])[1],
+      wifiIcon: v === 'offline' ? 'ph ph-wifi-slash' : 'ph ph-wifi-high',
+      hasCars: ready && st.cars.length > 0, isOffline: v === 'offline', isLoading: v === 'loading', isError: v === 'error', isEmpty: ready && !st.cars.length, showCars: ready && st.cars.length > 0, skel: [1, 2, 3],
+      retry: () => { this.setState({ view: 'loading' }); clearTimeout(this.l); this.l = setTimeout(() => this.setState({ view: 'ok', jump: 'list' }), 900); },
+      cars: cars.map(c => ({ ...c, slot: 'gr-car-' + c.id, ring: c.main ? 'rgba(176,206,226,.4)' : '#2C3D4B', specLine: [c.pot && c.pot + ' cv', c.motor].filter(Boolean).join(' · '), open: () => this.setState({ screen: 'detail', sel: c.id, jump: c.main ? 'detail' : 'detail2' }) })),
+      toNew: () => go('new'), toList: () => this.setState({ screen: 'list', jump: 'list' }),
+      d: car ? { ...car, slotMain: 'gr-car-' + car.id, thumbs: ['gr-g-' + car.id + '-1', 'gr-g-' + car.id + '-2', 'gr-g-' + car.id + '-3', 'gr-g-' + car.id + '-4'], notMain: !car.main, specs, mods: car.mods ? car.mods.split('\n').filter(Boolean) : null, noHistory: !car.history.length,
+        history: car.history.map(([name, date, cat, pos, pts]) => { const top = ['P1', 'P2', 'P3'].includes(pos); return { name, date, cat, pos, pts, badgeBg: top ? '#B0CEE2' : '#2C3D4B', badgeInk: top ? '#1A2730' : '#F5F7FA' }; }) } : {},
+      makeMain: () => { this.setState(x => ({ cars: x.cars.map(c => ({ ...c, main: c.id === x.sel })) })); this.flash(car.name + ' agora é seu veículo principal'); },
+      toEdit: () => this.setState({ screen: 'form', editing: car.id, fm: { ...car, ano: car.year, cor: car.color }, photos: [0, 1, 2, 3].map(() => ({ st: 'done', p: 100 })), specs: true, jump: 'edit' }),
+      isEdit: !!st.editing, formKicker: st.editing ? 'UC-20 · Editar veículo' : 'UC-01 · Novo veículo', formTitle: st.editing ? 'Editar ' + (fm.modelo || 'veículo') : 'Cadastrar veículo',
+      formBack: () => this.setState({ screen: st.editing ? 'detail' : 'list' }),
+      fm, fb: { marca: '#45586C', modelo: '#45586C', ano: fm.ano && !/^\d{4}$/.test(fm.ano) ? '#EF4444' : '#45586C' },
+      on: Object.fromEntries(['marca', 'modelo', 'ano', 'cor', 'motor', 'pot', 'torque', 'peso', 'trans', 'mods'].map(k => [k, set(k)])),
+      tiles, photoDone: done, photoColor: done >= 3 ? '#4ADE80' : '#9AA4B2', photoErr: st.photos.some(p => p.st === 'err'),
+      addPhoto: () => this.setState(x => { const fail = x.failNext && x.photos.length === 1; return { photos: [...x.photos, { st: 'up', p: 0, fail }], failNext: fail ? false : x.failNext }; }),
+      catChips: CATS.map(c => { const a = fm.cat === c; return { label: c, border: a ? '#E95D2C' : '#45586C', bg: a ? 'rgba(233,93,44,.12)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', pick: () => this.setState(x => ({ fm: { ...x.fm, cat: c } })) }; }),
+      specsOpen: st.specs, specsAria: st.specs ? 'true' : 'false', specsIcon: st.specs ? 'ph ph-caret-up' : 'ph ph-caret-down', toggleSpecs: () => this.setState(x => ({ specs: !x.specs })),
+      missing: miss.join(', '), invalid: miss.length > 0, saveOp: miss.length ? 0.45 : 1, saveLabel: st.editing ? 'Salvar alterações' : 'Salvar veículo',
+      save: () => {
+        if (miss.length) return;
+        const data = { marca: fm.marca, modelo: fm.modelo, name: fm.marca.replace('Volkswagen', 'VW') + ' ' + fm.modelo, year: fm.ano, color: fm.cor || '—', cat: fm.cat, motor: fm.motor, pot: fm.pot, torque: fm.torque, peso: fm.peso, trans: fm.trans, mods: fm.mods };
+        if (st.editing) { this.setState(x => ({ cars: x.cars.map(c => c.id === x.editing ? { ...c, ...data } : c), screen: 'detail', jump: 'detail' })); this.flash('Alterações salvas'); }
+        else { const id = 'c' + Date.now(); this.setState(x => ({ cars: [...x.cars, { id, ...data, main: !x.cars.length, history: [] }], screen: 'list', jump: 'list' })); this.flash('Veículo cadastrado na garagem'); }
+      },
+      askDelete: () => this.setState({ del: true }), confirmDel: st.del, cancelDel: () => this.setState({ del: false }),
+      doDelete: () => { this.setState(x => { const rest = x.cars.filter(c => c.id !== x.editing); if (rest.length && !rest.some(c => c.main)) rest[0] = { ...rest[0], main: true }; return { cars: rest, del: false, screen: 'list', editing: null, jump: 'list' }; }); this.flash('Veículo excluído'); },
+      toast: st.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

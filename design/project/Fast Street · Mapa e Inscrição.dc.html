@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/styles.css">
+<script src="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="./image-slot.js"></script>
+<style>*{scrollbar-width:none}*::-webkit-scrollbar{display:none}body{margin:0;background:#141F27;color:#F5F7FA;font-family:Inter,system-ui,sans-serif}a{color:#F28A62}a:hover{color:#E95D2C}input[type=range]{accent-color:#E95D2C}</style>
+</helmet>
+<div style="min-height:100vh;padding:48px;display:flex;gap:64px;flex-wrap:wrap;align-items:flex-start;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;background:#141F27">
+
+<aside style="width:340px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">Protótipo · fluxo (b)</span>
+    <h1 style="margin:0;font:600 40px/1 'Barlow Condensed';text-transform:uppercase">Mapa até a inscrição</h1>
+    <p style="margin:0;font-size:14px;line-height:1.55;color:#9AA4B2;text-wrap:pretty">UC-04 + UC-23 + UC-05/24. Toque em um pin, depois em Inscrever-se. Eventos públicos confirmam na hora; privados ficam pendentes. Arraste o raio para ver os pins e clusters atualizarem.</p>
+  </div>
+  <div style="padding:14px 16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;flex-direction:column;gap:10px">
+    <span style="font-size:13px;color:#9AA4B2">Garagem do piloto</span>
+    <div style="display:inline-flex;padding:4px;gap:4px;border-radius:12px;background:#1A2730;align-self:flex-start">
+      <sc-for list="{{ garageSeg }}" as="g" hint-placeholder-count="2"><button onClick="{{ g.pick }}" style="min-height:36px;padding:0 14px;border-radius:9px;border:1px solid {{ g.border }};background:{{ g.bg }};color:{{ g.color }};font:500 13px Inter;cursor:pointer">{{ g.label }}</button></sc-for>
+    </div>
+    <span style="font-size:12px;line-height:1.5;color:#9AA4B2">Civic Si (Turbo, principal) · Golf GTI (Turbo) · Opala SS (Clássicos)</span>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px">
+    <span style="font-size:12px;color:#9AA4B2;margin-bottom:6px">Telas e estados</span>
+    <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="14">
+      <button onClick="{{ j.go }}" style="min-height:34px;padding:0 12px;border:0;border-radius:10px;text-align:left;background:{{ j.bg }};color:{{ j.color }};box-shadow:{{ j.bar }};font:500 13px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">{{ j.label }}</button>
+    </sc-for>
+  </nav>
+</aside>
+
+<div style="flex:none;width:390px;height:844px;border-radius:52px;box-shadow:0 0 0 10px #0F171D,0 0 0 11px #45586C,0 40px 80px rgba(0,0,0,.5);position:relative;overflow:hidden;background:#15212A" data-screen-label="{{ screenLabel }}">
+  <div style="position:absolute;top:0;left:0;right:0;height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 34px;z-index:60;pointer-events:none;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="ph-fill ph-cell-signal-full"></i><i class="{{ wifiIcon }}"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#0F171D;z-index:61"></div>
+
+  <div style="position:absolute;inset:0;background:radial-gradient(90% 60% at 50% 47%,#1B2A34,#131D25 80%)">
+    <svg width="390" height="844" viewBox="0 0 390 844" style="position:absolute;inset:0" aria-hidden="true">
+      <path d="M-20 250 C 80 220, 140 300, 220 270 S 360 210, 420 240" fill="none" stroke="#1E2E39" stroke-width="1.2"></path>
+      <path d="M-20 330 C 60 300, 150 380, 240 350 S 350 300, 420 320" fill="none" stroke="#1E2E39" stroke-width="1.2"></path>
+      <path d="M-20 560 C 90 520, 160 610, 250 580 S 360 530, 420 560" fill="none" stroke="#1E2E39" stroke-width="1.2"></path>
+      <path d="M-20 640 C 70 610, 170 690, 260 660 S 360 620, 420 640" fill="none" stroke="#1E2E39" stroke-width="1.2"></path>
+      <path d="M40 -10 C 70 120, 20 260, 60 420 S 30 700, 70 860" fill="none" stroke="#1D3140" stroke-width="5" stroke-linecap="round"></path>
+      <path d="M330 -10 C 300 160, 360 300, 320 470 S 350 720, 310 860" fill="none" stroke="#1D3140" stroke-width="3" stroke-linecap="round"></path>
+    </svg>
+    <sc-if value="{{ showUser }}">
+      <div style="position:absolute;left:195px;top:{{ cyPx }};width:{{ ringD }};height:{{ ringD }};transform:translate(-50%,-50%);border-radius:50%;border:1px dashed rgba(233,93,44,.55);background:rgba(233,93,44,.04);pointer-events:none"></div>
+      <span style="position:absolute;left:195px;top:{{ ringLabelTop }};transform:translateX(-50%);font:600 12px 'Barlow Condensed';letter-spacing:.12em;color:#F28A62;background:#15212A;padding:0 6px;pointer-events:none">{{ radius }} KM</span>
+    </sc-if>
+    <sc-for list="{{ cities }}" as="c" hint-placeholder-count="0">
+      <span style="position:absolute;left:{{ c.x }};top:{{ c.y }};transform:translate(-50%,-50%);font:600 11px 'Barlow Condensed';letter-spacing:.18em;text-transform:uppercase;color:#56697D;pointer-events:none;white-space:nowrap">{{ c.name }}</span>
+    </sc-for>
+    <sc-if value="{{ showPins }}">
+      <sc-for list="{{ pins }}" as="p" hint-placeholder-count="0">
+        <button onClick="{{ p.tap }}" aria-label="{{ p.aria }}" style="position:absolute;left:{{ p.x }};top:{{ p.y }};transform:translate(-50%,-100%) scale({{ p.scale }});transform-origin:50% 100%;border:0;padding:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;z-index:{{ p.z }};transition:left .25s,top .25s">
+          <span style="min-width:{{ p.size }};height:{{ p.size }};padding:0 {{ p.pad }};box-sizing:border-box;border-radius:{{ p.radius }};border:2px solid {{ p.ring }};background:{{ p.fill }};color:{{ p.ink }};display:flex;align-items:center;justify-content:center;gap:3px;box-shadow:0 4px 12px rgba(0,0,0,.5);font:700 14px 'Barlow Condensed'"><i class="{{ p.icon }}" style="font-size:17px"></i>{{ p.count }}</span>
+          <span style="width:2px;height:8px;background:{{ p.ring }}"></span>
+        </button>
+      </sc-for>
+    </sc-if>
+    <sc-if value="{{ showUser }}">
+      <div style="position:absolute;left:195px;top:{{ cyPx }};width:18px;height:18px;transform:translate(-50%,-50%);border-radius:50%;background:#B0CEE2;border:3px solid #15212A;box-shadow:0 0 0 6px rgba(176,206,226,.18);pointer-events:none"></div>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;top:51px;left:16px;right:16px;z-index:20;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;gap:8px">
+      <button onClick="{{ changeLocal }}" style="flex:1;min-height:48px;padding:0 14px;border-radius:14px;border:1px solid #2C3D4B;background:rgba(26,39,48,.94);color:#F5F7FA;display:flex;align-items:center;gap:10px;cursor:pointer;text-align:left;box-shadow:0 6px 18px rgba(0,0,0,.35)"><i class="ph ph-map-pin" style="font-size:20px;color:#F28A62"></i><span style="flex:1;display:flex;flex-direction:column"><span style="font-size:11px;color:#9AA4B2">Buscando perto de</span><span style="font:500 14px Inter">{{ cityLabel }}</span></span><span style="font:500 13px Inter;color:#F28A62">Alterar</span></button>
+      <button onClick="{{ toList }}" aria-label="Ver lista" style="width:48px;height:48px;border-radius:14px;border:1px solid #2C3D4B;background:rgba(26,39,48,.94);color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-list-bullets" style="font-size:20px"></i></button>
+    </div>
+    <div style="display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;margin:0 -16px;padding:0 16px">
+      <sc-for list="{{ typeChips }}" as="t" hint-placeholder-count="5"><button onClick="{{ t.pick }}" style="flex:none;min-height:36px;padding:0 12px;border-radius:10px;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }};font:500 12px Inter;display:inline-flex;gap:6px;align-items:center;cursor:pointer"><i class="{{ t.icon }}" style="font-size:14px"></i>{{ t.label }}</button></sc-for>
+    </div>
+    <sc-if value="{{ isOffline }}">
+      <div role="status" style="padding:10px 14px;border-radius:12px;background:rgba(40,34,20,.95);border:1px solid rgba(245,158,11,.45);display:flex;gap:10px;align-items:center;font-size:13px;color:#FCD34D"><i class="ph ph-wifi-slash" style="font-size:18px"></i><span style="flex:1">Exibindo dados salvos · atualizado há 18 min</span></div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ isLoading }}">
+    <div style="position:absolute;inset:0;z-index:15;pointer-events:none">
+      <div style="position:absolute;left:110px;top:300px;width:36px;height:36px;border-radius:50%;background:#22323E"></div>
+      <div style="position:absolute;left:230px;top:360px;width:36px;height:36px;border-radius:50%;background:#22323E"></div>
+      <div style="position:absolute;left:170px;top:470px;width:44px;height:44px;border-radius:50%;background:#22323E"></div>
+      <div style="position:absolute;left:260px;top:520px;width:36px;height:36px;border-radius:50%;background:#22323E"></div>
+      <div style="position:absolute;left:50%;top:410px;transform:translateX(-50%);padding:8px 14px;border-radius:10px;background:rgba(26,39,48,.94);box-shadow:0 0 0 1px #2C3D4B;font-size:13px;color:#C9D2DC;display:flex;gap:8px;align-items:center"><i class="ph ph-circle-notch" style="font-size:16px"></i>Carregando eventos…</div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isNoPerm }}">
+    <div style="position:absolute;left:16px;right:16px;top:300px;z-index:25;padding:20px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #45586C,0 16px 40px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:12px">
+      <div style="width:48px;height:48px;border-radius:14px;border:1px solid #45586C;display:grid;place-items:center;color:#B0CEE2"><i class="ph ph-map-pin-simple-slash" style="font-size:24px"></i></div>
+      <h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Onde você está?</h3>
+      <p style="margin:0;font-size:14px;line-height:1.5;color:#C9D2DC">Permita a localização ou escolha uma cidade para ver eventos e parceiros próximos. Sua posição nunca é exibida para outros usuários.</p>
+      <button onClick="{{ grantLoc }}" style="min-height:48px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)">Permitir localização</button>
+      <button onClick="{{ grantLoc }}" style="min-height:44px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.07)">Definir local manualmente</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isError }}">
+    <div style="position:absolute;left:16px;right:16px;top:320px;z-index:25;padding:20px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #45586C,0 16px 40px rgba(0,0,0,.6);display:flex;gap:12px;align-items:flex-start">
+      <i class="ph ph-cloud-warning" style="font-size:26px;color:#F87171"></i>
+      <div style="display:flex;flex-direction:column;gap:8px;flex:1"><span style="font-size:15px;font-weight:500">Não foi possível carregar o mapa</span><span style="font-size:13px;color:#9AA4B2">Verifique sua conexão e tente de novo.</span><button onClick="{{ retry }}" style="align-self:flex-start;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-arrow-clockwise" style="font-size:15px"></i>Tentar novamente</button></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isEmpty }}">
+    <div style="position:absolute;left:16px;right:16px;top:560px;z-index:25;padding:16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);display:flex;gap:12px;align-items:center">
+      <i class="ph ph-magnifying-glass" style="font-size:24px;color:#9AA4B2"></i>
+      <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:500">Nenhum evento em {{ radius }} km</span><span style="font-size:12px;color:#9AA4B2">Amplie o raio ou limpe o filtro de tipo.</span></div>
+      <button onClick="{{ widen }}" style="min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 13px Inter;cursor:pointer">Ampliar</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showRadius }}">
+    <div style="position:absolute;left:16px;right:16px;bottom:94px;z-index:20;padding:12px 16px 10px;border-radius:16px;background:rgba(26,39,48,.96);box-shadow:0 0 0 1px #2C3D4B,0 6px 18px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:4px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12px;color:#9AA4B2">Raio de busca</span><span style="font:600 18px/1 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ radius }} KM · <span style="color:#F28A62">{{ countLabel }}</span></span></div>
+      <input type="range" min="5" max="200" step="5" value="{{ radius }}" onChange="{{ onRadius }}" aria-label="Raio de busca em km" style="width:100%;height:28px;margin:0">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#6B7F95"><span>5 km</span><span style="display:flex;gap:10px"><span style="display:flex;gap:4px;align-items:center"><i class="ph ph-flag-checkered"></i>Eventos</span><span style="display:flex;gap:4px;align-items:center"><i class="ph ph-wrench"></i>Parceiros</span></span><span>200 km</span></div>
+    </div>
+  </sc-if>
+
+  <nav style="position:absolute;left:0;right:0;bottom:0;z-index:20;padding:8px 8px 26px;background:#1A2730;box-shadow:0 -1px 0 #2C3D4B;display:grid;grid-template-columns:repeat(5,1fr)">
+    <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-house-simple" style="font-size:22px"></i>Feed</button>
+    <button style="min-height:52px;border:0;background:transparent;color:#F28A62;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter;position:relative"><span style="position:absolute;top:-8px;width:24px;height:2px;border-radius:1px;background:#E95D2C"></span><i class="ph-fill ph-map-trifold" style="font-size:22px"></i>Mapa</button>
+    <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-garage" style="font-size:22px"></i>Garagem</button>
+    <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-trophy" style="font-size:22px"></i>Ranking</button>
+    <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-user-circle" style="font-size:22px"></i>Perfil</button>
+  </nav>
+
+  <sc-if value="{{ sheetOpen }}">
+    <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:40;background:rgba(10,15,19,.35)"></div>
+    <div role="dialog" aria-label="Evento" style="position:absolute;left:0;right:0;bottom:0;z-index:41;border-radius:24px 24px 0 0;background:#22323E;box-shadow:0 0 0 1px #45586C,0 -16px 40px rgba(0,0,0,.5);padding:8px 20px 34px;display:flex;flex-direction:column;gap:14px">
+      <div style="width:40px;height:4px;border-radius:2px;background:#56697D;align-self:center"></div>
+      <sc-if value="{{ sheetIsCluster }}">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><h3 style="margin:0;font:600 24px/1 'Barlow Condensed';text-transform:uppercase">{{ clusterTitle }}</h3><span style="font-size:12px;color:#9AA4B2">{{ clusterSub }}</span></div>
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ clusterItems }}" as="c" hint-placeholder-count="3">
+            <button onClick="{{ c.open }}" style="min-height:60px;border:0;border-bottom:1px solid #2C3D4B;background:transparent;color:#F5F7FA;display:flex;gap:12px;align-items:center;text-align:left;cursor:pointer;padding:6px 0"><span style="width:40px;height:40px;flex:none;border-radius:12px;border:1px solid #45586C;display:grid;place-items:center;color:{{ c.ic }}"><i class="{{ c.icon }}" style="font-size:20px"></i></span><span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:500">{{ c.name }}</span><span style="font-size:12px;color:#9AA4B2">{{ c.sub }}</span></span><i class="ph ph-caret-right" style="font-size:16px;color:#9AA4B2"></i></button>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ sheetIsEvent }}">
+        <div style="display:flex;gap:14px">
+          <div style="width:88px;height:88px;flex:none;border-radius:12px;overflow:hidden;position:relative"><image-slot id="{{ ev.slot }}" shape="rect" placeholder="Capa"></image-slot></div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0">
+            <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">{{ ev.type }}</span>
+            <span style="font:600 24px/1.02 'Barlow Condensed';text-transform:uppercase">{{ ev.name }}</span>
+            <span style="font-size:12px;color:#9AA4B2;display:flex;gap:4px;align-items:center"><i class="ph-fill ph-seal-check" style="font-size:13px;color:#B0CEE2"></i>{{ ev.org }}</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#C9D2DC">
+          <span style="display:flex;gap:8px;align-items:center"><i class="ph ph-calendar-blank" style="font-size:16px;color:#9AA4B2"></i>{{ ev.date }}</span>
+          <span style="display:flex;gap:8px;align-items:center"><i class="{{ ev.localIcon }}" style="font-size:16px;color:#B0CEE2"></i>{{ ev.localType }} · {{ ev.local }} <span style="color:#9AA4B2">· {{ ev.distLabel }}</span></span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:8px;border:1px solid {{ ev.visBorder }};color:{{ ev.visColor }};font:500 11px Inter"><i class="{{ ev.visIcon }}" style="font-size:11px"></i>{{ ev.vis }}</span>
+          <sc-for list="{{ ev.cats }}" as="c" hint-placeholder-count="2"><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px">{{ c }}</span></sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:{{ ev.vagasColor }}">{{ ev.vagasLabel }}</span><span style="font-weight:500">{{ ev.vagasCount }}</span></div><div style="height:4px;border-radius:2px;background:#2C3D4B"><div style="height:4px;border-radius:2px;width:{{ ev.vagasPct }};background:{{ ev.vagasBar }}"></div></div></div>
+        <div style="display:flex;gap:8px">
+          <button onClick="{{ openRoute }}" aria-label="Abrir no Maps/Waze" style="width:52px;min-height:52px;flex:none;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;display:grid;place-items:center;cursor:pointer" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-navigation-arrow" style="font-size:20px"></i></button>
+          <button onClick="{{ seeDetails }}" style="flex:1;min-height:52px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.07)">Ver detalhes</button>
+          <button onClick="{{ startReg }}" disabled="{{ ctaDisabled }}" style="flex:1.3;min-height:52px;border-radius:12px;border:1px solid {{ cta.border }};background:{{ cta.bg }};color:{{ cta.color }};font:500 15px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center;justify-content:center" style-hover="background:rgba(233,93,44,.12)"><i class="{{ cta.icon }}" style="font-size:16px"></i>{{ cta.label }}</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ routeOpen }}">
+    <div onClick="{{ closeRoute }}" style="position:absolute;inset:0;z-index:45;background:rgba(10,15,19,.45)"></div>
+    <div style="position:absolute;left:8px;right:8px;bottom:30px;z-index:46;display:flex;flex-direction:column;gap:8px;font-family:-apple-system,system-ui,sans-serif">
+      <div style="border-radius:14px;background:rgba(44,44,48,.97);overflow:hidden;text-align:center">
+        <div style="padding:12px;font-size:13px;color:#A0A0A8">Abrir rota até {{ ev.local }} em</div>
+        <button onClick="{{ closeRoute }}" style="display:block;width:100%;min-height:56px;border:0;border-top:1px solid rgba(255,255,255,.1);background:transparent;color:#0A84FF;font:20px -apple-system,system-ui;cursor:pointer">Google Maps</button>
+        <button onClick="{{ closeRoute }}" style="display:block;width:100%;min-height:56px;border:0;border-top:1px solid rgba(255,255,255,.1);background:transparent;color:#0A84FF;font:20px -apple-system,system-ui;cursor:pointer">Waze</button>
+      </div>
+      <button onClick="{{ closeRoute }}" style="min-height:56px;border:0;border-radius:14px;background:rgba(44,44,48,.97);color:#0A84FF;font:600 20px -apple-system,system-ui;cursor:pointer">Cancelar</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toast }}">
+    <div role="status" style="position:absolute;top:170px;left:16px;right:16px;z-index:50;padding:12px 14px;border-radius:12px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);display:flex;gap:12px;align-items:center"><i class="ph-fill ph-info" style="font-size:20px;color:#B0CEE2"></i><span style="flex:1;font-size:13px;line-height:1.4">{{ toast }}</span><button onClick="{{ closeToast }}" aria-label="Fechar" style="width:36px;height:36px;border:0;background:transparent;color:#9AA4B2;display:grid;place-items:center;cursor:pointer"><i class="ph ph-x" style="font-size:16px"></i></button></div>
+  </sc-if>
+
+  <sc-if value="{{ regOpen }}">
+    <div style="position:absolute;inset:0;z-index:55;background:#1A2730;display:flex;flex-direction:column;padding-top:47px">
+      <sc-if value="{{ showRegHeader }}">
+        <div style="padding:4px 12px 0;display:flex;align-items:center;gap:8px">
+          <button onClick="{{ regBack }}" aria-label="Voltar" style="width:44px;height:44px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-arrow-left" style="font-size:22px"></i></button>
+          <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding-right:16px"><div style="height:3px;border-radius:2px;background:#E95D2C"></div><div style="height:3px;border-radius:2px;background:{{ step2Bar }}"></div></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ r.step1 }}">
+        <div style="flex:1;overflow-y:auto;padding:12px 24px 24px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-05 · Passo 1 de 2</span><h2 style="margin:0;font:600 38px/0.95 'Barlow Condensed';text-transform:uppercase">Escolha o veículo</h2><p style="margin:4px 0 0;font-size:14px;color:#9AA4B2">{{ ev.name }} aceita {{ ev.catsText }}.</p></div>
+          <div role="radiogroup" style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ vehicles }}" as="v" hint-placeholder-count="3">
+              <button onClick="{{ v.pick }}" disabled="{{ v.disabled }}" role="radio" aria-checked="{{ v.aria }}" style="min-height:72px;padding:10px 14px;border-radius:12px;border:1px solid {{ v.border }};background:{{ v.bg }};color:#F5F7FA;display:flex;gap:12px;align-items:center;text-align:left;cursor:{{ v.cursor }};opacity:{{ v.opacity }};font:inherit">
+                <span style="width:20px;height:20px;flex:none;border-radius:50%;border:1.5px solid {{ v.dotBorder }};background:{{ v.dot }};box-shadow:inset 0 0 0 4px #1A2730"></span>
+                <span style="width:52px;height:52px;flex:none;border-radius:10px;overflow:hidden;position:relative"><image-slot id="{{ v.slot }}" shape="rect" placeholder=" "></image-slot></span>
+                <span style="flex:1;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:15px;font-weight:500">{{ v.name }}</span><span style="font-size:12px;color:{{ v.subColor }};display:flex;gap:4px;align-items:center"><i class="{{ v.subIcon }}" style="font-size:12px"></i>{{ v.sub }}</span></span>
+                <sc-if value="{{ v.main }}"><span style="padding:3px 8px;border-radius:6px;background:rgba(176,206,226,.14);color:#B0CEE2;font:500 11px Inter;display:inline-flex;gap:4px;align-items:center"><i class="ph-fill ph-star" style="font-size:10px"></i>Principal</span></sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding:12px 24px 34px;box-shadow:0 -1px 0 #22323E"><button onClick="{{ toReview }}" style="width:100%;min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)">Continuar</button></div>
+      </sc-if>
+
+      <sc-if value="{{ r.step2 }}">
+        <div style="flex:1;overflow-y:auto;padding:12px 24px 24px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-05 · Passo 2 de 2</span><h2 style="margin:0;font:600 38px/0.95 'Barlow Condensed';text-transform:uppercase">Revisar inscrição</h2></div>
+          <div style="border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;flex-direction:column">
+            <div style="padding:14px 16px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:#9AA4B2">Evento</span><span style="font:600 22px/1.05 'Barlow Condensed';text-transform:uppercase">{{ ev.name }}</span><span style="font-size:13px;color:#C9D2DC">{{ ev.date }}</span><span style="font-size:13px;color:#C9D2DC">{{ ev.localType }} · {{ ev.local }}</span></div>
+            <div style="height:1px;margin:0 16px;background:#2C3D4B"></div>
+            <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px"><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:#9AA4B2">Veículo · categoria</span><span style="font-size:15px;font-weight:500">{{ selVeh.name }}</span><span style="font-size:13px;color:#C9D2DC">{{ selVeh.cat }}</span></span><button onClick="{{ regBack }}" style="min-height:44px;padding:0 10px;border:0;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer">Trocar</button></div>
+            <div style="height:1px;margin:0 16px;background:#2C3D4B"></div>
+            <div style="padding:14px 16px;display:flex;gap:10px;align-items:flex-start"><i class="{{ ev.visIcon }}" style="font-size:18px;color:{{ ev.visColor }};margin-top:1px"></i><span style="font-size:13px;line-height:1.5;color:#C9D2DC">{{ ev.visExplain }}</span></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <button onClick="{{ toggleRules }}" role="checkbox" aria-checked="{{ rulesAria }}" aria-label="Aceitar regras" style="flex:none;width:44px;height:44px;margin:-10px -10px 0 -10px;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;padding:0"><span style="width:24px;height:24px;border-radius:6px;border:1.5px solid {{ rulesBorder }};background:{{ rulesBg }};display:grid;place-items:center;color:#1A2730"><sc-if value="{{ rules }}"><i class="ph-bold ph-check" style="font-size:14px"></i></sc-if></span></button>
+            <span style="font-size:14px;line-height:1.5">Li as <a href="#" onClick="{{ noop }}">regras do evento</a> e sei que o uso de equipamento de segurança é obrigatório.</span>
+          </div>
+          <p style="margin:0;font-size:12px;line-height:1.5;color:#9AA4B2">O Fast Street não processa pagamentos. Taxas, se houver, são combinadas com o organizador.</p>
+        </div>
+        <div style="padding:12px 24px 34px;box-shadow:0 -1px 0 #22323E"><button onClick="{{ confirmReg }}" disabled="{{ rulesMissing }}" style="width:100%;min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer;opacity:{{ confirmOpacity }}" style-hover="background:rgba(233,93,44,.12)">{{ confirmLabel }}</button></div>
+      </sc-if>
+
+      <sc-if value="{{ r.result }}">
+        <div style="flex:1;overflow-y:auto;padding:56px 28px 24px;display:flex;flex-direction:column;gap:16px;background:radial-gradient(100% 50% at 0% 10%,{{ res.glow }},transparent 70%)">
+          
+          <div style="width: 82px; height: 79px; border-radius: 20px; border: 1px solid {{ res.color }}; display: grid; place-items: center; color: {{ res.color }}"><i class="{{ res.icon }}" style="font-size:36px"></i></div><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:{{ res.color }}">{{ res.kicker }}</span>
+          <h2 style="margin:0;font:600 42px/0.95 'Barlow Condensed';text-transform:uppercase">{{ res.title }}</h2>
+          <p style="margin:0;font-size:15px;line-height:1.55;color:#C9D2DC">{{ res.body }}</p>
+          <sc-if value="{{ res.showSummary }}">
+            <div style="padding:14px 16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font:600 20px/1.05 'Barlow Condensed';text-transform:uppercase">{{ ev.name }}</span><span style="flex:none;display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:{{ res.badgeBg }};color:{{ res.badgeColor }};font:500 12px Inter"><i class="{{ res.badgeIcon }}" style="font-size:12px"></i>{{ res.badge }}</span></div>
+              <span style="font-size:13px;color:#C9D2DC">{{ ev.date }} · {{ ev.localType }}</span>
+              <span style="font-size:13px;color:#C9D2DC">{{ selVeh.name }} · {{ selVeh.cat }}</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ res.showCompat }}">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:13px;color:#9AA4B2">{{ compatTitle }}</span>
+              <sc-for list="{{ compat }}" as="c" hint-placeholder-count="1">
+                <div style="padding:10px 14px;border-radius:12px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;gap:12px;align-items:center;min-height:60px"><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:500">{{ c.name }}</span><span style="font-size:12px;color:#4ADE80">{{ c.cat }} · compatível</span></span><button onClick="{{ c.use }}" style="min-height:44px;padding:0 14px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 13px Inter;cursor:pointer">Usar este</button></div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ res.showAlt }}">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:13px;color:#9AA4B2">Eventos parecidos com vagas</span>
+              <sc-for list="{{ alts }}" as="a" hint-placeholder-count="2">
+                <button onClick="{{ a.open }}" style="padding:10px 14px;border-radius:12px;border:0;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;color:#F5F7FA;display:flex;gap:12px;align-items:center;min-height:60px;text-align:left;cursor:pointer"><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:500">{{ a.name }}</span><span style="font-size:12px;color:#9AA4B2">{{ a.sub }}</span></span><i class="ph ph-caret-right" style="font-size:16px;color:#9AA4B2"></i></button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+        <div style="padding:12px 24px 34px;display:flex;flex-direction:column;gap:8px">
+          <sc-if value="{{ res.primary }}"><button onClick="{{ resPrimary }}" style="min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center" style-hover="background:rgba(233,93,44,.12)"><i class="{{ res.primaryIcon }}" style="font-size:18px"></i>{{ res.primary }}</button></sc-if>
+          <button onClick="{{ backToMap }}" style="min-height:48px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.07)">Voltar ao mapa</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#F5F7FA;opacity:.8;z-index:70;pointer-events:none"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TYPES = {
+  td: { label: 'Track Day', icon: 'ph ph-flag-checkered' },
+  arr: { label: 'Arrancada Autorizada', short: 'Arrancada', icon: 'ph ph-arrows-out-line-horizontal' },
+  des: { label: 'Desafio em Pista', short: 'Desafio', icon: 'ph ph-path' },
+  enc: { label: 'Encontro', icon: 'ph ph-users-three' },
+  par: { label: 'Parceiro', icon: 'ph ph-wrench' }
+};
+const LOCAL_ICON = { 'Autódromo': 'ph ph-flag-checkered', 'Pista de Arrancada': 'ph ph-arrows-out-line-horizontal', 'Área Privada': 'ph ph-fence' };
+const EVENTS = [
+  { id: 'e1', t: 'td', name: 'Track Day Zilmar Beux · Etapa 3', date: 'Sáb, 12 out · 08:00', local: 'Autódromo Zilmar Beux', localType: 'Autódromo', dist: 4.2, ang: -35, pub: true, cats: ['Turismo', 'Turbo', 'Aspirado'], left: 18, total: 40, org: 'Oeste Track Club' },
+  { id: 'e4', t: 'des', name: 'Desafio em Pista · Turbo', date: 'Dom, 13 out · 14:00', local: 'Autódromo Zilmar Beux', localType: 'Autódromo', dist: 4.6, ang: 15, pub: true, cats: ['Turbo'], left: 0, total: 24, org: 'Oeste Track Club' },
+  { id: 'e3', t: 'enc', name: 'Encontro Clássicos do Oeste', date: 'Qua, 9 out · 19:00', local: 'Espaço Lago Azul', localType: 'Área Privada', dist: 6.1, ang: 150, pub: true, cats: ['Clássicos', 'Aspirado'], left: 40, total: 60, org: 'Clube do Opala PR' },
+  { id: 'e2', t: 'arr', name: 'Noite da Arrancada 201m', date: 'Sex, 18 out · 19:30', local: 'Pista de Arrancada Cascavel', localType: 'Pista de Arrancada', dist: 9.8, ang: 70, pub: false, cats: ['Street Legal', 'Turbo'], left: 3, total: 32, org: 'Arrancada Oeste' },
+  { id: 'e5', t: 'arr', name: 'Arrancada Toledo · Street', date: 'Sáb, 19 out · 16:00', local: 'Pista de Arrancada Toledo', localType: 'Pista de Arrancada', dist: 48, ang: -80, pub: true, cats: ['Street Legal', 'Turbo'], left: 22, total: 30, org: 'Toledo Motorsport' },
+  { id: 'e6', t: 'enc', name: 'Encontro Tríplice Fronteira', date: 'Dom, 20 out · 10:00', local: 'Parque de Exposições (área privada)', localType: 'Área Privada', dist: 140, ang: -170, pub: true, cats: ['Street Legal', 'Turismo', 'Aspirado', 'Turbo', 'Clássicos'], left: 85, total: 120, org: 'Foz Auto Clube' },
+  { id: 'e7', t: 'des', name: 'Desafio Aspirados Guarapuava', date: 'Sáb, 26 out · 09:00', local: 'Autódromo de Guarapuava', localType: 'Autódromo', dist: 190, ang: 10, pub: false, cats: ['Aspirado', 'Turismo'], left: 14, total: 20, org: 'Centro-Sul Racing' },
+  { id: 'p1', t: 'par', name: 'Box 45 Performance', date: 'Oficina parceira · seg a sáb', local: 'Cascavel', localType: 'Parceiro', dist: 2.6, ang: 110, partner: true },
+  { id: 'p2', t: 'par', name: 'Oeste Pneus & Alinhamento', date: 'Loja parceira · seg a sex', local: 'Cascavel', localType: 'Parceiro', dist: 3.4, ang: -120, partner: true }
+];
+const CITIES = [{ name: 'Cascavel', dist: 1.2, ang: 95 }, { name: 'Toledo', dist: 44, ang: -85 }, { name: 'Foz do Iguaçu', dist: 132, ang: -172 }, { name: 'Guarapuava', dist: 180, ang: 20 }, { name: 'Medianeira', dist: 75, ang: -160 }];
+const VEHICLES = [
+  { id: 'civic', name: 'Honda Civic Si · 2019', short: 'Honda Civic Si', cat: 'Turbo', main: true },
+  { id: 'golf', name: 'VW Golf GTI · 2016', short: 'VW Golf GTI', cat: 'Turbo' },
+  { id: 'opala', name: 'Chevrolet Opala SS · 1976', short: 'Chevrolet Opala SS', cat: 'Clássicos' }
+];
+const CY = 400, R = 150;
+
+class Component extends DCLogic {
+  state = { mode: 'ok', radius: 15, type: 'all', sel: null, cluster: null, reg: null, veh: null, rules: false, garage: 'full', regs: {}, extraFull: {}, route: false, toast: null, jump: 'map', result: null };
+
+  componentWillUnmount() { clearTimeout(this.lt); }
+  ev(id) { return EVENTS.find(e => e.id === id); }
+  compatible(e) { return VEHICLES.filter(v => e.cats && e.cats.includes(v.cat)); }
+  left(e) { return this.state.extraFull[e.id] ? 0 : e.left - (this.state.regs[e.id] ? 1 : 0); }
+  startReg(id) {
+    const e = this.ev(id);
+    if (this.state.garage === 'empty') return this.setState({ reg: 'result', result: 'noveh' });
+    const comp = this.compatible(e);
+    const main = VEHICLES.find(v => v.main);
+    if (!comp.length) return this.setState({ reg: 'result', result: 'incompat', veh: null });
+    if (!comp.includes(main)) return this.setState({ reg: 'result', result: 'incompat', veh: null });
+    this.setState({ reg: 'step1', veh: main.id, rules: false });
+  }
+  confirm() {
+    const e = this.ev(this.state.sel);
+    if (this.state.jump === 'resFull' || this.left(e) <= 0) return this.setState({ reg: 'result', result: 'full', extraFull: { ...this.state.extraFull, [e.id]: true } });
+    this.setState(s => ({ reg: 'result', result: e.pub ? 'ok' : 'pending', regs: { ...s.regs, [e.id]: e.pub ? 'ok' : 'pending' } }));
+  }
+  preset(k) {
+    clearTimeout(this.lt);
+    const base = { mode: 'ok', radius: 15, type: 'all', sel: null, cluster: null, reg: null, route: false, toast: null, jump: k, rules: false, result: null };
+    const P = {
+      map: {}, loading: { mode: 'loading' }, noperm: { mode: 'noperm' }, offline: { mode: 'offline' }, error: { mode: 'error' }, empty: { radius: 5, type: 'enc' },
+      pinPub: { sel: 'e1' }, pinPriv: { sel: 'e2' }, pinFull: { sel: 'e4' }, cluster: { radius: 200, cluster: 'auto' },
+      step1: { sel: 'e1', reg: 'step1', veh: 'civic' }, step2: { sel: 'e1', reg: 'step2', veh: 'civic', rules: true },
+      resOk: { sel: 'e1', reg: 'result', result: 'ok', veh: 'civic' }, resPending: { sel: 'e2', reg: 'result', result: 'pending', veh: 'civic' },
+      resFull: { sel: 'e5', reg: 'step2', veh: 'civic', rules: true }, resIncompat: { sel: 'e3', reg: 'result', result: 'incompat' },
+      resNoVeh: { sel: 'e1', reg: 'result', result: 'noveh', garage: 'empty' }
+    };
+    const extra = P[k] || {};
+    this.setState({ ...base, regs: {}, extraFull: {}, garage: k === 'resNoVeh' ? 'empty' : this.state.garage === 'empty' && k !== 'resNoVeh' ? 'full' : this.state.garage, ...extra, cluster: null }, () => {
+      if (extra.cluster === 'auto') { const c = this.layout().find(p => p.members.length > 1); if (c) this.setState({ cluster: c.members.map(m => m.id) }); }
+    });
+  }
+  layout() {
+    const st = this.state, scale = R / st.radius;
+    const vis = EVENTS.filter(e => e.dist <= st.radius && (st.type === 'all' || e.t === st.type || (e.partner && st.type === 'all')));
+    const pts = vis.map(e => { const a = e.ang * Math.PI / 180; return { e, x: 195 + Math.cos(a) * e.dist * scale, y: CY + Math.sin(a) * e.dist * scale }; });
+    const groups = [];
+    pts.forEach(p => { const g = groups.find(g => Math.hypot(g.x - p.x, g.y - p.y) < 34); if (g) { g.members.push(p.e); g.x = (g.x + p.x) / 2; g.y = (g.y + p.y) / 2; } else groups.push({ x: p.x, y: p.y, members: [p.e] }); });
+    return groups.map(g => ({ ...g, members: g.members, id: g.members[0].id }));
+  }
+  renderVals() {
+    const st = this.state, scale = R / st.radius;
+    const showMap = st.mode !== 'noperm' && st.mode !== 'error' && st.mode !== 'loading';
+    const groups = showMap ? this.layout() : [];
+    const pins = groups.map(g => {
+      const e = g.members[0], cl = g.members.length > 1, selected = !cl && st.sel === e.id && !st.reg;
+      const partner = !cl && e.partner;
+      return {
+        x: g.x + 'px', y: g.y + 'px', count: cl ? String(g.members.length) : '', icon: cl ? 'ph-fill ph-stack' : TYPES[e.t].icon,
+        size: cl ? '44px' : '36px', pad: cl ? '8px' : '0', radius: partner ? '10px' : '18px',
+        ring: partner ? '#B0CEE2' : '#E95D2C', fill: selected ? '#E95D2C' : cl ? '#2C1F1A' : '#1A2730', ink: selected ? '#1A2730' : partner ? '#B0CEE2' : '#F28A62',
+        scale: selected ? 1.15 : 1, z: selected ? 5 : cl ? 3 : 2,
+        aria: cl ? g.members.length + ' itens neste local' : e.name,
+        tap: () => cl ? this.setState({ cluster: g.members.map(m => m.id), sel: null, jump: 'cluster' }) : e.partner ? this.setState({ toast: e.name + ' · ' + e.date }) : this.setState({ sel: e.id, cluster: null, jump: e.pub ? 'pinPub' : 'pinPriv' })
+      };
+    });
+    const events = groups.reduce((n, g) => n + g.members.filter(m => !m.partner).length, 0);
+    const cities = showMap ? CITIES.filter(c => c.dist <= st.radius * 1.5 && c.dist * scale > 30).map(c => { const a = c.ang * Math.PI / 180; return { name: c.name, x: 195 + Math.cos(a) * c.dist * scale + 'px', y: CY + Math.sin(a) * c.dist * scale + 22 + 'px' }; }) : [];
+    const typeChips = [['all', 'Todos', 'ph ph-squares-four'], ['td', 'Track Day', TYPES.td.icon], ['arr', 'Arrancada', TYPES.arr.icon], ['des', 'Desafio', TYPES.des.icon], ['enc', 'Encontro', TYPES.enc.icon]].map(([id, label, icon]) => { const a = st.type === id; return { label, icon, border: a ? '#E95D2C' : '#2C3D4B', bg: a ? 'rgba(42,30,26,.96)' : 'rgba(26,39,48,.94)', color: a ? '#F28A62' : '#C9D2DC', pick: () => this.setState({ type: id, sel: null, cluster: null }) }; });
+
+    const e = st.sel ? this.ev(st.sel) : null;
+    let evv = {};
+    if (e && !e.partner) {
+      const l = this.left(e), pct = Math.round(l / e.total * 100);
+      evv = {
+        ...e, type: TYPES[e.t].label, slot: 'fb-ev-' + e.id, distLabel: String(e.dist).replace('.', ',') + ' km', localIcon: LOCAL_ICON[e.localType],
+        vis: e.pub ? 'Público' : 'Requer aprovação', visIcon: e.pub ? 'ph ph-globe-simple' : 'ph ph-lock-simple', visBorder: e.pub ? '#45586C' : '#F59E0B', visColor: e.pub ? '#F5F7FA' : '#FBBF24',
+        visExplain: e.pub ? 'Evento público: sua inscrição é confirmada na hora.' : 'Evento privado: o organizador precisa aprovar sua inscrição. Você será notificado.',
+        catsText: e.cats.join(', '),
+        vagasLabel: l <= 0 ? 'Vagas esgotadas' : l <= 5 ? 'Últimas vagas' : 'Vagas restantes', vagasCount: l + ' de ' + e.total, vagasPct: (100 - pct) + '%',
+        vagasColor: l <= 0 ? '#F87171' : l <= 5 ? '#FBBF24' : '#9AA4B2', vagasBar: l <= 0 ? '#EF4444' : l <= 5 ? '#F59E0B' : '#E95D2C'
+      };
+    }
+    const regState = e ? st.regs[e.id] : null, full = e && !e.partner && this.left(e) <= 0 && !regState;
+    const cta = regState === 'ok' ? { label: 'Inscrito', icon: 'ph-bold ph-check', border: '#22C55E', bg: 'rgba(34,197,94,.10)', color: '#4ADE80' }
+      : regState === 'pending' ? { label: 'Inscrição pendente', icon: 'ph ph-hourglass-medium', border: '#F59E0B', bg: 'rgba(245,158,11,.10)', color: '#FBBF24' }
+      : full ? { label: 'Vagas esgotadas', icon: 'ph ph-prohibit', border: '#45586C', bg: 'transparent', color: '#9AA4B2' }
+      : { label: 'Inscrever-se', icon: 'ph ph-lightning', border: '#E95D2C', bg: 'transparent', color: '#F28A62' };
+
+    const cl = st.cluster ? st.cluster.map(id => this.ev(id)) : [];
+    const selVeh = VEHICLES.find(v => v.id === st.veh) || VEHICLES[0];
+    const vehicles = e && e.cats ? VEHICLES.map(v => {
+      const ok = e.cats.includes(v.cat), a = st.veh === v.id;
+      return { name: v.name, main: !!v.main, slot: 'fb-veh-' + v.id, disabled: !ok, aria: a ? 'true' : 'false', cursor: ok ? 'pointer' : 'not-allowed', opacity: ok ? 1 : 0.5,
+        border: a ? '#E95D2C' : '#2C3D4B', bg: a ? 'rgba(233,93,44,.08)' : 'transparent', dot: a ? '#E95D2C' : 'transparent', dotBorder: a ? '#E95D2C' : '#45586C',
+        sub: ok ? v.cat : v.cat + ' não é aceito neste evento', subColor: ok ? '#9AA4B2' : '#F87171', subIcon: ok ? 'ph ph-tag' : 'ph ph-prohibit',
+        pick: () => ok && this.setState({ veh: v.id }) };
+    }) : [];
+    const comp = e && e.cats ? this.compatible(e) : [];
+    const R_ = {
+      ok: { icon: 'ph ph-check-circle', color: '#22C55E', glow: 'rgba(34,197,94,.12)', kicker: 'UC-05 · Confirmada', title: 'Inscrição confirmada', body: 'Você está no grid. Enviaremos um lembrete na véspera com o horário do briefing.', showSummary: true, badge: 'Confirmada', badgeIcon: 'ph-bold ph-check', badgeBg: 'rgba(34,197,94,.14)', badgeColor: '#4ADE80', primary: 'Abrir no Maps/Waze', primaryIcon: 'ph ph-navigation-arrow' },
+      pending: { icon: 'ph ph-hourglass-medium', color: '#F59E0B', glow: 'rgba(245,158,11,.12)', kicker: 'UC-24 · Pendente', title: 'Aguardando aprovação do organizador', body: (e && e.org ? e.org : 'O organizador') + ' vai analisar sua inscrição. Você recebe uma notificação quando ela for aprovada ou recusada.', showSummary: true, badge: 'Pendente', badgeIcon: 'ph ph-hourglass-medium', badgeBg: 'rgba(245,158,11,.14)', badgeColor: '#FBBF24', primary: 'Ver minhas inscrições', primaryIcon: 'ph ph-list-checks' },
+      full: { icon: 'ph ph-prohibit', color: '#F87171', glow: 'rgba(239,68,68,.12)', kicker: 'UC-05 · Vagas esgotadas', title: 'As vagas acabaram', body: 'As últimas vagas foram preenchidas enquanto você revisava a inscrição. Nenhum dado foi perdido.', showAlt: true },
+      incompat: { icon: 'ph ph-swap', color: '#F59E0B', glow: 'rgba(245,158,11,.10)', kicker: 'UC-05 · Categoria incompatível', title: 'Veículo principal incompatível', body: 'Seu ' + VEHICLES[0].short + ' (Turbo) não é aceito. ' + (e && e.name ? e.name : 'Este evento') + ' aceita ' + (e && e.cats ? e.cats.join(', ') : '') + '.', showCompat: true, primary: comp.length ? '' : 'Cadastrar veículo', primaryIcon: 'ph ph-plus' },
+      noveh: { icon: 'ph ph-garage', color: '#B0CEE2', glow: 'rgba(176,206,226,.10)', kicker: 'UC-05 · Sem veículo', title: 'Sua garagem está vazia', body: 'Para se inscrever você precisa de pelo menos um veículo cadastrado. Leva cerca de 1 minuto.', primary: 'Cadastrar veículo', primaryIcon: 'ph ph-plus' }
+    };
+    const res = st.result ? R_[st.result] : {};
+    const alts = EVENTS.filter(x => !x.partner && x.id !== st.sel && this.left(x) > 0 && x.cats.includes('Turbo')).slice(0, 2).map(x => ({ name: x.name, sub: x.date + ' · ' + String(x.dist).replace('.', ',') + ' km', open: () => this.setState({ reg: null, sel: x.id, result: null }) }));
+    const jumps = [['map', 'UC-04 · Mapa · Sucesso'], ['loading', 'UC-04 · Mapa · Carregando'], ['noperm', 'UC-04 · Mapa · Sem localização'], ['offline', 'UC-04 · Mapa · Offline (cache)'], ['error', 'UC-04 · Mapa · Erro'], ['empty', 'UC-04 · Mapa · Vazio no raio'], ['cluster', 'UC-23 · Cluster · lista'], ['pinPub', 'UC-23 · Pin · Público'], ['pinPriv', 'UC-23 · Pin · Requer aprovação'], ['pinFull', 'UC-23 · Pin · Esgotado'], ['step1', 'UC-05 · Passo 1 · Veículo'], ['step2', 'UC-05 · Passo 2 · Revisão'], ['resOk', 'UC-05 · Inscrição confirmada'], ['resPending', 'UC-24 · Aguardando aprovação'], ['resFull', 'UC-05 · Vagas esgotadas (ao confirmar)'], ['resIncompat', 'UC-05 · Categoria incompatível'], ['resNoVeh', 'UC-05 · Sem veículo na garagem']].map(([k, label]) => { const a = st.jump === k; return { label, bg: a ? 'rgba(233,93,44,.10)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', bar: a ? 'inset 2px 0 0 #E95D2C' : 'none', go: () => this.preset(k) }; });
+    const screenLabel = st.reg ? (st.reg === 'result' ? 'Resultado · ' + (res.kicker || '') : 'Inscrição · ' + st.reg) : st.sel ? 'UC-23 · Bottom sheet' : 'UC-04 · Mapa';
+    return {
+      jumps, screenLabel,
+      garageSeg: [['full', 'Com veículos'], ['empty', 'Garagem vazia']].map(([id, label]) => { const a = st.garage === id; return { label, border: a ? '#E95D2C' : 'transparent', bg: a ? 'rgba(233,93,44,.12)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', pick: () => this.setState({ garage: id }) }; }),
+      wifiIcon: st.mode === 'offline' ? 'ph ph-wifi-slash' : 'ph ph-wifi-high',
+      showUser: showMap, showPins: showMap, pins, cities, radius: st.radius,
+      cyPx: CY + 'px', ringD: R * 2 + 'px', ringLabelTop: (CY - R - 8) + 'px',
+      countLabel: events + (events === 1 ? ' evento' : ' eventos'),
+      onRadius: (ev2) => this.setState({ radius: +ev2.target.value, sel: null, cluster: null }),
+      typeChips, isOffline: st.mode === 'offline', isLoading: st.mode === 'loading', isNoPerm: st.mode === 'noperm', isError: st.mode === 'error',
+      isEmpty: showMap && events === 0, showRadius: st.mode !== 'noperm' && st.mode !== 'error',
+      cityLabel: st.mode === 'noperm' ? 'Local não definido' : 'Cascavel, PR',
+      changeLocal: () => this.setState({ toast: 'Alterar local: busca de cidade (módulo Feed).' }),
+      toList: () => this.setState({ toast: 'A lista de eventos está no Feed e no split-view do desktop.' }),
+      grantLoc: () => this.setState({ mode: 'ok', jump: 'map' }),
+      retry: () => { this.setState({ mode: 'loading' }); this.lt = setTimeout(() => this.setState({ mode: 'ok', jump: 'map' }), 1000); },
+      widen: () => this.setState({ radius: 15, type: 'all' }),
+      sheetOpen: !!(st.sel || st.cluster) && !st.reg, sheetIsCluster: !!st.cluster && !st.sel, sheetIsEvent: !!st.sel,
+      clusterTitle: cl.length + ' itens neste local', clusterSub: 'Toque para ver',
+      clusterItems: cl.map(x => ({ name: x.name, sub: x.partner ? x.date : TYPES[x.t].label + ' · ' + x.date, icon: TYPES[x.t].icon, ic: x.partner ? '#B0CEE2' : '#F28A62', open: () => x.partner ? this.setState({ toast: x.name + ' · ' + x.date }) : this.setState({ sel: x.id, cluster: null }) })),
+      closeSheet: () => this.setState({ sel: null, cluster: null, jump: 'map' }),
+      ev: evv, cta, ctaDisabled: !!regState || !!full,
+      startReg: () => this.startReg(st.sel),
+      openRoute: () => this.setState({ route: true }), routeOpen: st.route, closeRoute: () => this.setState({ route: false }),
+      seeDetails: () => this.setState({ toast: 'Detalhe do evento: próximo módulo (4).' }),
+      toast: st.toast, closeToast: () => this.setState({ toast: null }),
+      regOpen: !!st.reg, showRegHeader: st.reg === 'step1' || st.reg === 'step2',
+      r: { step1: st.reg === 'step1', step2: st.reg === 'step2', result: st.reg === 'result' },
+      step2Bar: st.reg === 'step2' ? '#E95D2C' : '#2C3D4B',
+      regBack: () => this.setState({ reg: st.reg === 'step2' ? 'step1' : null }),
+      vehicles, selVeh: { name: selVeh.name, cat: selVeh.cat },
+      toReview: () => this.setState({ reg: 'step2' }),
+      rules: st.rules, rulesAria: st.rules ? 'true' : 'false', rulesBorder: st.rules ? '#E95D2C' : '#6B7F95', rulesBg: st.rules ? '#E95D2C' : 'transparent',
+      toggleRules: () => this.setState(x => ({ rules: !x.rules })), rulesMissing: !st.rules, confirmOpacity: st.rules ? 1 : 0.45,
+      confirmLabel: e && e.pub ? 'Confirmar inscrição' : 'Enviar para aprovação',
+      confirmReg: () => st.rules && this.confirm(),
+      res, compat: comp.map(v => ({ name: v.name, cat: v.cat, use: () => this.setState({ reg: 'step1', veh: v.id, result: null, rules: false }) })),
+      compatTitle: comp.length ? 'Compatíveis na sua garagem' : 'Nenhum veículo compatível na sua garagem',
+      alts,
+      resPrimary: () => st.result === 'ok' ? this.setState({ route: true }) : st.result === 'pending' ? this.setState({ toast: 'Minhas inscrições ficam em Perfil › Histórico.' }) : this.setState({ toast: 'Abre o cadastro de veículo (UC-01), o mesmo do fluxo (a).' }),
+      backToMap: () => this.setState({ reg: null, result: null, jump: 'map' }),
+      noop: (ev2) => ev2.preventDefault()
+    };
+  }
+}
+</script>
+</body>
+</html>

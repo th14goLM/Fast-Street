@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/styles.css">
+<script src="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="./image-slot.js"></script>
+<style>body{margin:0;background:#141F27;color:#F5F7FA;font-family:Inter,system-ui,sans-serif}a{color:#F28A62}a:hover{color:#E95D2C}input::placeholder,textarea::placeholder{color:#6B7F95}select option{background:#22323E}input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-calendar-picker-indicator{filter:invert(.8)}</style>
+</helmet>
+<div style="width:1440px;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;background:#141F27">
+
+<div style="height:56px;padding:0 24px;display:flex;align-items:center;gap:16px;background:#0F171D;box-shadow:0 1px 0 #22323E">
+  <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">Protótipo · fluxo (c)</span>
+  <span style="font-size:13px;color:#9AA4B2">Criar evento → gerenciar inscrições → registrar resultados → ranking atualizado</span>
+  <span style="flex:1"></span>
+  <label style="display:flex;gap:8px;align-items:center;font-size:12px;color:#9AA4B2">Ir para<div style="position:relative"><select value="{{ jump }}" onChange="{{ onJump }}" style="appearance:none;min-height:36px;padding:0 36px 0 12px;border-radius:10px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:13px Inter;outline:none"><sc-for list="{{ jumps }}" as="j" hint-placeholder-count="1"><option value="{{ j.k }}">{{ j.label }}</option></sc-for></select><i class="ph ph-caret-down" style="position:absolute;right:10px;top:10px;font-size:15px;color:#9AA4B2;pointer-events:none"></i></div></label>
+  <button onClick="{{ fillDemo }}" style="min-height:36px;padding:0 12px;border-radius:10px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center" style-hover="background:rgba(233,93,44,.12)"><i class="ph ph-magic-wand" style="font-size:14px"></i>Preencher</button>
+  <button onClick="{{ restart }}" style="min-height:36px;padding:0 12px;border-radius:10px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 13px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.07)">Reiniciar</button>
+</div>
+
+<div style="height:900px;display:flex;background:#1A2730;position:relative;overflow:hidden" data-screen-label="{{ screenLabel }}">
+  <aside style="width:248px;flex:none;padding:20px 12px;display:flex;flex-direction:column;gap:4px;box-shadow:1px 0 0 #22323E">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 8px 20px"><div style="width:36px;height:36px;border-radius:10px;border:1px solid #E95D2C;display:grid;place-items:center;color:#F28A62"><i class="ph ph-flag-checkered" style="font-size:20px"></i></div><span style="font:600 18px/1 'Barlow Condensed';letter-spacing:.12em;text-transform:uppercase">Fast Street</span></div>
+    <a href="#" style="min-height:44px;padding:0 12px;border-radius:12px;display:flex;align-items:center;gap:12px;color:#C9D2DC;text-decoration:none;font:500 14px Inter" style-hover="background:rgba(245,247,250,.06)"><i class="ph ph-house-simple" style="font-size:20px"></i>Feed</a>
+    <a href="#" style="min-height:44px;padding:0 12px;border-radius:12px;display:flex;align-items:center;gap:12px;color:#C9D2DC;text-decoration:none;font:500 14px Inter" style-hover="background:rgba(245,247,250,.06)"><i class="ph ph-map-trifold" style="font-size:20px"></i>Mapa</a>
+    <a href="#" style="min-height:44px;padding:0 12px;border-radius:12px;display:flex;align-items:center;gap:12px;color:#C9D2DC;text-decoration:none;font:500 14px Inter" style-hover="background:rgba(245,247,250,.06)"><i class="ph ph-garage" style="font-size:20px"></i>Garagem</a>
+    <a href="#" onClick="{{ navRanking }}" style="min-height:44px;padding:0 12px;border-radius:12px;display:flex;align-items:center;gap:12px;color:{{ navRankColor }};background:{{ navRankBg }};text-decoration:none;font:500 14px Inter" style-hover="background:rgba(245,247,250,.06)"><i class="ph ph-trophy" style="font-size:20px"></i>Ranking</a>
+    <a href="#" style="min-height:44px;padding:0 12px;border-radius:12px;display:flex;align-items:center;gap:12px;color:#C9D2DC;text-decoration:none;font:500 14px Inter" style-hover="background:rgba(245,247,250,.06)"><i class="ph ph-user-circle" style="font-size:20px"></i>Perfil</a>
+    <div style="height:1px;margin:12px 8px;background:linear-gradient(to right,#2C3D4B,transparent)"></div>
+    <span style="padding:0 12px 6px;font:600 11px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#9AA4B2">Organizador</span>
+    <a href="#" onClick="{{ navEvents }}" style="min-height:44px;padding:0 12px;border-radius:12px;display:flex;align-items:center;gap:12px;color:{{ navOrgColor }};background:{{ navOrgBg }};box-shadow:{{ navOrgBar }};text-decoration:none;font:500 14px Inter"><i class="ph ph-clipboard-text" style="font-size:20px"></i><span style="flex:1">Central do Organizador</span><sc-if value="{{ totalPending }}"><span style="min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#E95D2C;color:#1A2730;font:700 11px/20px Inter;text-align:center">{{ totalPending }}</span></sc-if></a>
+    <a href="#" style="min-height:44px;padding:0 12px;border-radius:12px;display:flex;align-items:center;gap:12px;color:#C9D2DC;text-decoration:none;font:500 14px Inter" style-hover="background:rgba(245,247,250,.06)"><i class="ph ph-bell" style="font-size:20px"></i>Notificações</a>
+    <span style="flex:1"></span>
+    <div style="padding:12px;border-radius:14px;background:#22323E;display:flex;gap:10px;align-items:center"><span style="width:36px;height:36px;flex:none;border-radius:50%;background:#45586C;display:grid;place-items:center;font:600 13px Inter">LA</span><span style="flex:1;display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:500">Lucas Andrade</span><span style="font-size:11px;color:#B0CEE2;display:flex;gap:4px;align-items:center"><i class="ph-fill ph-seal-check"></i>Oeste Track Club</span></span></div>
+  </aside>
+
+  <main style="flex:1;min-width:0;overflow-y:auto;position:relative">
+
+  <sc-if value="{{ s.events }}">
+    <div style="padding:32px 40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:flex-end;gap:16px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-06 · Central do Organizador</span><h1 style="margin:0;font:600 48px/0.95 'Barlow Condensed';text-transform:uppercase">Meus eventos</h1></div>
+        <button onClick="{{ newEvent }}" style="min-height:44px;padding:0 18px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center" style-hover="background:rgba(233,93,44,.12)" style-active="background:rgba(166,62,27,.35)"><i class="ph ph-plus" style="font-size:16px"></i>Criar evento</button>
+      </div>
+      <sc-if value="{{ banner }}"><div role="status" style="padding:12px 16px;border-radius:12px;background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.35);display:flex;gap:10px;align-items:center;font-size:14px;color:#86EFAC"><i class="ph-fill ph-check-circle" style="font-size:20px;color:#22C55E"></i><span style="flex:1">{{ banner }}</span><button onClick="{{ closeBanner }}" aria-label="Fechar" style="width:32px;height:32px;border:0;background:transparent;color:#9AA4B2;cursor:pointer"><i class="ph ph-x"></i></button></div></sc-if>
+      <div role="tablist" style="display:flex;gap:4px;box-shadow:inset 0 -1px 0 #2C3D4B">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4"><button role="tab" onClick="{{ t.pick }}" aria-selected="{{ t.aria }}" style="min-height:44px;padding:0 16px;border:0;background:transparent;color:{{ t.color }};box-shadow:{{ t.bar }};font:500 14px Inter;cursor:pointer;display:flex;gap:8px;align-items:center">{{ t.label }}<span style="min-width:22px;height:20px;padding:0 6px;border-radius:6px;background:#22323E;color:#C9D2DC;font:500 12px/20px Inter">{{ t.count }}</span></button></sc-for>
+      </div>
+      <sc-if value="{{ tabEmpty }}"><div style="padding:48px 0;display:flex;flex-direction:column;gap:8px;align-items:flex-start"><i class="ph ph-calendar-blank" style="font-size:32px;color:#9AA4B2"></i><span style="font-size:15px;font-weight:500">Nada por aqui</span><span style="font-size:13px;color:#9AA4B2">Nenhum evento neste status.</span></div></sc-if>
+      <sc-if value="{{ tabHasRows }}">
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <thead><tr style="text-align:left;font:500 11px Inter;letter-spacing:.08em;text-transform:uppercase;color:#9AA4B2"><th style="padding:10px 12px;font-weight:500">Evento</th><th style="padding:10px 12px;font-weight:500">Data</th><th style="padding:10px 12px;font-weight:500">Local</th><th style="padding:10px 12px;font-weight:500;width:200px">Inscritos / vagas</th><th style="padding:10px 12px;font-weight:500">Pendências</th><th style="padding:10px 12px;font-weight:500">Status</th><th style="padding:10px 12px;font-weight:500;text-align:right">Ações</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="3">
+            <tr style="box-shadow:inset 0 1px 0 #22323E" style-hover="background:rgba(245,247,250,.03)">
+              <td style="padding:14px 12px"><div style="display:flex;flex-direction:column;gap:3px"><span style="font-weight:500">{{ r.name }}</span><span style="font:600 11px/1 'Barlow Condensed';letter-spacing:.14em;text-transform:uppercase;color:#F28A62">{{ r.type }} · {{ r.vis }}</span></div></td>
+              <td style="padding:14px 12px;color:#C9D2DC;white-space:nowrap">{{ r.date }}</td>
+              <td style="padding:14px 12px;color:#C9D2DC"><span style="display:flex;gap:6px;align-items:center"><i class="{{ r.localIcon }}" style="color:#B0CEE2"></i>{{ r.localType }}</span></td>
+              <td style="padding:14px 12px"><div style="display:flex;flex-direction:column;gap:6px"><span style="font-variant-numeric:tabular-nums">{{ r.filled }} / {{ r.cap }}</span><div style="height:4px;border-radius:2px;background:#2C3D4B"><div style="height:4px;border-radius:2px;width:{{ r.pct }};background:{{ r.barColor }}"></div></div></div></td>
+              <td style="padding:14px 12px"><sc-if value="{{ r.pending }}"><span style="display:inline-flex;gap:6px;align-items:center;padding:3px 9px;border-radius:8px;background:rgba(245,158,11,.14);color:#FBBF24;font:500 12px Inter"><i class="ph ph-hourglass-medium"></i>{{ r.pending }} pendentes</span></sc-if><sc-if value="{{ r.noPending }}"><span style="color:#6B7F95">—</span></sc-if></td>
+              <td style="padding:14px 12px"><span style="display:inline-flex;gap:6px;align-items:center;padding:3px 9px;border-radius:8px;background:{{ r.stBg }};color:{{ r.stColor }};font:500 12px Inter">{{ r.status }}</span></td>
+              <td style="padding:14px 12px;text-align:right"><button onClick="{{ r.open }}" style="min-height:36px;padding:0 12px;border-radius:10px;border:1px solid {{ r.actBorder }};background:transparent;color:{{ r.actColor }};font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center" style-hover="background:rgba(245,247,250,.06)">{{ r.action }}<i class="ph ph-arrow-right" style="font-size:13px"></i></button></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.wizard }}">
+    <div style="padding:28px 40px 40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px"><button onClick="{{ navEvents }}" style="min-height:36px;padding:0 10px 0 4px;border:0;background:transparent;color:#C9D2DC;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center"><i class="ph ph-arrow-left" style="font-size:16px"></i>Meus eventos</button><span style="flex:1"></span><span style="font-size:12px;color:#9AA4B2">Rascunho salvo automaticamente</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-25 · Criar evento</span><h1 style="margin:0;font:600 44px/0.95 'Barlow Condensed';text-transform:uppercase">Novo evento</h1></div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:860px">
+        <sc-for list="{{ steps }}" as="st" hint-placeholder-count="4">
+          <button onClick="{{ st.go }}" style="border:0;background:transparent;padding:0;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:8px;color:#F5F7FA"><div style="height:3px;border-radius:2px;background:{{ st.bar }}"></div><div style="display:flex;gap:8px;align-items:center"><span style="width:24px;height:24px;border-radius:50%;border:1px solid {{ st.ring }};background:{{ st.fill }};color:{{ st.ink }};display:grid;place-items:center;font:600 13px 'Barlow Condensed'">{{ st.mark }}</span><span style="font-size:13px;color:{{ st.labelColor }};font-weight:{{ st.weight }}">{{ st.label }}</span></div></button>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:40px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:20px;max-width:720px">
+          <sc-if value="{{ w.step1 }}">
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Nome do evento</span><input value="{{ f.nome }}" onChange="{{ on.nome }}" placeholder="Ex.: Track Day Zilmar Beux · Etapa 4" style="min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ fb.nome }};background:#22323E;color:#F5F7FA;font:15px Inter;outline:none" style-focus="box-shadow:0 0 0 3px rgba(233,93,44,.25)"><sc-if value="{{ fe.nome }}"><span style="font-size:12px;color:#F87171">{{ fe.nome }}</span></sc-if></label>
+            <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#C9D2DC">Tipo de evento</span>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"><sc-for list="{{ tipos }}" as="t" hint-placeholder-count="4"><button onClick="{{ t.pick }}" style="min-height:72px;padding:10px 12px;border-radius:12px;border:1px solid {{ t.border }};background:{{ t.bg }};color:#F5F7FA;display:flex;flex-direction:column;gap:6px;align-items:flex-start;justify-content:center;cursor:pointer;font:500 14px Inter"><i class="{{ t.icon }}" style="font-size:22px;color:{{ t.ic }}"></i>{{ t.label }}</button></sc-for></div>
+              <sc-if value="{{ fe.tipo }}"><span style="font-size:12px;color:#F87171">{{ fe.tipo }}</span></sc-if></div>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Descrição</span><textarea value="{{ f.desc }}" onChange="{{ on.desc }}" placeholder="O que os pilotos devem saber sobre o evento" style="min-height:96px;padding:12px 14px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px/1.5 Inter;outline:none;resize:vertical"></textarea></label>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Regras</span><textarea value="{{ f.regras }}" onChange="{{ on.regras }}" placeholder="Equipamentos obrigatórios, briefing, horários" style="min-height:96px;padding:12px 14px;border-radius:12px;border:1px solid {{ fb.regras }};background:#22323E;color:#F5F7FA;font:15px/1.5 Inter;outline:none;resize:vertical"></textarea><sc-if value="{{ fe.regras }}"><span style="font-size:12px;color:#F87171">{{ fe.regras }}</span></sc-if></label>
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Capa</span><div style="height:180px;border-radius:12px;overflow:hidden;position:relative"><image-slot id="fc-capa" shape="rect" placeholder="Arraste a capa: autódromo, box ou grid de largada"></image-slot></div></div>
+          </sc-if>
+          <sc-if value="{{ w.step2 }}">
+            <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#C9D2DC">Categorias aceitas <span style="color:#9AA4B2">· escolha ao menos 1</span></span>
+              <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ catChips }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.toggle }}" role="checkbox" aria-checked="{{ c.aria }}" style="min-height:44px;padding:0 16px;border-radius:10px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 14px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center"><i class="{{ c.icon }}" style="font-size:14px"></i>{{ c.label }}</button></sc-for></div>
+              <sc-if value="{{ fe.cats }}"><span style="font-size:12px;color:#F87171">{{ fe.cats }}</span></sc-if></div>
+            <label style="display:flex;flex-direction:column;gap:6px;max-width:260px"><span style="font-size:13px;color:#C9D2DC">Limite de vagas</span><input type="number" min="1" value="{{ f.vagas }}" onChange="{{ on.vagas }}" placeholder="Ex.: 40" style="min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ fb.vagas }};background:#22323E;color:#F5F7FA;font:15px Inter;outline:none"><sc-if value="{{ fe.vagas }}"><span style="font-size:12px;color:#F87171">{{ fe.vagas }}</span></sc-if><span style="font-size:12px;color:#9AA4B2">Total do evento, somando todas as categorias.</span></label>
+          </sc-if>
+          <sc-if value="{{ w.step3 }}">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:460px">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Data</span><input type="date" value="{{ f.date }}" onChange="{{ on.date }}" style="min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ fb.date }};background:{{ fbg.date }};color:#F5F7FA;font:15px Inter;outline:none;color-scheme:dark"></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Horário</span><input type="time" value="{{ f.time }}" onChange="{{ on.time }}" style="min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ fb.time }};background:#22323E;color:#F5F7FA;font:15px Inter;outline:none;color-scheme:dark"></label>
+            </div>
+            <sc-if value="{{ fe.date }}"><span role="alert" style="font-size:12px;color:#F87171;margin-top:-12px;display:flex;gap:6px;align-items:center"><i class="ph ph-warning-circle"></i>{{ fe.date }}</span></sc-if>
+            <div style="display:flex;flex-direction:column;gap:6px;position:relative"><span style="font-size:13px;color:#C9D2DC">Local</span>
+              <div style="position:relative"><i class="ph ph-magnifying-glass" style="position:absolute;left:14px;top:14px;font-size:18px;color:#9AA4B2"></i><input value="{{ f.addr }}" onChange="{{ on.addr }}" placeholder="Buscar autódromo, pista ou área privada" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px 0 42px;border-radius:12px;border:1px solid {{ fb.addr }};background:#22323E;color:#F5F7FA;font:15px Inter;outline:none" style-focus="box-shadow:0 0 0 3px rgba(233,93,44,.25)"></div>
+              <sc-if value="{{ showSug }}"><div style="position:absolute;top:78px;left:0;right:0;z-index:10;border-radius:12px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);overflow:hidden"><sc-for list="{{ sugs }}" as="g" hint-placeholder-count="3"><button onClick="{{ g.pick }}" style="width:100%;min-height:52px;padding:8px 14px;border:0;background:transparent;color:#F5F7FA;text-align:left;display:flex;gap:10px;align-items:center;cursor:pointer" style-hover="background:rgba(245,247,250,.06)"><i class="{{ g.icon }}" style="font-size:18px;color:#B0CEE2"></i><span style="display:flex;flex-direction:column"><span style="font-size:14px">{{ g.name }}</span><span style="font-size:12px;color:#9AA4B2">{{ g.city }}</span></span></button></sc-for></div></sc-if>
+              <sc-if value="{{ fe.addr }}"><span style="font-size:12px;color:#F87171">{{ fe.addr }}</span></sc-if>
+            </div>
+            <div onMouseDown="{{ pinDown }}" onMouseMove="{{ pinMove }}" onMouseUp="{{ pinUp }}" onMouseLeave="{{ pinUp }}" style="height:260px;border-radius:16px;position:relative;overflow:hidden;cursor:crosshair;background:radial-gradient(80% 80% at 50% 50%,#1E2E39,#15212A);box-shadow:0 0 0 1px #2C3D4B;user-select:none">
+              <svg width="100%" height="100%" viewBox="0 0 700 260" preserveAspectRatio="none" style="position:absolute;inset:0;pointer-events:none"><path d="M-10 80 C 150 40, 260 120, 420 90 S 640 50, 710 70" fill="none" stroke="#223441" stroke-width="1.2"></path><path d="M-10 190 C 120 160, 300 230, 460 190 S 640 170, 710 200" fill="none" stroke="#223441" stroke-width="1.2"></path><path d="M120 -10 C 150 80, 90 170, 140 270" fill="none" stroke="#1D3140" stroke-width="5"></path></svg>
+              <div style="position:absolute;left:{{ pinX }};top:{{ pinY }};transform:translate(-50%,-100%);pointer-events:none;display:flex;flex-direction:column;align-items:center"><span style="width:40px;height:40px;border-radius:20px;border:2px solid #E95D2C;background:#E95D2C;color:#1A2730;display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,.5)"><i class="{{ pinIcon }}" style="font-size:20px"></i></span><span style="width:2px;height:10px;background:#E95D2C"></span></div>
+              <div style="position:absolute;left:12px;bottom:12px;padding:6px 10px;border-radius:8px;background:rgba(26,39,48,.9);font-size:12px;color:#C9D2DC;pointer-events:none;display:flex;gap:6px;align-items:center"><i class="ph ph-hand-grabbing"></i>Arraste para ajustar o pin · {{ coords }}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#C9D2DC">Tipo de local autorizado <span style="color:#F87171">*</span></span>
+              <div role="radiogroup" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><sc-for list="{{ locais }}" as="l" hint-placeholder-count="3"><button onClick="{{ l.pick }}" role="radio" aria-checked="{{ l.aria }}" style="min-height:56px;padding:0 14px;border-radius:12px;border:1px solid {{ l.border }};background:{{ l.bg }};color:#F5F7FA;display:flex;gap:10px;align-items:center;cursor:pointer;font:500 14px Inter"><i class="{{ l.icon }}" style="font-size:20px;color:#B0CEE2"></i>{{ l.label }}</button></sc-for></div>
+              <sc-if value="{{ fe.localType }}"><span style="font-size:12px;color:#F87171">{{ fe.localType }}</span></sc-if></div>
+          </sc-if>
+          <sc-if value="{{ w.step4 }}">
+            <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#C9D2DC">Visibilidade</span>
+              <div role="radiogroup" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><sc-for list="{{ visOpts }}" as="v" hint-placeholder-count="2"><button onClick="{{ v.pick }}" role="radio" aria-checked="{{ v.aria }}" style="padding:16px;border-radius:14px;border:1px solid {{ v.border }};background:{{ v.bg }};color:#F5F7FA;display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;cursor:pointer;font:inherit"><span style="display:flex;gap:8px;align-items:center;font-size:15px;font-weight:500"><i class="{{ v.icon }}" style="font-size:20px;color:{{ v.ic }}"></i>{{ v.label }}</span><span style="font-size:13px;line-height:1.5;color:#9AA4B2">{{ v.sub }}</span></button></sc-for></div></div>
+            <div style="border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B">
+              <sc-for list="{{ review }}" as="rv" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:180px 1fr auto;gap:16px;align-items:center;padding:12px 16px;box-shadow:inset 0 -1px 0 #2C3D4B"><span style="font-size:13px;color:#9AA4B2">{{ rv.k }}</span><span style="font-size:14px">{{ rv.v }}</span><button onClick="{{ rv.edit }}" style="min-height:32px;padding:0 8px;border:0;background:transparent;color:#F28A62;font:500 13px Inter;cursor:pointer">Editar</button></div></sc-for>
+            </div>
+          </sc-if>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+            <sc-if value="{{ canBack }}"><button onClick="{{ prevStep }}" style="min-height:48px;padding:0 18px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.07)">Voltar</button></sc-if>
+            <button onClick="{{ nextStep }}" style="min-height:48px;padding:0 22px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center" style-hover="background:rgba(233,93,44,.12)" style-active="background:rgba(166,62,27,.35)"><i class="{{ nextIcon }}" style="font-size:16px"></i>{{ nextLabel }}</button>
+            <sc-if value="{{ stepErrCount }}"><span style="font-size:13px;color:#F87171">{{ stepErrCount }} campo(s) para revisar</span></sc-if>
+          </div>
+        </div>
+        <div style="position:sticky;top:24px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;color:#9AA4B2">Prévia do card no app</span>
+          <article style="border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden">
+            <div style="height:150px;position:relative;background:#2C3D4B;display:grid;place-items:center;color:#6B7F95"><i class="ph ph-image" style="font-size:28px"></i><span style="position:absolute;top:10px;right:10px;padding:4px 10px;border-radius:8px;background:rgba(26,39,48,.85);border:1px solid {{ pv.visBorder }};color:{{ pv.visColor }};font:500 12px Inter">{{ pv.vis }}</span></div>
+            <div style="padding:12px 16px 16px;display:flex;flex-direction:column;gap:10px">
+              <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">{{ pv.type }}</span>
+              <span style="font:600 24px/1.05 'Barlow Condensed';text-transform:uppercase">{{ pv.name }}</span>
+              <div style="display:flex;flex-direction:column;gap:4px;font-size:13px;color:#C9D2DC"><span style="display:flex;gap:8px;align-items:center"><i class="ph ph-calendar-blank" style="color:#9AA4B2"></i>{{ pv.date }}</span><span style="display:flex;gap:8px;align-items:center"><i class="{{ pinIcon }}" style="color:#B0CEE2"></i>{{ pv.local }}</span></div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ pv.cats }}" as="c" hint-placeholder-count="0"><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px">{{ c }}</span></sc-for></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#9AA4B2">Vagas</span><span>{{ pv.vagas }}</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.published }}">
+    <div style="padding:96px 40px;display:flex;flex-direction:column;gap:16px;max-width:640px;background:radial-gradient(60% 60% at 0% 0%,rgba(34,197,94,.10),transparent 70%)">
+      <div style="width:72px;height:72px;border-radius:20px;border:1px solid #22C55E;display:grid;place-items:center;color:#22C55E"><i class="ph ph-check-circle" style="font-size:36px"></i></div>
+      <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#4ADE80">UC-25 · Sucesso</span>
+      <h1 style="margin:0;font:600 52px/0.95 'Barlow Condensed';text-transform:uppercase">Evento publicado · pilotos da região notificados</h1>
+      <p style="margin:0;font-size:15px;line-height:1.55;color:#C9D2DC">{{ pubName }} já aparece no Feed e no Mapa. {{ pubVisText }}</p>
+      <div style="display:flex;gap:12px;margin-top:8px">
+        <button onClick="{{ navEvents }}" style="min-height:48px;padding:0 20px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)">Ver em Meus eventos</button>
+        <button onClick="{{ openNewManage }}" style="min-height:48px;padding:0 20px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.07)">Gerenciar inscrições</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.event }}">
+    <div style="padding:28px 40px 40px;display:flex;flex-direction:column;gap:20px">
+      <button onClick="{{ navEvents }}" style="align-self:flex-start;min-height:36px;padding:0 10px 0 4px;border:0;background:transparent;color:#C9D2DC;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center"><i class="ph ph-arrow-left" style="font-size:16px"></i>Meus eventos</button>
+      <div style="display:flex;gap:16px;align-items:flex-end">
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;gap:10px;align-items:center"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">{{ me.type }}</span><span style="display:inline-flex;padding:3px 9px;border-radius:8px;background:{{ me.stBg }};color:{{ me.stColor }};font:500 12px Inter">{{ me.status }}</span></div>
+          <h1 style="margin:0;font:600 44px/0.95 'Barlow Condensed';text-transform:uppercase">{{ me.name }}</h1>
+          <span style="font-size:13px;color:#C9D2DC;display:flex;gap:16px"><span style="display:flex;gap:6px;align-items:center"><i class="ph ph-calendar-blank" style="color:#9AA4B2"></i>{{ me.date }}</span><span style="display:flex;gap:6px;align-items:center"><i class="{{ me.localIcon }}" style="color:#B0CEE2"></i>{{ me.localType }} · {{ me.local }}</span><span style="display:flex;gap:6px;align-items:center"><i class="{{ me.visIcon }}" style="color:#9AA4B2"></i>{{ me.vis }}</span></span>
+        </div>
+        <sc-if value="{{ me.canClose }}"><button onClick="{{ askClose }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-flag-checkered" style="font-size:16px"></i>Encerrar evento</button></sc-if>
+      </div>
+      <div role="tablist" style="display:flex;gap:4px;box-shadow:inset 0 -1px 0 #2C3D4B">
+        <button role="tab" onClick="{{ toManage }}" style="min-height:44px;padding:0 16px;border:0;background:transparent;color:{{ subTab.m.color }};box-shadow:{{ subTab.m.bar }};font:500 14px Inter;cursor:pointer">Inscrições</button>
+        <button role="tab" onClick="{{ toResults }}" style="min-height:44px;padding:0 16px;border:0;background:transparent;color:{{ subTab.r.color }};box-shadow:{{ subTab.r.bar }};font:500 14px Inter;cursor:pointer;display:flex;gap:6px;align-items:center"><sc-if value="{{ resLocked }}"><i class="ph ph-lock-simple" style="font-size:14px"></i></sc-if>Resultados</button>
+      </div>
+
+      <sc-if value="{{ s.manage }}">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,220px));gap:12px">
+          <div style="padding:14px 16px;border-radius:14px;background:#22323E;display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:#9AA4B2">Confirmadas / vagas</span><span style="font:600 32px/1 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ m.conf }} <span style="color:#9AA4B2;font-size:22px">/ {{ me.cap }}</span></span><div style="height:4px;border-radius:2px;background:#2C3D4B"><div style="height:4px;border-radius:2px;width:{{ m.pct }};background:{{ m.bar }}"></div></div></div>
+          <div style="padding:14px 16px;border-radius:14px;background:#22323E;display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:#9AA4B2">Pendentes</span><span style="font:600 32px/1 'Barlow Condensed';color:{{ m.pendColor }}">{{ m.pend }}</span></div>
+          <div style="padding:14px 16px;border-radius:14px;background:#22323E;display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:#9AA4B2">Recusadas / removidas</span><span style="font:600 32px/1 'Barlow Condensed'">{{ m.rec }}</span></div>
+        </div>
+        <sc-if value="{{ alert }}"><div role="alert" style="padding:12px 16px;border-radius:12px;background:{{ alertBg }};border:1px solid {{ alertBorder }};display:flex;gap:10px;align-items:center;font-size:14px;color:{{ alertColor }}"><i class="{{ alertIcon }}" style="font-size:20px"></i><span style="flex:1">{{ alert }}</span><button onClick="{{ closeAlert }}" aria-label="Fechar" style="width:32px;height:32px;border:0;background:transparent;color:#9AA4B2;cursor:pointer"><i class="ph ph-x"></i></button></div></sc-if>
+        <sc-if value="{{ me.closed }}"><div style="padding:12px 16px;border-radius:12px;background:#22323E;display:flex;gap:10px;align-items:center;font-size:14px;color:#C9D2DC"><i class="ph ph-lock-simple" style="font-size:18px;color:#9AA4B2"></i><span style="flex:1">Evento encerrado: inscrições não podem mais ser aprovadas nem removidas.</span><button onClick="{{ toResults }}" style="min-height:40px;padding:0 14px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 13px Inter;cursor:pointer">Registrar resultados</button></div></sc-if>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="display:inline-flex;padding:4px;gap:4px;border-radius:12px;background:#22323E"><sc-for list="{{ filters }}" as="x" hint-placeholder-count="4"><button onClick="{{ x.pick }}" style="min-height:36px;padding:0 14px;border-radius:9px;border:1px solid {{ x.border }};background:{{ x.bg }};color:{{ x.color }};font:500 13px Inter;cursor:pointer">{{ x.label }} · {{ x.count }}</button></sc-for></div>
+          <span style="flex:1"></span>
+          <div style="position:relative;width:260px"><i class="ph ph-magnifying-glass" style="position:absolute;left:12px;top:11px;font-size:16px;color:#9AA4B2"></i><input value="{{ q }}" onChange="{{ onQ }}" placeholder="Buscar piloto ou veículo" style="width:100%;box-sizing:border-box;min-height:40px;padding:0 12px 0 36px;border-radius:10px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:14px Inter;outline:none"></div>
+        </div>
+        <sc-if value="{{ regEmpty }}"><div style="padding:40px 0;display:flex;flex-direction:column;gap:8px;align-items:flex-start"><i class="ph ph-users-three" style="font-size:32px;color:#9AA4B2"></i><span style="font-size:15px;font-weight:500">Nenhuma inscrição ainda</span><span style="font-size:13px;color:#9AA4B2">Pilotos da região foram notificados. As inscrições aparecem aqui em tempo real.</span></div></sc-if>
+        <sc-if value="{{ regHasRows }}">
+        <table style="width:100%;border-collapse:collapse;font-size:14px">
+          <thead><tr style="text-align:left;font:500 11px Inter;letter-spacing:.08em;text-transform:uppercase;color:#9AA4B2"><th style="padding:8px 12px;font-weight:500">Piloto</th><th style="padding:8px 12px;font-weight:500">Veículo</th><th style="padding:8px 12px;font-weight:500">Categoria</th><th style="padding:8px 12px;font-weight:500">Inscrição</th><th style="padding:8px 12px;font-weight:500">Status</th><th style="padding:8px 12px;font-weight:500;text-align:right">Ações</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ regRows }}" as="r" hint-placeholder-count="8">
+              <tr style="box-shadow:inset 0 1px 0 #22323E" style-hover="background:rgba(245,247,250,.03)">
+                <td style="padding:8px 12px"><div style="display:flex;gap:10px;align-items:center"><span style="width:32px;height:32px;flex:none;border-radius:50%;background:#45586C;display:grid;place-items:center;font:600 12px Inter">{{ r.ini }}</span><span style="display:flex;flex-direction:column"><span style="font-weight:500">{{ r.name }}</span><span style="font-size:12px;color:#9AA4B2">{{ r.city }}</span></span></div></td>
+                <td style="padding:8px 12px;color:#C9D2DC">{{ r.car }}</td>
+                <td style="padding:8px 12px"><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:12px">{{ r.cat }}</span></td>
+                <td style="padding:8px 12px;color:#9AA4B2;font-variant-numeric:tabular-nums">{{ r.date }}</td>
+                <td style="padding:8px 12px"><span style="display:inline-flex;gap:6px;align-items:center;padding:3px 9px;border-radius:8px;background:{{ r.stBg }};color:{{ r.stColor }};font:500 12px Inter"><i class="{{ r.stIcon }}"></i>{{ r.status }}</span></td>
+                <td style="padding:8px 12px;text-align:right"><div style="display:inline-flex;gap:6px;justify-content:flex-end">
+                  <sc-if value="{{ r.isPend }}"><button onClick="{{ r.reject }}" disabled="{{ r.locked }}" style="min-height:36px;padding:0 12px;border-radius:10px;border:0;background:transparent;color:#F87171;font:500 13px Inter;cursor:pointer;opacity:{{ r.op }}" style-hover="background:rgba(239,68,68,.10)">Recusar</button><button onClick="{{ r.approve }}" disabled="{{ r.locked }}" style="min-height:36px;padding:0 12px;border-radius:10px;border:1px solid #22C55E;background:transparent;color:#4ADE80;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center;opacity:{{ r.op }}" style-hover="background:rgba(34,197,94,.10)"><i class="ph-bold ph-check" style="font-size:12px"></i>Aprovar</button></sc-if>
+                  <sc-if value="{{ r.isConf }}"><button onClick="{{ r.remove }}" disabled="{{ r.locked }}" title="{{ r.removeTitle }}" style="min-height:36px;padding:0 12px;border-radius:10px;border:0;background:transparent;color:#F87171;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center;opacity:{{ r.op }}" style-hover="background:rgba(239,68,68,.10)"><i class="ph ph-user-minus" style="font-size:14px"></i>Remover</button></sc-if>
+                </div></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ s.resLocked }}">
+        <div style="padding:48px 0;display:flex;flex-direction:column;gap:12px;align-items:flex-start;max-width:560px">
+          <div style="width:56px;height:56px;border-radius:16px;border:1px solid #45586C;display:grid;place-items:center;color:#9AA4B2"><i class="ph ph-lock-simple" style="font-size:28px"></i></div>
+          <h2 style="margin:0;font:600 32px/1 'Barlow Condensed';text-transform:uppercase">Resultados disponíveis após o encerramento</h2>
+          <p style="margin:0;font-size:15px;line-height:1.55;color:#C9D2DC">Este evento está com status {{ me.status }}. Os resultados só podem ser registrados quando o status for Encerrado, para que o ranking reflita apenas provas concluídas.</p>
+          <div style="display:flex;gap:12px;margin-top:4px"><sc-if value="{{ me.canClose }}"><button onClick="{{ askClose }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer">Encerrar evento</button></sc-if><button onClick="{{ toManage }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer">Ver inscrições</button></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ s.results }}">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:32px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div style="display:inline-flex;padding:4px;gap:4px;border-radius:12px;background:#22323E"><sc-for list="{{ resCats }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.pick }}" style="min-height:36px;padding:0 14px;border-radius:9px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 13px Inter;cursor:pointer">{{ c.label }} · {{ c.count }}</button></sc-for></div>
+              <span style="font-size:13px;color:#9AA4B2;display:flex;gap:6px;align-items:center"><i class="ph ph-hand-grabbing"></i>Arraste as linhas para definir as posições</span>
+            </div>
+            <div role="list" style="display:flex;flex-direction:column;gap:6px">
+              <sc-for list="{{ resRows }}" as="r" hint-placeholder-count="5">
+                <div role="listitem" draggable="true" onDragStart="{{ r.dragStart }}" onDragOver="{{ r.dragOver }}" onDrop="{{ r.drop }}" onDragEnd="{{ dragEnd }}" style="min-height:64px;padding:8px 12px 8px 8px;border-radius:12px;background:{{ r.bg }};box-shadow:{{ r.ring }};display:grid;grid-template-columns:28px 56px minmax(0,1fr) 140px 220px 64px;gap:12px;align-items:center;cursor:grab;opacity:{{ r.op }}">
+                  <i class="ph ph-dots-six-vertical" style="font-size:20px;color:#6B7F95"></i>
+                  <span style="font:600 28px/1 'Barlow Condensed';color:{{ r.posColor }}">P{{ r.pos }}</span>
+                  <div style="display:flex;gap:10px;align-items:center;min-width:0"><span style="width:32px;height:32px;flex:none;border-radius:50%;background:#45586C;display:grid;place-items:center;font:600 12px Inter">{{ r.ini }}</span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:500">{{ r.name }}</span><span style="font-size:12px;color:#9AA4B2">{{ r.car }}</span></span></div>
+                  <label style="display:flex;gap:6px;align-items:center"><input type="number" min="0" value="{{ r.pts }}" onChange="{{ r.setPts }}" aria-label="Pontos" style="width:64px;min-height:36px;padding:0 8px;border-radius:8px;border:1px solid {{ r.ptsBorder }};background:#1A2730;color:#F5F7FA;font:600 16px 'Barlow Condensed';text-align:center;outline:none"><span style="font-size:11px;color:{{ r.ptsTagColor }}">{{ r.ptsTag }}</span></label>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><sc-for list="{{ r.awards }}" as="a" hint-placeholder-count="0"><span style="padding:3px 8px;border-radius:6px;background:rgba(176,206,226,.14);color:#B0CEE2;font:500 11px Inter;display:inline-flex;gap:4px;align-items:center"><i class="ph-fill ph-medal"></i>{{ a }}</span></sc-for><button onClick="{{ r.award }}" style="min-height:32px;padding:0 8px;border:0;border-radius:8px;background:transparent;color:#F28A62;font:500 12px Inter;cursor:pointer;display:inline-flex;gap:4px;align-items:center" style-hover="background:rgba(233,93,44,.10)"><i class="ph ph-medal" style="font-size:14px"></i>Conceder prêmio</button></div>
+                  <div style="display:flex;gap:2px"><button onClick="{{ r.up }}" aria-label="Subir" style="width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:#9AA4B2;cursor:pointer" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-caret-up"></i></button><button onClick="{{ r.down }}" aria-label="Descer" style="width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:#9AA4B2;cursor:pointer" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-caret-down"></i></button></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="position:sticky;top:24px;padding:16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;flex-direction:column;gap:12px">
+            <span style="font:600 20px/1 'Barlow Condensed';text-transform:uppercase">Pontuação</span>
+            <span style="font-size:13px;line-height:1.5;color:#9AA4B2">Calculada pela posição (25, 18, 15, 12, 10, 8…). Edite um valor para ajustar; use "auto" para voltar ao padrão.</span>
+            <div style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{ resSummary }}" as="x" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;font-size:13px"><span>{{ x.cat }}</span><span style="color:#9AA4B2">{{ x.n }} pilotos · {{ x.pts }} pts</span></div></sc-for></div>
+            <button onClick="{{ toReviewRes }}" style="min-height:48px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)">Revisar e publicar</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ s.resReview }}">
+        <div style="display:flex;flex-direction:column;gap:20px;max-width:960px">
+          <div style="display:flex;gap:12px;align-items:center"><h2 style="margin:0;flex:1;font:600 30px/1 'Barlow Condensed';text-transform:uppercase">Revisar resultados</h2><button onClick="{{ toResults }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer">Voltar e editar</button><button onClick="{{ publishRes }}" style="min-height:44px;padding:0 18px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center" style-hover="background:rgba(233,93,44,.12)"><i class="ph ph-paper-plane-tilt" style="font-size:16px"></i>Publicar resultados</button></div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+            <sc-for list="{{ reviewCats }}" as="c" hint-placeholder-count="3">
+              <div style="border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;padding:14px 16px;display:flex;flex-direction:column;gap:8px"><span style="font:600 18px/1 'Barlow Condensed';letter-spacing:.06em;text-transform:uppercase">{{ c.cat }}</span>
+                <sc-for list="{{ c.rows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:32px 1fr auto;gap:8px;align-items:center;font-size:13px;min-height:28px"><span style="font:600 16px 'Barlow Condensed';color:{{ r.posColor }}">P{{ r.pos }}</span><span style="display:flex;flex-direction:column"><span>{{ r.name }}</span><sc-if value="{{ r.awardText }}"><span style="font-size:11px;color:#B0CEE2">{{ r.awardText }}</span></sc-if></span><span style="font-variant-numeric:tabular-nums;color:#C9D2DC">{{ r.pts }} pts</span></div></sc-for>
+              </div>
+            </sc-for>
+          </div>
+          <p style="margin:0;font-size:13px;color:#9AA4B2">Ao publicar, os pontos entram no ranking mensal e semestral, e cada piloto recebe uma notificação com seu resultado.</p>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.ranking }}">
+    <div style="padding:28px 40px 40px;display:flex;flex-direction:column;gap:20px">
+      <div role="status" style="padding:12px 16px;border-radius:12px;background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.35);display:flex;gap:10px;align-items:center;font-size:14px;color:#86EFAC"><i class="ph-fill ph-check-circle" style="font-size:20px;color:#22C55E"></i>Ranking atualizado e pilotos notificados</div>
+      <div style="display:flex;align-items:flex-end;gap:16px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-08 · Ranking · Mensal · Outubro</span><h1 style="margin:0;font:600 48px/0.95 'Barlow Condensed';text-transform:uppercase">Ranking {{ rankCat }}</h1></div>
+        <div style="display:inline-flex;padding:4px;gap:4px;border-radius:12px;background:#22323E"><sc-for list="{{ rankCats }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.pick }}" style="min-height:36px;padding:0 14px;border-radius:9px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 13px Inter;cursor:pointer">{{ c.label }}</button></sc-for></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end;max-width:760px">
+        <sc-for list="{{ podium }}" as="p" hint-placeholder-count="3">
+          <div style="padding:16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px {{ p.ring }};display:flex;flex-direction:column;gap:8px;min-height:{{ p.h }}"><span style="align-self:flex-start;padding:2px 8px;border-radius:6px;background:{{ p.badgeBg }};color:#1A2730;font:700 16px 'Barlow Condensed'">P{{ p.pos }}</span><span style="flex:1"></span><span style="font-size:15px;font-weight:500">{{ p.name }}</span><span style="font-size:12px;color:#9AA4B2">{{ p.car }}</span><span style="font:600 28px/1 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ p.total }} PTS</span></div>
+        </sc-for>
+      </div>
+      <table style="width:100%;max-width:960px;border-collapse:collapse;font-size:14px">
+        <thead><tr style="text-align:left;font:500 11px Inter;letter-spacing:.08em;text-transform:uppercase;color:#9AA4B2"><th style="padding:8px 12px;font-weight:500;width:60px">Pos.</th><th style="padding:8px 12px;font-weight:500;width:70px">Var.</th><th style="padding:8px 12px;font-weight:500">Piloto</th><th style="padding:8px 12px;font-weight:500">Carro</th><th style="padding:8px 12px;font-weight:500;text-align:right">Neste evento</th><th style="padding:8px 12px;font-weight:500;text-align:right">Total</th></tr></thead>
+        <tbody><sc-for list="{{ rankRows }}" as="r" hint-placeholder-count="6"><tr style="box-shadow:inset 0 1px 0 #22323E;background:{{ r.bg }}"><td style="padding:10px 12px;font:600 20px 'Barlow Condensed'">{{ r.pos }}</td><td style="padding:10px 12px"><span style="display:inline-flex;gap:3px;align-items:center;font:600 13px Inter;color:{{ r.varColor }}"><i class="{{ r.varIcon }}" style="font-size:12px"></i>{{ r.varN }}</span></td><td style="padding:10px 12px;font-weight:500">{{ r.name }}</td><td style="padding:10px 12px;color:#C9D2DC">{{ r.car }}</td><td style="padding:10px 12px;text-align:right;color:{{ r.gainColor }};font-variant-numeric:tabular-nums">{{ r.gain }}</td><td style="padding:10px 12px;text-align:right;font:600 18px 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ r.total }}</td></tr></sc-for></tbody>
+      </table>
+    </div>
+  </sc-if>
+  </main>
+
+  <sc-if value="{{ modal }}">
+    <div style="position:absolute;inset:0;z-index:50;background:rgba(10,15,19,.6);display:grid;place-items:center">
+      <div role="dialog" aria-modal="true" style="width:440px;padding:24px;border-radius:16px;background:#2C3D4B;box-shadow:0 0 0 1px #5D7189,0 16px 40px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:12px">
+        <h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">{{ modal.title }}</h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#C9D2DC">{{ modal.body }}</p>
+        <sc-if value="{{ modal.isAward }}">
+          <div style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{ awardOpts }}" as="a" hint-placeholder-count="4"><button onClick="{{ a.toggle }}" role="checkbox" aria-checked="{{ a.aria }}" style="min-height:48px;padding:0 12px;border-radius:12px;border:1px solid {{ a.border }};background:{{ a.bg }};color:#F5F7FA;display:flex;gap:10px;align-items:center;cursor:pointer;font:500 14px Inter;text-align:left"><i class="{{ a.icon }}" style="font-size:20px;color:#B0CEE2"></i><span style="flex:1">{{ a.label }}</span><sc-if value="{{ a.on }}"><i class="ph-bold ph-check" style="color:#F28A62"></i></sc-if></button></sc-for></div>
+        </sc-if>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+          <button onClick="{{ closeModal }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer">{{ modal.cancel }}</button>
+          <sc-if value="{{ modal.confirm }}"><button onClick="{{ modalConfirm }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid {{ modal.cBorder }};background:transparent;color:{{ modal.cColor }};font:500 14px Inter;cursor:pointer">{{ modal.confirm }}</button></sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ toast }}">
+    <div role="status" style="position:absolute;right:24px;bottom:24px;z-index:60;padding:12px 14px;border-radius:12px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);display:flex;gap:10px;align-items:center;font-size:14px;max-width:420px"><i class="{{ toastIcon }}" style="font-size:20px;color:{{ toastColor }}"></i><span style="flex:1">{{ toast }}</span></div>
+  </sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:956}}">
+const TODAY = '2026-09-24';
+const TIPOS = [['td', 'Track Day', 'ph ph-flag-checkered'], ['arr', 'Arrancada Autorizada', 'ph ph-arrows-out-line-horizontal'], ['des', 'Desafio em Pista', 'ph ph-path'], ['enc', 'Encontro', 'ph ph-users-three']];
+const TIPO_L = Object.fromEntries(TIPOS.map(t => [t[0], t[1]]));
+const LOCAIS = [['Autódromo', 'ph ph-flag-checkered'], ['Pista de Arrancada', 'ph ph-arrows-out-line-horizontal'], ['Área Privada', 'ph ph-fence']];
+const LOC_I = Object.fromEntries(LOCAIS);
+const CATS = ['Street Legal', 'Turismo', 'Aspirado', 'Turbo', 'Clássicos'];
+const PLACES = [['Autódromo Zilmar Beux', 'Cascavel, PR', 'Autódromo', 38, 42], ['Pista de Arrancada Cascavel', 'Cascavel, PR', 'Pista de Arrancada', 62, 55], ['Espaço Lago Azul (área privada)', 'Cascavel, PR', 'Área Privada', 45, 70], ['Autódromo Internacional de Curitiba', 'Pinhais, PR', 'Autódromo', 70, 30]];
+const PTS = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+const AWARDS = [['Piloto destaque', 'ph ph-star'], ['Espírito esportivo', 'ph ph-handshake'], ['Estreia no pódio', 'ph ph-medal'], ['Melhor preparação', 'ph ph-wrench']];
+const P = (id, name, city, car, cat, date, status) => ({ id, name, city, car, cat, date, status });
+const REGS = () => [
+  P('r1', 'Rafael Kowalski', 'Cascavel', 'VW Golf GTI', 'Turbo', '02/09 14:10', 'conf'), P('r2', 'Ana Beatriz Moraes', 'Toledo', 'Toyota Supra MK4', 'Turbo', '02/09 15:22', 'conf'),
+  P('r3', 'Thiago Nishimura', 'Cascavel', 'Honda Civic Si', 'Turbo', '03/09 09:05', 'conf'), P('r4', 'Camila Rocha', 'Curitiba', 'Audi S3', 'Turbo', '04/09 20:41', 'conf'),
+  P('r5', 'Diego Farias', 'Cascavel', 'VW Jetta GLI', 'Turbo', '05/09 11:30', 'conf'), P('r6', 'Juliana Pacheco', 'Londrina', 'VW Polo GTS', 'Turbo', '06/09 18:02', 'conf'),
+  P('r7', 'Marcos Vinícius Lopes', 'Cascavel', 'Ford Mustang GT', 'Turismo', '02/09 16:45', 'conf'), P('r8', 'Patrícia Weber', 'Maringá', 'BMW 330i', 'Turismo', '07/09 10:12', 'conf'),
+  P('r9', 'Eduardo Sartori', 'Cascavel', 'Toyota Corolla GR', 'Turismo', '08/09 13:33', 'conf'), P('r10', 'Letícia Hoffmann', 'Toledo', 'Honda Civic Touring', 'Turismo', '09/09 21:17', 'conf'),
+  P('r11', 'Bruno Takahashi', 'Cascavel', 'VW Gol GTI', 'Aspirado', '03/09 08:50', 'conf'), P('r12', 'Fernanda Zanella', 'Cascavel', 'Honda Civic Si 2008', 'Aspirado', '10/09 12:04', 'conf'),
+  P('r13', 'Gustavo Andreatta', 'Curitiba', 'Peugeot 206 RC', 'Aspirado', '11/09 17:26', 'conf'), P('r14', 'Renata Oliveira', 'Cascavel', 'Honda Fit EX', 'Aspirado', '12/09 19:48', 'conf'),
+  P('r15', 'Igor Schmitt', 'Cascavel', 'Ford Fiesta ST', 'Turbo', '18/09 09:14', 'pend'), P('r16', 'Vanessa Costa', 'Toledo', 'Mazda MX-5', 'Aspirado', '19/09 22:03', 'pend'),
+  P('r17', 'Henrique Bortolini', 'Cascavel', 'Chevrolet Camaro SS', 'Turismo', '20/09 07:55', 'pend'), P('r18', 'Sofia Mazur', 'Maringá', 'Mini Cooper S', 'Turbo', '21/09 15:40', 'pend'),
+  P('r19', 'Paulo Reis', 'Cascavel', 'Chevrolet Opala SS', 'Clássicos', '15/09 10:10', 'rec')
+];
+const EVENTS = () => [
+  { id: 'ev3', name: 'Track Day Zilmar Beux · Etapa 3', t: 'td', date: 'Sáb, 12 out · 08:00', local: 'Autódromo Zilmar Beux', localType: 'Autódromo', pub: true, cap: 16, st: 'aberto', live: true },
+  { id: 'evA', name: 'Noite da Arrancada 201m', t: 'arr', date: 'Sex, 18 out · 19:30', local: 'Pista de Arrancada Cascavel', localType: 'Pista de Arrancada', pub: false, cap: 32, st: 'aberto', filled: 29, pending: 2 },
+  { id: 'evD', name: 'Desafio em Pista · Turbo', t: 'des', date: 'Hoje · 14:00', local: 'Autódromo Zilmar Beux', localType: 'Autódromo', pub: true, cap: 24, st: 'andamento', filled: 24, pending: 0 },
+  { id: 'ev2', name: 'Track Day Zilmar Beux · Etapa 2', t: 'td', date: 'Sáb, 14 set · 08:00', local: 'Autódromo Zilmar Beux', localType: 'Autódromo', pub: true, cap: 40, st: 'encerrado', filled: 38, pending: 0, published: true },
+  { id: 'evR', name: 'Encontro de Verão · Maringá', t: 'enc', date: 'Sem data', local: 'A definir', localType: 'Área Privada', pub: true, cap: 60, st: 'rascunho', filled: 0, pending: 0 }
+];
+const PRIOR = { Turbo: [['Leonardo Brandt', 'Subaru WRX STI', 58], ['Rafael Kowalski', 'VW Golf GTI', 50], ['Camila Rocha', 'Audi S3', 43], ['Ana Beatriz Moraes', 'Toyota Supra MK4', 36], ['Diego Farias', 'VW Jetta GLI', 30], ['Thiago Nishimura', 'Honda Civic Si', 18], ['Juliana Pacheco', 'VW Polo GTS', 12]],
+  Turismo: [['Patrícia Weber', 'BMW 330i', 50], ['Otávio Lemos', 'Chevrolet Cruze', 44], ['Marcos Vinícius Lopes', 'Ford Mustang GT', 33], ['Eduardo Sartori', 'Toyota Corolla GR', 25], ['Letícia Hoffmann', 'Honda Civic Touring', 10]],
+  Aspirado: [['Fernanda Zanella', 'Honda Civic Si 2008', 43], ['Gustavo Andreatta', 'Peugeot 206 RC', 40], ['Bruno Takahashi', 'VW Gol GTI', 36], ['Clara Menegatti', 'Renault Clio RS', 25], ['Renata Oliveira', 'Honda Fit EX', 8]] };
+const EMPTY_F = { nome: '', tipo: '', desc: '', regras: '', cats: [], vagas: '', date: '', time: '', addr: '', place: null, pinX: 50, pinY: 50, localType: '', vis: 'pub' };
+const DEMO_F = { nome: 'Track Day Zilmar Beux · Etapa 4', tipo: 'td', desc: 'Quarta etapa do campeonato regional. Baterias de 20 minutos por categoria.', regras: 'Capacete homologado, macacão e luvas. Briefing obrigatório às 7h30.', cats: ['Turismo', 'Turbo', 'Aspirado'], vagas: '40', date: '2026-11-14', time: '08:00', addr: 'Autódromo Zilmar Beux', place: 0, pinX: 38, pinY: 42, localType: 'Autódromo', vis: 'pub' };
+const ini = n => n.split(' ').filter(Boolean).map(x => x[0]).slice(0, 2).join('');
+const tint = (a, c = '#E95D2C', t = 'rgba(233,93,44,.10)') => a ? { border: c, bg: t, color: '#F28A62' } : { border: '#45586C', bg: 'transparent', color: '#C9D2DC' };
+const ST = { rascunho: ['Rascunho', '#424048', '#D5D8DE'], aberto: ['Aberto', 'rgba(34,197,94,.14)', '#4ADE80'], andamento: ['Em andamento', 'rgba(233,93,44,.16)', '#F28A62'], encerrado: ['Encerrado', '#424048', '#D5D8DE'] };
+
+class Component extends DCLogic {
+  state = this.fresh();
+  fresh() { return { screen: 'events', tab: 'aberto', events: EVENTS(), regs: REGS(), f: { ...EMPTY_F }, step: 1, tried: {}, meId: 'ev3', filter: 'all', q: '', alert: null, modal: null, order: null, pts: {}, awards: {}, resCat: 'Turbo', rankCat: 'Turbo', drag: null, banner: null, toast: null, jump: 'events', sug: false, pinDrag: false, awardFor: null, awardSel: [] }; }
+  componentWillUnmount() { clearTimeout(this.tt); }
+  toastMsg(msg, kind = 'ok') { clearTimeout(this.tt); this.setState({ toast: msg, toastKind: kind }); this.tt = setTimeout(() => this.setState({ toast: null }), 3200); }
+  errs(f, step) {
+    const e = {};
+    if (step === 1) { if (!f.nome.trim()) e.nome = 'Informe o nome do evento.'; if (!f.tipo) e.tipo = 'Escolha o tipo de evento.'; if (!f.regras.trim()) e.regras = 'Descreva as regras mínimas de segurança.'; }
+    if (step === 2) { if (!f.cats.length) e.cats = 'Selecione ao menos 1 categoria.'; if (!(+f.vagas > 0)) e.vagas = 'O limite de vagas precisa ser maior que 0.'; }
+    if (step === 3) { if (!f.date) e.date = 'Informe a data do evento.'; else if (f.date < TODAY) e.date = 'A data não pode estar no passado.'; if (!f.time) e.time = 'Informe o horário.'; if (f.place === null) e.addr = 'Selecione um local na busca.'; if (!f.localType) e.localType = 'Tipo de local autorizado é obrigatório.'; }
+    return e;
+  }
+  me() { return this.state.events.find(e => e.id === this.state.meId); }
+  meRegs() { return this.state.meId === 'ev3' ? this.state.regs : []; }
+  initOrder() {
+    const o = {}; ['Turismo', 'Turbo', 'Aspirado'].forEach(c => o[c] = this.state.regs.filter(r => r.status === 'conf' && r.cat === c).map(r => r.id));
+    return o;
+  }
+  closeEvent() { this.setState(s => ({ events: s.events.map(e => e.id === s.meId ? { ...e, st: 'encerrado' } : e), modal: null, order: s.order || this.initOrder() })); this.toastMsg('Evento encerrado. Resultados liberados.'); }
+  pointsOf(id, idx) { const p = this.state.pts[id]; return p !== undefined ? p : (PTS[idx] ?? 0); }
+  preset(k) {
+    const f0 = this.fresh();
+    const closed = (s) => ({ ...s, events: s.events.map(e => e.id === 'ev3' ? { ...e, st: 'encerrado' } : e), order: this.initOrder() });
+    const M = {
+      events: {}, wiz1: { screen: 'wizard', step: 1 }, wiz1err: { screen: 'wizard', step: 1, tried: { 1: true } },
+      wiz2err: { screen: 'wizard', step: 2, f: { ...DEMO_F, cats: [], vagas: '0' }, tried: { 2: true } },
+      wiz3err: { screen: 'wizard', step: 3, f: { ...DEMO_F, date: '2026-08-30' }, tried: { 3: true } },
+      wiz4: { screen: 'wizard', step: 4, f: { ...DEMO_F } }, published: { screen: 'published', f: { ...DEMO_F } },
+      manage: { screen: 'manage' }, manageFull: { screen: 'manage', regs: REGS().map(r => r.id === 'r15' || r.id === 'r16' ? { ...r, status: 'conf' } : r), alert: { kind: 'err', text: 'Não foi possível aprovar Henrique Bortolini: vagas esgotadas (16/16). Aumente o limite ou remova uma inscrição.' } },
+      removeModal: { screen: 'manage', modal: { type: 'remove', id: 'r5' } },
+      manageEmpty: { screen: 'manage', meId: 'evNew', events: [{ id: 'evNew', name: DEMO_F.nome, t: 'td', date: 'Sáb, 14 nov · 08:00', local: 'Autódromo Zilmar Beux', localType: 'Autódromo', pub: true, cap: 40, st: 'aberto', live: true }, ...EVENTS()] },
+      resLocked: { screen: 'results' }
+    };
+    let patch = { ...f0, ...(M[k] || {}), jump: k };
+    if (k === 'manageClosed') patch = { ...closed(patch), screen: 'manage' };
+    if (k === 'results') patch = { ...closed(patch), screen: 'results' };
+    if (k === 'resReview') patch = { ...closed(patch), screen: 'resReview', awards: { r2: ['Piloto destaque'] } };
+    if (k === 'ranking') patch = { ...closed(patch), screen: 'ranking', awards: { r2: ['Piloto destaque'] } };
+    this.setState(patch);
+  }
+  renderVals() {
+    const st = this.state, f = st.f;
+    const s = { events: st.screen === 'events', wizard: st.screen === 'wizard', published: st.screen === 'published', ranking: st.screen === 'ranking' };
+    const me = this.me() || st.events[0];
+    const isEv = ['manage', 'results', 'resReview'].includes(st.screen);
+    s.event = isEv; s.manage = st.screen === 'manage';
+    const closed = me.st === 'encerrado';
+    s.resLocked = st.screen === 'results' && !closed; s.results = st.screen === 'results' && closed; s.resReview = st.screen === 'resReview';
+    const regs = st.regs;
+    const count = (id) => { if (id === 'ev3') { const c = regs.filter(r => r.status === 'conf').length, p = regs.filter(r => r.status === 'pend').length; return { filled: c, pending: p }; } const e = st.events.find(x => x.id === id); return { filled: e.filled || 0, pending: e.pending || 0 }; };
+    const totalPending = st.events.filter(e => e.st === 'aberto').reduce((n, e) => n + count(e.id).pending, 0);
+    // events list
+    const tabs = [['rascunho', 'Rascunho'], ['aberto', 'Abertos'], ['andamento', 'Em andamento'], ['encerrado', 'Encerrados']].map(([id, label]) => { const a = st.tab === id; return { label, count: st.events.filter(e => e.st === id).length, aria: a ? 'true' : 'false', color: a ? '#F28A62' : '#C9D2DC', bar: a ? 'inset 0 -2px 0 #E95D2C' : 'none', pick: () => this.setState({ tab: id }) }; });
+    const rows = st.events.filter(e => e.st === st.tab).map(e => {
+      const c = count(e.id), pct = Math.min(100, Math.round(c.filled / e.cap * 100));
+      const [stL, stBg, stC] = ST[e.st];
+      let action = 'Gerenciar', open = () => this.setState({ screen: 'manage', meId: e.id, filter: 'all', alert: null, jump: 'manage' });
+      if (e.st === 'rascunho') { action = 'Continuar edição'; open = () => this.setState({ screen: 'wizard', step: 1, f: { ...EMPTY_F, nome: e.name, tipo: e.t, cats: ['Clássicos'] }, tried: {} }); }
+      if (e.st === 'encerrado') { action = e.published ? 'Ver resultados' : 'Registrar resultados'; open = () => e.published ? this.setState({ screen: 'ranking' }) : this.setState({ screen: 'results', meId: e.id, order: st.order || this.initOrder() }); }
+      return { name: e.name, type: TIPO_L[e.t], vis: e.pub ? 'Público' : 'Privado', date: e.date, localType: e.localType, localIcon: LOC_I[e.localType], filled: c.filled, cap: e.cap, pct: pct + '%', barColor: pct >= 100 ? '#F59E0B' : '#E95D2C', pending: c.pending || 0, noPending: !c.pending, status: e.published ? 'Encerrado · resultados publicados' : stL, stBg, stColor: stC, action, open, actBorder: action === 'Registrar resultados' ? '#E95D2C' : '#45586C', actColor: action === 'Registrar resultados' ? '#F28A62' : '#F5F7FA' };
+    });
+    // wizard
+    const E = st.tried[st.step] ? this.errs(f, st.step) : {};
+    const fb = {}, fbg = {}; ['nome', 'regras', 'vagas', 'date', 'time', 'addr'].forEach(k => { fb[k] = E[k] ? '#EF4444' : '#45586C'; fbg[k] = E[k] ? 'rgba(239,68,68,.06)' : '#22323E'; });
+    const set = (k) => (ev) => { const v = ev.target.value; this.setState(x => ({ f: { ...x.f, [k]: v, ...(k === 'addr' ? { place: null } : {}) }, ...(k === 'addr' ? { sug: v.length >= 2 } : {}) })); };
+    const labels = ['Informações', 'Categorias e vagas', 'Data e local', 'Visibilidade e revisão'];
+    const steps = labels.map((label, i) => { const n = i + 1, done = n < st.step, cur = n === st.step; return { label, mark: done ? '✓' : String(n), bar: done || cur ? '#E95D2C' : '#45586C', ring: done || cur ? '#E95D2C' : '#45586C', fill: done ? '#E95D2C' : 'transparent', ink: done ? '#1A2730' : cur ? '#F28A62' : '#9AA4B2', labelColor: cur ? '#F5F7FA' : '#9AA4B2', weight: cur ? 500 : 400, go: () => n < st.step && this.setState({ step: n }) }; });
+    const q = f.addr.toLowerCase();
+    const sugs = PLACES.map((p, i) => ({ p, i })).filter(({ p }) => !q || p[0].toLowerCase().includes(q) || q.split(' ').some(w => w.length > 2 && p[0].toLowerCase().includes(w))).slice(0, 3).map(({ p, i }) => ({ name: p[0], city: p[1], icon: LOC_I[p[2]], pick: () => this.setState(x => ({ sug: false, f: { ...x.f, addr: p[0], place: i, pinX: p[3], pinY: p[4], localType: p[2] } })) }));
+    const place = f.place !== null ? PLACES[f.place] : null;
+    const lat = (-24.95 - (f.pinY - 50) * 0.0004).toFixed(4), lng = (-53.46 + (f.pinX - 50) * 0.0006).toFixed(4);
+    const pinAt = (ev) => { const r = ev.currentTarget.getBoundingClientRect(); const x = Math.max(4, Math.min(96, (ev.clientX - r.left) / r.width * 100)), y = Math.max(18, Math.min(96, (ev.clientY - r.top) / r.height * 100)); this.setState(z => ({ f: { ...z.f, pinX: x, pinY: y } })); };
+    const fmtDate = (d, t) => { if (!d) return 'Data a definir'; const [y, m, dd] = d.split('-'); const dt = new Date(+y, +m - 1, +dd); const wd = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][dt.getDay()]; const mo = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][+m - 1]; return wd + ', ' + +dd + ' ' + mo + (t ? ' · ' + t : ''); };
+    const stepErrs = Object.keys(E).length;
+    const next = () => {
+      const e = this.errs(f, st.step);
+      if (Object.keys(e).length) return this.setState(x => ({ tried: { ...x.tried, [st.step]: true } }));
+      if (st.step < 4) return this.setState({ step: st.step + 1, jump: 'wiz' + (st.step + 1) });
+      const ev = { id: 'ev' + Date.now(), name: f.nome, t: f.tipo, date: fmtDate(f.date, f.time), local: place ? place[0] : f.addr, localType: f.localType, pub: f.vis === 'pub', cap: +f.vagas, st: 'aberto', filled: 0, pending: 0 };
+      this.setState(x => ({ events: [ev, ...x.events], screen: 'published', lastId: ev.id, tab: 'aberto', jump: 'published' }));
+    };
+    const review = [['Nome', f.nome || '—', 1], ['Tipo', TIPO_L[f.tipo] || '—', 1], ['Categorias', f.cats.join(', ') || '—', 2], ['Vagas', f.vagas || '—', 2], ['Data e hora', fmtDate(f.date, f.time), 3], ['Local', (f.localType || '—') + ' · ' + (place ? place[0] + ', ' + place[1] : f.addr || '—'), 3]].map(([k, v, n]) => ({ k, v, edit: () => this.setState({ step: n }) }));
+    // manage
+    const conf = regs.filter(r => r.status === 'conf').length, pend = regs.filter(r => r.status === 'pend').length, rec = regs.filter(r => r.status === 'rec').length;
+    const mr = this.meRegs();
+    const ql = st.q.toLowerCase();
+    const filtered = mr.filter(r => (st.filter === 'all' || r.status === st.filter) && (!ql || (r.name + r.car).toLowerCase().includes(ql)));
+    const RS = { conf: ['Confirmada', 'rgba(34,197,94,.14)', '#4ADE80', 'ph-bold ph-check'], pend: ['Pendente', 'rgba(245,158,11,.14)', '#FBBF24', 'ph ph-hourglass-medium'], rec: ['Recusada', 'rgba(239,68,68,.14)', '#F87171', 'ph-bold ph-x'], rem: ['Removida', '#424048', '#D5D8DE', 'ph ph-user-minus'] };
+    const regRows = filtered.map(r => { const [l, bg, c, ic] = RS[r.status]; return { ...r, ini: ini(r.name), status: l, stBg: bg, stColor: c, stIcon: ic, isPend: r.status === 'pend', isConf: r.status === 'conf', locked: closed, op: closed ? 0.4 : 1, removeTitle: closed ? 'Evento encerrado: não é possível remover' : 'Remover piloto',
+      approve: () => { if (closed) return; if (conf >= me.cap) return this.setState({ alert: { kind: 'err', text: 'Não foi possível aprovar ' + r.name + ': vagas esgotadas (' + conf + '/' + me.cap + '). Aumente o limite ou remova uma inscrição.' } }); this.setState(x => ({ regs: x.regs.map(y => y.id === r.id ? { ...y, status: 'conf' } : y), alert: null })); this.toastMsg(r.name + ' aprovado e notificado.'); },
+      reject: () => { if (closed) return; this.setState(x => ({ regs: x.regs.map(y => y.id === r.id ? { ...y, status: 'rec' } : y) })); this.toastMsg('Inscrição de ' + r.name + ' recusada.', 'info'); },
+      remove: () => !closed && this.setState({ modal: { type: 'remove', id: r.id } }) }; });
+    const filters = [['all', 'Todas', mr.length], ['pend', 'Pendentes', mr.filter(r => r.status === 'pend').length], ['conf', 'Confirmadas', mr.filter(r => r.status === 'conf').length], ['rec', 'Recusadas', mr.filter(r => r.status === 'rec' || r.status === 'rem').length]].map(([id, label, n]) => ({ label, count: n, ...tint(st.filter === id), pick: () => this.setState({ filter: id === 'rec' ? 'rec' : id }) }));
+    const meConf = st.meId === 'ev3' ? conf : 0;
+    const mePct = Math.min(100, Math.round(meConf / me.cap * 100));
+    // results
+    const order = st.order || this.initOrder();
+    const byId = Object.fromEntries(regs.map(r => [r.id, r]));
+    const list = order[st.resCat] || [];
+    const move = (from, to) => this.setState(x => { const o = { ...(x.order || this.initOrder()) }; const arr = [...o[x.resCat]]; if (to < 0 || to >= arr.length) return null; const [it] = arr.splice(from, 1); arr.splice(to, 0, it); o[x.resCat] = arr; return { order: o }; });
+    const resRows = list.map((id, i) => { const r = byId[id], edited = st.pts[id] !== undefined; return { name: r.name, car: r.car, ini: ini(r.name), pos: i + 1, posColor: i < 3 ? '#B0CEE2' : '#9AA4B2', pts: this.pointsOf(id, i), ptsBorder: edited ? '#F59E0B' : '#45586C', ptsTag: edited ? 'editado' : 'auto', ptsTagColor: edited ? '#FBBF24' : '#6B7F95', awards: st.awards[id] || [],
+      bg: st.drag === i ? '#2C3D4B' : '#22323E', ring: st.drag === i ? '0 0 0 1px #E95D2C' : '0 0 0 1px #2C3D4B', op: st.drag === i ? 0.7 : 1,
+      setPts: (ev) => { const v = ev.target.value; this.setState(x => { const p = { ...x.pts }; if (v === '' || +v === PTS[i]) delete p[id]; else p[id] = Math.max(0, +v); return { pts: p }; }); },
+      award: () => this.setState({ modal: { type: 'award', id }, awardSel: [...(st.awards[id] || [])] }),
+      up: () => move(i, i - 1), down: () => move(i, i + 1),
+      dragStart: (ev) => { ev.dataTransfer.effectAllowed = 'move'; ev.dataTransfer.setData('text/plain', String(i)); this.setState({ drag: i }); },
+      dragOver: (ev) => { ev.preventDefault(); if (st.drag !== null && st.drag !== i) { move(st.drag, i); this.setState({ drag: i }); } },
+      drop: (ev) => { ev.preventDefault(); this.setState({ drag: null }); } }; });
+    const resCats = ['Turbo', 'Turismo', 'Aspirado'].map(c => ({ label: c, count: (order[c] || []).length, ...tint(st.resCat === c), pick: () => this.setState({ resCat: c }) }));
+    const resSummary = ['Turbo', 'Turismo', 'Aspirado'].map(c => ({ cat: c, n: (order[c] || []).length, pts: (order[c] || []).reduce((n, id, i) => n + this.pointsOf(id, i), 0) }));
+    const reviewCats = ['Turbo', 'Turismo', 'Aspirado'].map(c => ({ cat: c, rows: (order[c] || []).map((id, i) => ({ pos: i + 1, name: byId[id].name, pts: this.pointsOf(id, i), posColor: i < 3 ? '#B0CEE2' : '#9AA4B2', awardText: (st.awards[id] || []).join(' · ') })) }));
+    // ranking
+    const gains = {}; Object.keys(order).forEach(c => (order[c] || []).forEach((id, i) => { gains[byId[id].name] = this.pointsOf(id, i); }));
+    const prior = PRIOR[st.rankCat].map(([name, car, p]) => ({ name, car, p }));
+    (order[st.rankCat] || []).forEach(id => { const r = byId[id]; if (!prior.find(x => x.name === r.name)) prior.push({ name: r.name, car: r.car, p: 0 }); });
+    const oldRank = [...prior].sort((a, b) => b.p - a.p).map(x => x.name);
+    const newList = prior.map(x => ({ ...x, g: gains[x.name] || 0, total: x.p + (gains[x.name] || 0) })).sort((a, b) => b.total - a.total);
+    const rankRows = newList.map((x, i) => { const was = oldRank.indexOf(x.name), d = was - i; return { pos: i + 1, name: x.name, car: x.car, total: x.total, gain: x.g ? '+' + x.g : '—', gainColor: x.g ? '#4ADE80' : '#6B7F95', varN: d ? Math.abs(d) : '', varIcon: d > 0 ? 'ph-bold ph-arrow-up' : d < 0 ? 'ph-bold ph-arrow-down' : 'ph ph-minus', varColor: d > 0 ? '#4ADE80' : d < 0 ? '#F87171' : '#6B7F95', bg: x.g ? 'rgba(233,93,44,.04)' : 'transparent' }; });
+    const podium = [1, 0, 2].map(i => newList[i]).filter(Boolean).map((x) => { const pos = newList.indexOf(x) + 1; return { pos, name: x.name, car: x.car, total: x.total, h: pos === 1 ? '190px' : pos === 2 ? '160px' : '140px', ring: pos === 1 ? '#B0CEE2' : '#2C3D4B', badgeBg: pos === 1 ? '#B0CEE2' : pos === 2 ? '#C9D2DC' : '#9AA4B2' }; });
+    // modal
+    let modal = null;
+    if (st.modal && st.modal.type === 'remove') { const r = byId[st.modal.id]; modal = { title: 'Remover piloto?', body: r.name + ' (' + r.car + ') será removido de ' + me.name + ' e notificado. A vaga volta a ficar disponível.', cancel: 'Cancelar', confirm: 'Remover', cBorder: '#EF4444', cColor: '#F87171' }; }
+    if (st.modal && st.modal.type === 'close') modal = { title: 'Encerrar evento?', body: 'O status passa para Encerrado. Inscrições ficam bloqueadas e o registro de resultados é liberado.', cancel: 'Cancelar', confirm: 'Encerrar evento', cBorder: '#E95D2C', cColor: '#F28A62' };
+    if (st.modal && st.modal.type === 'award') { const r = byId[st.modal.id]; modal = { isAward: true, title: 'Conceder prêmio', body: 'Selecione as conquistas para ' + r.name + '. Elas aparecem no perfil do piloto após a publicação.', cancel: 'Cancelar', confirm: 'Salvar', cBorder: '#E95D2C', cColor: '#F28A62' }; }
+    const awardOpts = AWARDS.map(([label, icon]) => { const on = st.awardSel.includes(label); return { label, icon, on, aria: on ? 'true' : 'false', border: on ? '#E95D2C' : '#45586C', bg: on ? 'rgba(233,93,44,.08)' : 'transparent', toggle: () => this.setState(x => ({ awardSel: on ? x.awardSel.filter(a => a !== label) : [...x.awardSel, label] })) }; });
+    const modalConfirm = () => {
+      const m = st.modal;
+      if (m.type === 'remove') { const r = byId[m.id]; this.setState(x => ({ regs: x.regs.map(y => y.id === m.id ? { ...y, status: 'rem' } : y), modal: null, alert: null })); this.toastMsg(r.name + ' removido e notificado.', 'info'); }
+      if (m.type === 'close') this.closeEvent();
+      if (m.type === 'award') this.setState(x => ({ awards: { ...x.awards, [m.id]: x.awardSel }, modal: null }));
+    };
+    const jumps = [['events', 'UC-06 · Meus eventos'], ['wiz1', 'UC-25 · Passo 1 · Informações'], ['wiz1err', 'UC-25 · Passo 1 · Erros'], ['wiz2err', 'UC-25 · Passo 2 · Categoria/vagas inválidas'], ['wiz3err', 'UC-25 · Passo 3 · Data no passado'], ['wiz4', 'UC-25 · Passo 4 · Revisão'], ['published', 'UC-25 · Evento publicado'], ['manage', 'UC-33 · Gerenciar inscrições'], ['manageFull', 'UC-33 · Aprovar com vagas esgotadas'], ['removeModal', 'UC-34 · Remover piloto · modal'], ['manageEmpty', 'UC-33 · Sem inscrições (novo evento)'], ['manageClosed', 'UC-33 · Evento encerrado · bloqueado'], ['resLocked', 'UC-07 · Resultados · bloqueado'], ['results', 'UC-07 · Resultados · ordenar e pontuar'], ['resReview', 'UC-28 · Resultados · revisão'], ['ranking', 'UC-29 · Ranking atualizado']].map(([k, label]) => ({ k, label }));
+    const labelMap = Object.fromEntries(jumps.map(j => [j.k, j.label]));
+    return {
+      s, jumps, jump: st.jump, onJump: (ev) => this.preset(ev.target.value), screenLabel: labelMap[st.jump] || st.screen,
+      restart: () => this.setState(this.fresh()),
+      fillDemo: () => st.screen === 'wizard' ? this.setState({ f: { ...DEMO_F, vis: f.vis }, tried: {} }) : this.preset('wiz4'),
+      totalPending, navEvents: (ev) => { ev && ev.preventDefault && ev.preventDefault(); this.setState({ screen: 'events', jump: 'events' }); },
+      navRanking: (ev) => { ev.preventDefault(); this.setState({ screen: 'ranking', jump: 'ranking' }); },
+      navOrgColor: s.ranking ? '#C9D2DC' : '#F28A62', navOrgBg: s.ranking ? 'transparent' : 'rgba(233,93,44,.10)', navOrgBar: s.ranking ? 'none' : 'inset 2px 0 0 #E95D2C',
+      navRankColor: s.ranking ? '#F28A62' : '#C9D2DC', navRankBg: s.ranking ? 'rgba(233,93,44,.10)' : 'transparent',
+      banner: st.banner, closeBanner: () => this.setState({ banner: null }),
+      tabs, rows, tabEmpty: !rows.length, tabHasRows: rows.length > 0,
+      newEvent: () => this.setState({ screen: 'wizard', step: 1, f: { ...EMPTY_F }, tried: {}, jump: 'wiz1' }),
+      w: { step1: st.step === 1, step2: st.step === 2, step3: st.step === 3, step4: st.step === 4 },
+      f, fe: E, fb, fbg, steps, on: { nome: set('nome'), desc: set('desc'), regras: set('regras'), vagas: set('vagas'), date: set('date'), time: set('time'), addr: set('addr') },
+      tipos: TIPOS.map(([id, label, icon]) => { const a = f.tipo === id; return { label, icon, border: a ? '#E95D2C' : E.tipo ? '#EF4444' : '#2C3D4B', bg: a ? 'rgba(233,93,44,.08)' : 'transparent', ic: a ? '#F28A62' : '#9AA4B2', pick: () => this.setState(x => ({ f: { ...x.f, tipo: id } })) }; }),
+      catChips: CATS.map(c => { const a = f.cats.includes(c); return { label: c, aria: a ? 'true' : 'false', icon: a ? 'ph-bold ph-check' : 'ph ph-plus', ...(a ? tint(true) : { border: E.cats ? '#EF4444' : '#45586C', bg: 'transparent', color: '#C9D2DC' }), toggle: () => this.setState(x => ({ f: { ...x.f, cats: a ? x.f.cats.filter(y => y !== c) : [...x.f.cats, c] } })) }; }),
+      showSug: st.sug && sugs.length > 0, sugs,
+      pinX: f.pinX + '%', pinY: f.pinY + '%', pinIcon: LOC_I[f.localType] || 'ph ph-map-pin', coords: lat + ', ' + lng,
+      pinDown: (ev) => { this.setState({ pinDrag: true }); pinAt(ev); }, pinMove: (ev) => st.pinDrag && pinAt(ev), pinUp: () => st.pinDrag && this.setState({ pinDrag: false }),
+      locais: LOCAIS.map(([label, icon]) => { const a = f.localType === label; return { label, icon, aria: a ? 'true' : 'false', border: a ? '#E95D2C' : E.localType ? '#EF4444' : '#2C3D4B', bg: a ? 'rgba(233,93,44,.08)' : 'transparent', pick: () => this.setState(x => ({ f: { ...x.f, localType: label } })) }; }),
+      visOpts: [['pub', 'Público', 'Inscrições confirmadas automaticamente até esgotar as vagas.', 'ph ph-globe-simple'], ['priv', 'Privado', 'Cada inscrição exige sua aprovação na Central.', 'ph ph-lock-simple']].map(([id, label, sub, icon]) => { const a = f.vis === id; return { label, sub, icon, aria: a ? 'true' : 'false', border: a ? '#E95D2C' : '#2C3D4B', bg: a ? 'rgba(233,93,44,.08)' : 'transparent', ic: a ? '#F28A62' : '#9AA4B2', pick: () => this.setState(x => ({ f: { ...x.f, vis: id } })) }; }),
+      review, canBack: st.step > 1, prevStep: () => this.setState({ step: st.step - 1 }), nextStep: next,
+      nextLabel: st.step === 4 ? 'Publicar' : 'Continuar', nextIcon: st.step === 4 ? 'ph ph-paper-plane-tilt' : 'ph ph-arrow-right', stepErrCount: stepErrs,
+      pv: { type: TIPO_L[f.tipo] || 'Tipo do evento', name: f.nome || 'Nome do evento', date: fmtDate(f.date, f.time), local: (f.localType || 'Tipo de local') + (place ? ' · ' + place[1].split(',')[0] : ''), cats: f.cats, vagas: f.vagas ? f.vagas + ' vagas' : '—', vis: f.vis === 'pub' ? 'Público' : 'Requer aprovação', visBorder: f.vis === 'pub' ? '#45586C' : '#F59E0B', visColor: f.vis === 'pub' ? '#F5F7FA' : '#FBBF24' },
+      pubName: f.nome || 'O evento', pubVisText: f.vis === 'pub' ? 'Inscrições são confirmadas automaticamente.' : 'Você receberá cada inscrição para aprovar.',
+      openNewManage: () => this.setState({ screen: 'manage', meId: st.lastId || st.events[0].id, filter: 'all', jump: 'manageEmpty' }),
+      me: { ...me, type: TIPO_L[me.t], status: ST[me.st][0], stBg: ST[me.st][1], stColor: ST[me.st][2], localIcon: LOC_I[me.localType], vis: me.pub ? 'Público' : 'Privado', visIcon: me.pub ? 'ph ph-globe-simple' : 'ph ph-lock-simple', canClose: me.st === 'aberto' || me.st === 'andamento', closed },
+      subTab: { m: { color: s.manage ? '#F28A62' : '#C9D2DC', bar: s.manage ? 'inset 0 -2px 0 #E95D2C' : 'none' }, r: { color: !s.manage ? '#F28A62' : '#C9D2DC', bar: !s.manage ? 'inset 0 -2px 0 #E95D2C' : 'none' } },
+      resLocked: !closed,
+      toManage: () => this.setState({ screen: 'manage' }), toResults: () => this.setState({ screen: 'results', order: st.order || (closed ? this.initOrder() : null) }),
+      askClose: () => this.setState({ modal: { type: 'close' } }),
+      m: { conf: meConf, pct: mePct + '%', bar: mePct >= 100 ? '#F59E0B' : '#E95D2C', pend: st.meId === 'ev3' ? pend : 0, pendColor: pend && st.meId === 'ev3' ? '#FBBF24' : '#F5F7FA', rec: st.meId === 'ev3' ? rec + regs.filter(r => r.status === 'rem').length : 0 },
+      alert: st.alert ? st.alert.text : null, alertBg: 'rgba(239,68,68,.10)', alertBorder: 'rgba(239,68,68,.4)', alertColor: '#FCA5A5', alertIcon: 'ph ph-warning-circle', closeAlert: () => this.setState({ alert: null }),
+      filters: filters.map((x, i) => ({ ...x, pick: () => this.setState({ filter: ['all', 'pend', 'conf', 'rec'][i] }) })),
+      q: st.q, onQ: (ev) => this.setState({ q: ev.target.value }),
+      regRows: st.filter === 'rec' ? regRows.concat(mr.filter(r => r.status === 'rem' && (!ql || (r.name + r.car).toLowerCase().includes(ql))).map(r => ({ ...r, ini: ini(r.name), status: 'Removida', stBg: '#424048', stColor: '#D5D8DE', stIcon: 'ph ph-user-minus', isPend: false, isConf: false }))) : regRows,
+      regEmpty: mr.length === 0, regHasRows: mr.length > 0,
+      resRows, resCats, resSummary, dragEnd: () => this.setState({ drag: null }),
+      toReviewRes: () => this.setState({ screen: 'resReview', jump: 'resReview' }),
+      reviewCats,
+      publishRes: () => { this.setState(x => ({ screen: 'ranking', jump: 'ranking', rankCat: 'Turbo', events: x.events.map(e => e.id === x.meId ? { ...e, published: true, filled: conf } : e) })); },
+      rankCat: st.rankCat, rankCats: ['Turbo', 'Turismo', 'Aspirado'].map(c => ({ label: c, ...tint(st.rankCat === c), pick: () => this.setState({ rankCat: c }) })),
+      rankRows, podium,
+      modal, awardOpts, closeModal: () => this.setState({ modal: null }), modalConfirm,
+      toast: st.toast, toastIcon: st.toastKind === 'info' ? 'ph-fill ph-info' : 'ph-fill ph-check-circle', toastColor: st.toastKind === 'info' ? '#B0CEE2' : '#22C55E'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/styles.css">
+<script src="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="./image-slot.js"></script>
+<style>*{scrollbar-width:none}*::-webkit-scrollbar{display:none}body{margin:0;background:#141F27;color:#F5F7FA;font-family:Inter,system-ui,sans-serif}a{color:#F28A62}a:hover{color:#E95D2C}input[type=range]{accent-color:#E95D2C}input::placeholder{color:#6B7F95}</style>
+</helmet>
+<div style="min-height:100vh;padding:48px;display:flex;gap:64px;flex-wrap:wrap;align-items:flex-start;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;background:#141F27">
+
+<aside style="width:340px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-03 + UC-22</span>
+    <h1 style="margin:0;font:600 40px/1 'Barlow Condensed';text-transform:uppercase">Feed</h1>
+    <p style="margin:0;font-size:14px;line-height:1.55;color:#9AA4B2;text-wrap:pretty">Os filtros funcionam: categoria, data e distância reduzem as seções. O contador mostra quantos filtros estão ativos.</p>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px">
+    <span style="font-size:12px;color:#9AA4B2;margin-bottom:6px">Estados</span>
+    <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="8"><button onClick="{{ j.go }}" style="min-height:36px;padding:0 12px;border:0;border-radius:10px;text-align:left;background:{{ j.bg }};color:{{ j.color }};box-shadow:{{ j.bar }};font:500 13px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">{{ j.label }}</button></sc-for>
+  </nav>
+</aside>
+
+<div style="flex:none;width:390px;height:844px;border-radius:52px;box-shadow:0 0 0 10px #0F171D,0 0 0 11px #45586C,0 40px 80px rgba(0,0,0,.5);position:relative;overflow:hidden;background:#1A2730" data-screen-label="{{ screenLabel }}">
+  <div style="position:absolute;top:0;left:0;right:0;height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 34px;z-index:60;pointer-events:none;font:600 15px Inter;background:#1A2730"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="ph-fill ph-cell-signal-full"></i><i class="{{ wifiIcon }}"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#0F171D;z-index:61"></div>
+
+  <div style="position:absolute;inset:47px 0 0 0;display:flex;flex-direction:column">
+    <header style="padding:8px 16px 10px 20px;display:flex;align-items:center;gap:8px">
+      <button onClick="{{ openCity }}" style="flex:1;min-height:44px;border:0;background:transparent;color:#F5F7FA;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:0;cursor:pointer"><span style="font-size:12px;color:#9AA4B2;display:flex;gap:4px;align-items:center"><i class="{{ locIcon }}" style="font-size:12px;color:#F28A62"></i>{{ locKicker }}</span><span style="font:600 22px/1 'Barlow Condensed';text-transform:uppercase;display:flex;gap:8px;align-items:center">{{ city }}<span style="font:500 13px Inter;color:#F28A62;text-transform:none">Alterar local</span></span></button>
+      <button onClick="{{ openFilters }}" aria-label="Filtros" style="width:44px;height:44px;border-radius:12px;border:1px solid {{ filterBorder }};background:transparent;color:#F5F7FA;display:grid;place-items:center;position:relative;cursor:pointer"><i class="ph ph-sliders-horizontal" style="font-size:20px"></i><sc-if value="{{ activeCount }}"><span style="position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#E95D2C;color:#1A2730;font:700 11px/20px Inter;text-align:center">{{ activeCount }}</span></sc-if></button>
+      <button aria-label="Notificações" style="width:44px;height:44px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;display:grid;place-items:center;position:relative"><i class="ph ph-bell" style="font-size:20px"></i><span style="position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:#E95D2C"></span></button>
+    </header>
+
+    <div style="flex:1;overflow-y:auto;padding:4px 0 24px;display:flex;flex-direction:column;gap:28px">
+      <sc-if value="{{ isOffline }}"><div role="status" style="margin:0 20px;padding:10px 14px;border-radius:12px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.35);display:flex;gap:10px;align-items:center;font-size:13px;color:#FCD34D"><i class="ph ph-wifi-slash" style="font-size:18px"></i>Exibindo dados salvos · atualizado há 12 min</div></sc-if>
+      <sc-if value="{{ activeCount }}"><div style="padding:0 20px;display:flex;gap:6px;flex-wrap:wrap;align-items:center"><sc-for list="{{ activeChips }}" as="a" hint-placeholder-count="0"><span style="min-height:32px;padding:0 6px 0 10px;border-radius:8px;background:rgba(233,93,44,.12);color:#F28A62;font:500 12px Inter;display:inline-flex;gap:4px;align-items:center">{{ a.label }}<button onClick="{{ a.remove }}" aria-label="Remover filtro" style="width:24px;height:24px;border:0;background:transparent;color:#F28A62;cursor:pointer;display:grid;place-items:center"><i class="ph ph-x" style="font-size:12px"></i></button></span></sc-for><button onClick="{{ clearFilters }}" style="min-height:32px;padding:0 8px;border:0;background:transparent;color:#9AA4B2;font:500 12px Inter;cursor:pointer">Limpar</button></div></sc-if>
+
+      <sc-if value="{{ isNoPerm }}">
+        <div style="margin:0 20px;padding:20px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;flex-direction:column;gap:12px">
+          <div style="width:48px;height:48px;border-radius:14px;border:1px solid #45586C;display:grid;place-items:center;color:#B0CEE2"><i class="ph ph-map-pin-simple-slash" style="font-size:24px"></i></div>
+          <h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Mostre eventos perto de você</h3>
+          <p style="margin:0;font-size:14px;line-height:1.5;color:#C9D2DC">Sem acesso à localização não conseguimos calcular distâncias. Permita ou escolha sua cidade.</p>
+          <button onClick="{{ grant }}" style="min-height:48px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)">Permitir localização</button>
+          <button onClick="{{ openCity }}" style="min-height:44px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer">Definir local manualmente</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isError }}">
+        <div style="margin:0 20px;padding:16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;gap:12px;align-items:flex-start"><i class="ph ph-cloud-warning" style="font-size:24px;color:#F87171"></i><div style="display:flex;flex-direction:column;gap:8px;flex:1"><span style="font-size:14px;font-weight:500">Não foi possível carregar os eventos</span><span style="font-size:13px;color:#9AA4B2">Verifique sua conexão e tente de novo.</span><button onClick="{{ retry }}" style="align-self:flex-start;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center"><i class="ph ph-arrow-clockwise" style="font-size:14px"></i>Tentar novamente</button></div></div>
+      </sc-if>
+
+      <sc-if value="{{ isLoading }}">
+        <section style="display:flex;flex-direction:column;gap:12px" aria-busy="true">
+          <div style="margin:0 20px;width:140px;height:22px;border-radius:6px;background:#22323E"></div>
+          <div style="display:flex;gap:12px;padding:0 20px;overflow:hidden">
+            <div style="flex:none;width:300px;border-radius:16px;background:#22323E;overflow:hidden"><div style="height:150px;background:#2C3D4B"></div><div style="padding:14px;display:flex;flex-direction:column;gap:10px"><div style="width:30%;height:10px;border-radius:4px;background:#2C3D4B"></div><div style="width:80%;height:20px;border-radius:6px;background:#2C3D4B"></div><div style="width:60%;height:12px;border-radius:4px;background:#2C3D4B"></div><div style="height:4px;border-radius:2px;background:#2C3D4B"></div></div></div>
+            <div style="flex:none;width:300px;border-radius:16px;background:#22323E;height:280px"></div>
+          </div>
+          <div style="margin:12px 20px 0;width:120px;height:22px;border-radius:6px;background:#22323E"></div>
+          <div style="margin:0 20px;height:56px;border-radius:12px;background:#22323E"></div>
+          <div style="margin:0 20px;height:56px;border-radius:12px;background:#22323E"></div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ isEmpty }}">
+        <div style="margin:0 20px;padding:28px 20px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+          <div style="width:56px;height:56px;border-radius:16px;border:1px solid #45586C;display:grid;place-items:center;color:#B0CEE2"><i class="ph ph-calendar-x" style="font-size:28px"></i></div>
+          <h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Nenhum evento encontrado</h3>
+          <p style="margin:0;font-size:14px;line-height:1.5;color:#9AA4B2">{{ emptyText }}</p>
+          <div style="display:flex;gap:8px"><button onClick="{{ clearFilters }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer">Limpar filtros</button><button onClick="{{ widen }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer">Ampliar para 200 km</button></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showNear }}">
+        <section style="display:flex;flex-direction:column;gap:12px">
+          <div style="padding:0 20px;display:flex;justify-content:space-between;align-items:baseline"><h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Perto de você</h3><a href="#" onClick="{{ noop }}" style="font-size:13px">Ver no mapa</a></div>
+          <div style="display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:0 20px 4px;scroll-snap-type:x mandatory">
+            <sc-for list="{{ near }}" as="e" hint-placeholder-count="2">
+              <article style="flex:none;width:300px;scroll-snap-align:start;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden">
+                <div style="position:relative;height:150px"><image-slot id="{{ e.slot }}" shape="rect" placeholder="{{ e.local }}"></image-slot><div style="position:absolute;inset:auto 0 0 0;height:60px;background:linear-gradient(to top,#22323E,transparent);pointer-events:none"></div><span style="position:absolute;top:10px;right:10px;padding:4px 10px;border-radius:8px;background:rgba(26,39,48,.85);border:1px solid {{ e.visBorder }};color:{{ e.visColor }};font:500 12px Inter;display:flex;gap:6px;align-items:center;pointer-events:none"><i class="{{ e.visIcon }}" style="font-size:12px"></i>{{ e.vis }}</span></div>
+                <div style="padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px">
+                  <div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">{{ e.type }}</span><span style="font:600 24px/1.05 'Barlow Condensed';text-transform:uppercase">{{ e.name }}</span></div>
+                  <div style="display:flex;flex-direction:column;gap:4px;font-size:13px;color:#C9D2DC"><span style="display:flex;gap:8px;align-items:center"><i class="ph ph-calendar-blank" style="font-size:15px;color:#9AA4B2"></i>{{ e.date }}</span><span style="display:flex;gap:8px;align-items:center"><i class="{{ e.localIcon }}" style="font-size:15px;color:#B0CEE2"></i>{{ e.localType }} · {{ e.dist }}</span></div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ e.cats }}" as="c" hint-placeholder-count="2"><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px">{{ c }}</span></sc-for></div>
+                  <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:{{ e.vColor }}">{{ e.vLabel }}</span><span style="font-weight:500">{{ e.vCount }}</span></div><div style="height:4px;border-radius:2px;background:#2C3D4B"><div style="height:4px;border-radius:2px;width:{{ e.vPct }};background:{{ e.vBar }}"></div></div></div>
+                </div>
+              </article>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ showWeek }}">
+        <section style="padding:0 20px;display:flex;flex-direction:column">
+          <h3 style="margin:0 0 8px;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Esta semana</h3>
+          <sc-for list="{{ week }}" as="e" hint-placeholder-count="3">
+            <button onClick="{{ noop }}" style="min-height:68px;display:flex;gap:14px;align-items:center;padding:8px 0;border:0;background:transparent;color:#F5F7FA;text-align:left;cursor:pointer;box-shadow:inset 0 -1px 0 #22323E"><span style="width:48px;flex:none;display:flex;flex-direction:column"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.12em;color:#9AA4B2">{{ e.wd }}</span><span style="font:600 28px/1 'Barlow Condensed'">{{ e.day }}</span></span><span style="flex:1;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:15px;font-weight:500">{{ e.name }}</span><span style="font-size:12px;color:#9AA4B2">{{ e.localType }} · {{ e.dist }} · {{ e.vis }}</span></span><i class="ph ph-caret-right" style="font-size:18px;color:#9AA4B2"></i></button>
+          </sc-for>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ showRank }}">
+        <section style="display:flex;flex-direction:column;gap:12px">
+          <div style="padding:0 20px;display:flex;justify-content:space-between;align-items:baseline"><h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Destaques do ranking</h3><a href="#" onClick="{{ noop }}" style="font-size:13px">Ranking</a></div>
+          <div style="margin:0 20px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;padding:6px 14px">
+            <sc-for list="{{ rank }}" as="r" hint-placeholder-count="3"><div style="min-height:56px;display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;box-shadow:{{ r.line }}"><span style="padding:2px 6px;justify-self:start;border-radius:6px;background:{{ r.badge }};color:#1A2730;font:700 15px 'Barlow Condensed'">P{{ r.pos }}</span><span style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:500">{{ r.name }}</span><span style="font-size:12px;color:#9AA4B2">{{ r.cat }} · {{ r.car }}</span></span><span style="font:600 18px 'Barlow Condensed'">{{ r.pts }} PTS</span></div></sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ showNews }}">
+        <section style="padding:0 20px;display:flex;flex-direction:column;gap:12px">
+          <h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Novidades</h3>
+          <article style="border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden;display:flex"><div style="width:110px;flex:none;position:relative"><image-slot id="fd-news-1" shape="rect" placeholder="Pódio"></image-slot></div><div style="padding:12px 14px;display:flex;flex-direction:column;gap:4px"><span style="font:600 11px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#B0CEE2">Resultado publicado</span><span style="font-size:14px;font-weight:500;line-height:1.35">Etapa 2 do Zilmar Beux: veja o pódio de cada categoria</span><span style="font-size:12px;color:#9AA4B2">Oeste Track Club · há 2 dias</span></div></article>
+          <article style="border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden;display:flex"><div style="width:110px;flex:none;position:relative"><image-slot id="fd-news-2" shape="rect" placeholder="Box / oficina"></image-slot></div><div style="padding:12px 14px;display:flex;flex-direction:column;gap:4px"><span style="font:600 11px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#B0CEE2">Novo parceiro</span><span style="font-size:14px;font-weight:500;line-height:1.35">Box 45 Performance oferece vistoria técnica antes dos track days</span><span style="font-size:12px;color:#9AA4B2">Cascavel · há 4 dias</span></div></article>
+        </section>
+      </sc-if>
+    </div>
+
+    <nav style="padding:8px 8px 26px;background:#1A2730;box-shadow:0 -1px 0 #2C3D4B;display:grid;grid-template-columns:repeat(5,1fr)">
+      <button style="min-height:52px;border:0;background:transparent;color:#F28A62;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter;position:relative"><span style="position:absolute;top:-8px;width:24px;height:2px;border-radius:1px;background:#E95D2C"></span><i class="ph-fill ph-house-simple" style="font-size:22px"></i>Feed</button>
+      <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-map-trifold" style="font-size:22px"></i>Mapa</button>
+      <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-garage" style="font-size:22px"></i>Garagem</button>
+      <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-trophy" style="font-size:22px"></i>Ranking</button>
+      <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-user-circle" style="font-size:22px"></i>Perfil</button>
+    </nav>
+  </div>
+
+  <sc-if value="{{ sheetOpen }}">
+    <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:40;background:rgba(10,15,19,.5)"></div>
+    <div role="dialog" aria-modal="true" style="position:absolute;left:0;right:0;bottom:0;z-index:41;border-radius:24px 24px 0 0;background:#2C3D4B;box-shadow:0 0 0 1px #5D7189,0 -16px 40px rgba(0,0,0,.5);padding:8px 20px 32px;display:flex;flex-direction:column;gap:16px">
+      <div style="width:40px;height:4px;border-radius:2px;background:#6B7F95;align-self:center"></div>
+      <sc-if value="{{ sheetFilters }}">
+        <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Filtros</h3><span style="font-size:13px;color:#F28A62">{{ draftCount }} ativos</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#C9D2DC">Categoria</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ catChips }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.toggle }}" style="min-height:40px;padding:0 12px;border-radius:8px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 13px Inter;cursor:pointer">{{ c.label }}</button></sc-for></div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#C9D2DC">Data</span><div style="display:flex;padding:4px;gap:4px;border-radius:12px;background:#22323E"><sc-for list="{{ dateOpts }}" as="d" hint-placeholder-count="3"><button onClick="{{ d.pick }}" style="flex:1;min-height:36px;border-radius:9px;border:1px solid {{ d.border }};background:{{ d.bg }};color:{{ d.color }};font:500 13px Inter;cursor:pointer">{{ d.label }}</button></sc-for></div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:#C9D2DC">Distância</span><span style="font-size:13px;font-weight:500">até {{ draftDist }} km</span></div><input type="range" min="5" max="200" step="5" value="{{ draftDist }}" onChange="{{ onDist }}" aria-label="Distância máxima" style="width:100%"></div>
+        <div style="display:flex;gap:12px"><button onClick="{{ resetDraft }}" style="min-height:48px;padding:0 16px;border-radius:12px;border:0;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer">Limpar</button><button onClick="{{ applyFilters }}" style="flex:1;min-height:48px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)">Aplicar filtros ({{ draftCount }})</button></div>
+      </sc-if>
+      <sc-if value="{{ sheetCity }}">
+        <h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Alterar local</h3>
+        <div style="position:relative"><i class="ph ph-magnifying-glass" style="position:absolute;left:14px;top:14px;font-size:18px;color:#9AA4B2"></i><input placeholder="Buscar cidade" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px 0 42px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px Inter;outline:none"></div>
+        <button onClick="{{ useGps }}" style="min-height:52px;padding:0 4px;border:0;background:transparent;color:#F28A62;display:flex;gap:10px;align-items:center;font:500 15px Inter;cursor:pointer"><i class="ph-fill ph-navigation-arrow" style="font-size:18px"></i>Usar minha localização atual</button>
+        <div style="display:flex;flex-direction:column"><sc-for list="{{ cities }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.pick }}" style="min-height:52px;border:0;box-shadow:inset 0 -1px 0 #45586C;background:transparent;color:#F5F7FA;display:flex;justify-content:space-between;align-items:center;font:15px Inter;cursor:pointer;padding:0 4px">{{ c.label }}<sc-if value="{{ c.on }}"><i class="ph-bold ph-check" style="color:#F28A62"></i></sc-if></button></sc-for></div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#F5F7FA;opacity:.8;z-index:70;pointer-events:none"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TL = { td: 'Track Day', arr: 'Arrancada Autorizada', des: 'Desafio em Pista', enc: 'Encontro' };
+const LI = { 'Autódromo': 'ph ph-flag-checkered', 'Pista de Arrancada': 'ph ph-arrows-out-line-horizontal', 'Área Privada': 'ph ph-fence' };
+const EV = [
+  { id: 1, t: 'td', name: 'Track Day Zilmar Beux · Etapa 3', date: 'Sáb, 12 out · 08:00', wd: 'SÁB', day: '12', week: true, localType: 'Autódromo', local: 'Autódromo Zilmar Beux', dist: 4.2, pub: true, cats: ['Turismo', 'Turbo', 'Aspirado'], left: 18, total: 40 },
+  { id: 2, t: 'arr', name: 'Noite da Arrancada 201m', date: 'Sex, 18 out · 19:30', wd: 'SEX', day: '18', localType: 'Pista de Arrancada', local: 'Pista de Arrancada Cascavel', dist: 9.8, pub: false, cats: ['Street Legal', 'Turbo'], left: 3, total: 32 },
+  { id: 3, t: 'enc', name: 'Encontro Clássicos do Oeste', date: 'Qua, 9 out · 19:00', wd: 'QUA', day: '09', week: true, localType: 'Área Privada', local: 'Espaço Lago Azul', dist: 6.1, pub: true, cats: ['Clássicos', 'Aspirado'], left: 40, total: 60 },
+  { id: 4, t: 'des', name: 'Desafio em Pista · Turbo', date: 'Dom, 13 out · 14:00', wd: 'DOM', day: '13', week: true, localType: 'Autódromo', local: 'Autódromo Zilmar Beux', dist: 4.6, pub: true, cats: ['Turbo'], left: 0, total: 24 },
+  { id: 5, t: 'arr', name: 'Arrancada Toledo · Street', date: 'Sáb, 19 out · 16:00', wd: 'SÁB', day: '19', localType: 'Pista de Arrancada', local: 'Pista de Arrancada Toledo', dist: 48, pub: true, cats: ['Street Legal', 'Turbo'], left: 22, total: 30 },
+  { id: 6, t: 'des', name: 'Desafio Aspirados Guarapuava', date: 'Sáb, 26 out · 09:00', wd: 'SÁB', day: '26', localType: 'Autódromo', local: 'Autódromo de Guarapuava', dist: 190, pub: false, cats: ['Aspirado', 'Turismo'], left: 14, total: 20 }
+];
+const CATS = ['Street Legal', 'Turismo', 'Aspirado', 'Turbo', 'Clássicos'];
+const DATES = [['any', 'Qualquer data'], ['week', 'Esta semana'], ['month', 'Este mês']];
+const EMPTY = { cats: [], date: 'any', dist: 50 };
+
+class Component extends DCLogic {
+  state = { view: 'ok', filters: { ...EMPTY }, draft: { ...EMPTY }, sheet: null, city: 'Cascavel', gps: true, jump: 'ok' };
+  componentWillUnmount() { clearTimeout(this.l); }
+  count(f) { return f.cats.length + (f.date !== 'any' ? 1 : 0) + (f.dist !== 50 ? 1 : 0); }
+  renderVals() {
+    const st = this.state, f = st.filters, d = st.draft, v = st.view;
+    const tint = (a) => a ? { border: '#E95D2C', bg: 'rgba(233,93,44,.12)', color: '#F28A62' } : { border: '#45586C', bg: 'transparent', color: '#C9D2DC' };
+    const match = EV.filter(e => e.dist <= f.dist && (!f.cats.length || e.cats.some(c => f.cats.includes(c))) && (f.date !== 'week' || e.week));
+    const ready = v === 'ok' || v === 'offline';
+    const isEmpty = ready && match.length === 0;
+    const card = e => ({ ...e, type: TL[e.t], slot: 'fd-ev-' + e.id, localIcon: LI[e.localType], dist: String(e.dist).replace('.', ',') + ' km',
+      vis: e.pub ? 'Público' : 'Requer aprovação', visIcon: e.pub ? 'ph ph-globe-simple' : 'ph ph-lock-simple', visBorder: e.pub ? '#45586C' : '#F59E0B', visColor: e.pub ? '#F5F7FA' : '#FBBF24',
+      vLabel: e.left === 0 ? 'Vagas esgotadas' : e.left <= 5 ? 'Últimas vagas' : 'Vagas restantes', vCount: e.left + ' de ' + e.total, vPct: Math.round((e.total - e.left) / e.total * 100) + '%',
+      vColor: e.left === 0 ? '#F87171' : e.left <= 5 ? '#FBBF24' : '#9AA4B2', vBar: e.left === 0 ? '#EF4444' : e.left <= 5 ? '#F59E0B' : '#E95D2C' });
+    const near = match.filter(e => e.dist <= 15).map(card);
+    const week = match.filter(e => e.week).map(card);
+    const activeChips = [...f.cats.map(c => ({ label: c, remove: () => this.setState(x => ({ filters: { ...x.filters, cats: x.filters.cats.filter(y => y !== c) } })) })),
+      ...(f.date !== 'any' ? [{ label: DATES.find(x => x[0] === f.date)[1], remove: () => this.setState(x => ({ filters: { ...x.filters, date: 'any' } })) }] : []),
+      ...(f.dist !== 50 ? [{ label: 'até ' + f.dist + ' km', remove: () => this.setState(x => ({ filters: { ...x.filters, dist: 50 } })) }] : [])];
+    const J = [['ok', 'UC-03 · Feed · Sucesso'], ['loading', 'Carregando (skeleton)'], ['empty', 'Vazio (filtros sem resultado)'], ['noperm', 'Sem permissão de localização'], ['offline', 'Offline (cache)'], ['error', 'Erro com retry'], ['filters', 'UC-22 · Bottom sheet de filtros'], ['city', 'Alterar local (manual)']];
+    const jumps = J.map(([k, label]) => { const a = st.jump === k; return { label, bg: a ? 'rgba(233,93,44,.10)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', bar: a ? 'inset 2px 0 0 #E95D2C' : 'none', go: () => {
+      const base = { jump: k, sheet: null };
+      if (k === 'empty') return this.setState({ ...base, view: 'ok', filters: { cats: ['Clássicos'], date: 'week', dist: 5 } });
+      if (k === 'filters') return this.setState({ ...base, view: 'ok', sheet: 'filters', draft: { cats: ['Turbo', 'Turismo'], date: 'week', dist: 50 } });
+      if (k === 'city') return this.setState({ ...base, view: 'ok', sheet: 'city' });
+      if (k === 'loading') { clearTimeout(this.l); this.l = setTimeout(() => this.setState({ view: 'ok', jump: 'ok' }), 1800); }
+      this.setState({ ...base, view: k, filters: { ...EMPTY }, gps: k !== 'noperm' });
+    } }; });
+    return {
+      jumps, screenLabel: J.find(j => j[0] === st.jump)[1],
+      wifiIcon: v === 'offline' ? 'ph ph-wifi-slash' : 'ph ph-wifi-high',
+      city: v === 'noperm' ? 'Local não definido' : st.city, locKicker: st.gps && v !== 'noperm' ? 'Sua localização' : 'Local escolhido', locIcon: st.gps && v !== 'noperm' ? 'ph-fill ph-navigation-arrow' : 'ph ph-map-pin',
+      isOffline: v === 'offline', isNoPerm: v === 'noperm', isError: v === 'error', isLoading: v === 'loading', isEmpty,
+      emptyText: 'Nada em ' + f.dist + ' km com os filtros atuais. Tente ampliar a distância ou mudar as categorias.',
+      showNear: ready && near.length > 0, near, showWeek: ready && week.length > 0, week,
+      showRank: ready && !isEmpty, showNews: ready && !isEmpty,
+      rank: [['Ana Beatriz Moraes', 'Turbo', 'Toyota Supra MK4', 61, '#B0CEE2'], ['Patrícia Weber', 'Turismo', 'BMW 330i', 75, '#B0CEE2'], ['Fernanda Zanella', 'Aspirado', 'Honda Civic Si 2008', 68, '#B0CEE2']].map(([name, cat, car, pts, badge], i) => ({ pos: 1, name, cat, car, pts, badge, line: i < 2 ? 'inset 0 -1px 0 #2C3D4B' : 'none' })),
+      activeCount: this.count(f), activeChips, filterBorder: this.count(f) ? '#E95D2C' : '#45586C',
+      clearFilters: () => this.setState({ filters: { ...EMPTY }, jump: 'ok' }), widen: () => this.setState({ filters: { ...EMPTY, dist: 200 } }),
+      retry: () => { this.setState({ view: 'loading' }); clearTimeout(this.l); this.l = setTimeout(() => this.setState({ view: 'ok', jump: 'ok' }), 1000); },
+      grant: () => this.setState({ view: 'ok', gps: true, city: 'Cascavel', jump: 'ok' }),
+      openFilters: () => this.setState({ sheet: 'filters', draft: { ...f } }), openCity: () => this.setState({ sheet: 'city' }),
+      sheetOpen: !!st.sheet, sheetFilters: st.sheet === 'filters', sheetCity: st.sheet === 'city', closeSheet: () => this.setState({ sheet: null }),
+      catChips: CATS.map(c => ({ label: c, ...tint(d.cats.includes(c)), toggle: () => this.setState(x => ({ draft: { ...x.draft, cats: x.draft.cats.includes(c) ? x.draft.cats.filter(y => y !== c) : [...x.draft.cats, c] } })) })),
+      dateOpts: DATES.map(([id, label]) => { const a = d.date === id; return { label, border: a ? '#E95D2C' : 'transparent', bg: a ? 'rgba(233,93,44,.12)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', pick: () => this.setState(x => ({ draft: { ...x.draft, date: id } })) }; }),
+      draftDist: d.dist, onDist: (e) => { const val = +e.target.value; this.setState(x => ({ draft: { ...x.draft, dist: val } })); },
+      draftCount: this.count(d), resetDraft: () => this.setState({ draft: { ...EMPTY } }),
+      applyFilters: () => this.setState(x => ({ filters: { ...x.draft }, sheet: null, jump: 'ok' })),
+      cities: ['Cascavel', 'Curitiba', 'Londrina', 'Maringá'].map(c => ({ label: c + ', PR', on: st.city === c && !st.gps, pick: () => this.setState({ city: c, gps: false, sheet: null, view: 'ok', jump: 'ok' }) })),
+      useGps: () => this.setState({ gps: true, city: 'Cascavel', sheet: null, view: 'ok', jump: 'ok' }),
+      noop: (e) => e.preventDefault()
+    };
+  }
+}
+</script>
+</body>
+</html>

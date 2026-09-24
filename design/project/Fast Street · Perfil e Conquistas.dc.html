@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/styles.css">
+<script src="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="./image-slot.js"></script>
+<style>*{scrollbar-width:none}*::-webkit-scrollbar{display:none}body{margin:0;background:#141F27;color:#F5F7FA;font-family:Inter,system-ui,sans-serif}a{color:#F28A62}a:hover{color:#E95D2C}</style>
+</helmet>
+<div style="min-height:100vh;padding:48px;display:flex;gap:64px;flex-wrap:wrap;align-items:flex-start;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;background:#141F27">
+
+<aside style="width:340px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-18 · UC-31 · UC-32</span>
+    <h1 style="margin:0;font:600 40px/1 'Barlow Condensed';text-transform:uppercase">Perfil e conquistas</h1>
+    <p style="margin:0;font-size:14px;line-height:1.55;color:#9AA4B2;text-wrap:pretty">Conquistas desbloqueadas e bloqueadas com progresso, histórico com filtros e resultado por evento, e Configurações com LGPD e troca de papel.</p>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px">
+    <span style="font-size:12px;color:#9AA4B2;margin-bottom:6px">Telas e estados</span>
+    <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="10"><button onClick="{{ j.go }}" style="min-height:36px;padding:0 12px;border:0;border-radius:10px;text-align:left;background:{{ j.bg }};color:{{ j.color }};box-shadow:{{ j.bar }};font:500 13px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">{{ j.label }}</button></sc-for>
+  </nav>
+</aside>
+
+<div style="flex:none;width:390px;height:844px;border-radius:52px;box-shadow:0 0 0 10px #0F171D,0 0 0 11px #45586C,0 40px 80px rgba(0,0,0,.5);position:relative;overflow:hidden;background:#1A2730" data-screen-label="{{ screenLabel }}">
+  <div style="position:absolute;top:0;left:0;right:0;height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 34px;z-index:60;pointer-events:none;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#0F171D;z-index:61"></div>
+
+  <sc-if value="{{ s.profile }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:47px 0 0 0;display:flex;flex-direction:column">
+      <div style="flex:1;overflow-y:auto;padding:8px 20px 24px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;justify-content:flex-end"><button onClick="{{ toSettings }}" aria-label="Configurações" style="width:44px;height:44px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-gear-six" style="font-size:20px"></i></button></div>
+        <div style="display:flex;gap:16px;align-items:center;margin-top:-20px">
+          <div style="width:88px;height:88px;flex:none;border-radius:50%;box-shadow:0 0 0 2px #E95D2C,0 0 0 5px #1A2730,0 0 0 6px #45586C;overflow:hidden"><image-slot id="pf-avatar" shape="circle" placeholder="Foto"></image-slot></div>
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <h1 style="margin:0;font:600 32px/1 'Barlow Condensed';text-transform:uppercase">Lucas Andrade</h1>
+            <span style="font-size:13px;color:#9AA4B2">Cascavel, PR · @lucas.andrade.tt</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap"><span style="display:inline-flex;gap:5px;align-items:center;padding:3px 8px;border-radius:6px;background:#2C3D4B;font:500 11px Inter"><i class="ph ph-steering-wheel"></i>Piloto</span><sc-if value="{{ isOrg }}"><span style="display:inline-flex;gap:5px;align-items:center;padding:3px 8px;border-radius:6px;background:rgba(176,206,226,.14);color:#B0CEE2;font:500 11px Inter"><i class="ph-fill ph-seal-check"></i>Organizador verificado</span></sc-if></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <div style="padding:12px;border-radius:14px;background:#22323E;display:flex;flex-direction:column;gap:2px"><span style="font:600 30px/1 'Barlow Condensed'">14</span><span style="font-size:12px;color:#9AA4B2">Eventos</span></div>
+          <div style="padding:12px;border-radius:14px;background:#22323E;display:flex;flex-direction:column;gap:2px"><span style="font:600 30px/1 'Barlow Condensed';color:#B0CEE2">4</span><span style="font-size:12px;color:#9AA4B2">Pódios</span></div>
+          <div style="padding:12px;border-radius:14px;background:#22323E;display:flex;flex-direction:column;gap:2px"><span style="font:600 30px/1 'Barlow Condensed'">121</span><span style="font-size:12px;color:#9AA4B2">Pontos</span></div>
+        </div>
+        <div role="tablist" style="display:flex;box-shadow:inset 0 -1px 0 #2C3D4B"><sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2"><button role="tab" onClick="{{ t.pick }}" style="flex:1;min-height:44px;border:0;background:transparent;color:{{ t.color }};box-shadow:{{ t.bar }};font:500 14px Inter;cursor:pointer">{{ t.label }}</button></sc-for></div>
+
+        <sc-if value="{{ tabAch }}">
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#9AA4B2">{{ achCount }}</span></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <sc-for list="{{ ach }}" as="a" hint-placeholder-count="9">
+              <button onClick="{{ a.open }}" style="padding:14px 8px 12px;border-radius:14px;border:0;background:#22323E;box-shadow:0 0 0 1px {{ a.ring }};color:#F5F7FA;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;min-height:132px" style-hover="background:#263845">
+                <span style="width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:{{ a.iconBg }};color:{{ a.iconColor }};border:1px solid {{ a.iconBorder }}"><i class="{{ a.icon }}" style="font-size:26px"></i></span>
+                <span style="font-size:12px;font-weight:500;line-height:1.25;text-align:center;color:{{ a.labelColor }}">{{ a.name }}</span>
+                <sc-if value="{{ a.locked }}"><div style="width:100%;display:flex;flex-direction:column;gap:3px;align-items:center"><div style="width:80%;height:3px;border-radius:2px;background:#2C3D4B"><div style="height:3px;border-radius:2px;width:{{ a.pct }};background:#6B7F95"></div></div><span style="font-size:10px;color:#9AA4B2">{{ a.progress }}</span></div></sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tabHist }}">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;margin:0 -20px;padding:0 20px"><sc-for list="{{ hCats }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.pick }}" style="flex:none;min-height:36px;padding:0 12px;border-radius:8px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 12px Inter;cursor:pointer">{{ c.label }}</button></sc-for></div>
+            <div style="display:flex;padding:4px;gap:4px;border-radius:12px;background:#22323E"><sc-for list="{{ hPeriods }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.pick }}" style="flex:1;min-height:36px;border-radius:9px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }};font:500 12px Inter;cursor:pointer">{{ p.label }}</button></sc-for></div>
+          </div>
+          <sc-if value="{{ histEmpty }}"><div style="padding:24px 0;display:flex;flex-direction:column;gap:6px"><i class="ph ph-calendar-x" style="font-size:28px;color:#9AA4B2"></i><span style="font-size:14px;font-weight:500">Nenhum evento neste filtro</span><span style="font-size:13px;color:#9AA4B2">Mude a categoria ou o período.</span></div></sc-if>
+          <div style="display:flex;flex-direction:column"><sc-for list="{{ hist }}" as="h" hint-placeholder-count="5">
+            <button onClick="{{ h.open }}" style="min-height:68px;border:0;background:transparent;color:#F5F7FA;display:flex;gap:12px;align-items:center;text-align:left;cursor:pointer;box-shadow:inset 0 -1px 0 #22323E;padding:6px 0"><span style="width:44px;flex:none;padding:3px 0;border-radius:6px;background:{{ h.badgeBg }};color:{{ h.badgeInk }};font:700 17px 'Barlow Condensed';text-align:center">{{ h.pos }}</span><span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:500">{{ h.name }}</span><span style="font-size:12px;color:#9AA4B2">{{ h.date }} · {{ h.cat }} · {{ h.car }}</span></span><span style="font:600 16px 'Barlow Condensed'">+{{ h.pts }}</span><i class="ph ph-caret-right" style="color:#9AA4B2"></i></button>
+          </sc-for></div>
+        </sc-if>
+      </div>
+      <nav style="padding:8px 8px 26px;background:#1A2730;box-shadow:0 -1px 0 #2C3D4B;display:grid;grid-template-columns:repeat(5,1fr)">
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-house-simple" style="font-size:22px"></i>Feed</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-map-trifold" style="font-size:22px"></i>Mapa</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-garage" style="font-size:22px"></i>Garagem</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-trophy" style="font-size:22px"></i>Ranking</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#F28A62;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter;position:relative"><span style="position:absolute;top:-8px;width:24px;height:2px;border-radius:1px;background:#E95D2C"></span><i class="ph-fill ph-user-circle" style="font-size:22px"></i>Perfil</button>
+      </nav>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.result }}">
+    <div style="position:absolute;inset:47px 0 0 0;overflow-y:auto;padding:4px 20px 32px;display:flex;flex-direction:column;gap:18px">
+      <button onClick="{{ toHist }}" aria-label="Voltar" style="width:44px;height:44px;margin-left:-8px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-arrow-left" style="font-size:22px"></i></button>
+      <div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-32 · Resultado</span><h1 style="margin:0;font:600 36px/0.95 'Barlow Condensed';text-transform:uppercase">{{ r.name }}</h1><span style="font-size:13px;color:#9AA4B2">{{ r.date }} · Autódromo Zilmar Beux</span></div>
+      <div style="padding:20px;border-radius:16px;background:{{ r.cardBg }};box-shadow:0 0 0 1px {{ r.ring }};display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center">
+        <span style="font:600 64px/0.9 'Barlow Condensed';color:{{ r.posColor }}">{{ r.pos }}</span>
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15px;font-weight:500">{{ r.cat }} · {{ r.of }}</span><span style="font-size:13px;color:#C9D2DC">{{ r.car }}</span><span style="font:600 20px 'Barlow Condensed';color:#4ADE80">+{{ r.pts }} PTS NO RANKING</span></div>
+      </div>
+      <sc-if value="{{ r.award }}"><div style="padding:12px 14px;border-radius:12px;background:rgba(176,206,226,.10);display:flex;gap:10px;align-items:center;font-size:14px;color:#B0CEE2"><i class="ph-fill ph-medal" style="font-size:20px"></i>Prêmio do organizador: {{ r.award }}</div></sc-if>
+      <section style="display:flex;flex-direction:column"><h3 style="margin:0 0 8px;font:600 22px/1 'Barlow Condensed';text-transform:uppercase">Classificação · {{ r.cat }}</h3>
+        <sc-for list="{{ r.table }}" as="t" hint-placeholder-count="5"><div style="min-height:48px;display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;box-shadow:inset 0 -1px 0 #22323E;background:{{ t.bg }};padding:0 {{ t.pad }};border-radius:{{ t.radius }}"><span style="font:600 18px 'Barlow Condensed';color:{{ t.posColor }}">P{{ t.pos }}</span><span style="font-size:14px">{{ t.name }}</span><span style="font:600 15px 'Barlow Condensed'">{{ t.pts }} PTS</span></div></sc-for>
+      </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.settings }}">
+    <div style="position:absolute;inset:47px 0 0 0;overflow-y:auto;padding:4px 20px 32px;display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;align-items:center;gap:4px;margin-left:-8px"><button onClick="{{ toProfile }}" aria-label="Voltar" style="width:44px;height:44px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-arrow-left" style="font-size:22px"></i></button><h1 style="margin:0;font:600 30px/1 'Barlow Condensed';text-transform:uppercase">Configurações</h1></div>
+      <section style="display:flex;flex-direction:column;gap:8px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#9AA4B2">Modo de uso</span>
+        <div style="display:flex;padding:4px;gap:4px;border-radius:12px;background:#22323E"><sc-for list="{{ roles }}" as="r" hint-placeholder-count="2"><button onClick="{{ r.pick }}" style="flex:1;min-height:44px;border-radius:9px;border:1px solid {{ r.border }};background:{{ r.bg }};color:{{ r.color }};font:500 14px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center"><i class="{{ r.icon }}" style="font-size:18px"></i>{{ r.label }}</button></sc-for></div>
+        <span style="font-size:12px;color:#9AA4B2">{{ roleNote }}</span>
+      </section>
+      <section style="display:flex;flex-direction:column"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#9AA4B2;margin-bottom:4px">Notificações</span>
+        <sc-for list="{{ notifs }}" as="n" hint-placeholder-count="6"><div style="min-height:56px;display:flex;align-items:center;gap:12px;box-shadow:inset 0 -1px 0 #22323E"><span style="flex:1;display:flex;flex-direction:column"><span style="font-size:14px">{{ n.label }}</span><span style="font-size:12px;color:#9AA4B2">{{ n.sub }}</span></span><button role="switch" aria-checked="{{ n.aria }}" aria-label="{{ n.label }}" onClick="{{ n.toggle }}" style="width:48px;height:28px;flex:none;border-radius:14px;border:1px solid {{ n.border }};background:{{ n.bg }};padding:0;position:relative;cursor:pointer"><span style="position:absolute;top:3px;left:{{ n.left }};width:20px;height:20px;border-radius:50%;background:{{ n.knob }};transition:left .15s"></span></button></div></sc-for>
+      </section>
+      <section style="display:flex;flex-direction:column"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#9AA4B2;margin-bottom:4px">Privacidade · LGPD</span>
+        <button onClick="{{ askExport }}" style="min-height:56px;border:0;background:transparent;color:#F5F7FA;display:flex;gap:12px;align-items:center;text-align:left;cursor:pointer;box-shadow:inset 0 -1px 0 #22323E;padding:0"><i class="ph ph-download-simple" style="font-size:20px;color:#B0CEE2"></i><span style="flex:1;display:flex;flex-direction:column"><span style="font-size:14px">Exportar meus dados</span><span style="font-size:12px;color:#9AA4B2">Arquivo com perfil, garagem, inscrições e resultados</span></span><i class="ph ph-caret-right" style="color:#9AA4B2"></i></button>
+        <a href="#" onClick="{{ noop }}" style="min-height:56px;color:#F5F7FA;display:flex;gap:12px;align-items:center;text-decoration:none;box-shadow:inset 0 -1px 0 #22323E"><i class="ph ph-shield-check" style="font-size:20px;color:#B0CEE2"></i><span style="flex:1;font-size:14px">Política de Privacidade</span><i class="ph ph-arrow-square-out" style="color:#9AA4B2"></i></a>
+        <a href="#" onClick="{{ noop }}" style="min-height:56px;color:#F5F7FA;display:flex;gap:12px;align-items:center;text-decoration:none;box-shadow:inset 0 -1px 0 #22323E"><i class="ph ph-file-text" style="font-size:20px;color:#B0CEE2"></i><span style="flex:1;font-size:14px">Termos de Uso</span><i class="ph ph-arrow-square-out" style="color:#9AA4B2"></i></a>
+        <button onClick="{{ askDelete }}" style="min-height:56px;border:0;background:transparent;color:#F87171;display:flex;gap:12px;align-items:center;text-align:left;cursor:pointer;padding:0"><i class="ph ph-trash" style="font-size:20px"></i><span style="flex:1;font-size:14px">Excluir conta</span></button>
+      </section>
+      <button onClick="{{ askLogout }}" style="min-height:48px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-sign-out" style="font-size:18px"></i>Sair</button>
+      <span style="font-size:12px;color:#6B7F95;text-align:center">Fast Street · versão 1.0.0 (MVP Paraná)</span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ sheet }}">
+    <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:40;background:rgba(10,15,19,.5)"></div>
+    <div role="dialog" aria-modal="true" style="position:absolute;left:0;right:0;bottom:0;z-index:41;border-radius:24px 24px 0 0;background:#22323E;box-shadow:0 0 0 1px #45586C,0 -16px 40px rgba(0,0,0,.5);padding:8px 20px 32px;display:flex;flex-direction:column;gap:14px">
+      <div style="width:40px;height:4px;border-radius:2px;background:#56697D;align-self:center"></div>
+      <sc-if value="{{ sheetAch }}">
+        <div style="display:flex;gap:16px;align-items:center"><span style="width:72px;height:72px;flex:none;border-radius:20px;display:grid;place-items:center;background:{{ ad.iconBg }};color:{{ ad.iconColor }};border:1px solid {{ ad.iconBorder }}"><i class="{{ ad.icon }}" style="font-size:36px"></i></span><div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:{{ ad.kickerColor }}">{{ ad.kicker }}</span><h3 style="margin:0;font:600 28px/1 'Barlow Condensed';text-transform:uppercase">{{ ad.name }}</h3></div></div>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#C9D2DC">{{ ad.desc }}</p>
+        <sc-if value="{{ ad.locked }}"><div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#9AA4B2">Progresso</span><span style="font-weight:500">{{ ad.progress }}</span></div><div style="height:6px;border-radius:3px;background:#2C3D4B"><div style="height:6px;border-radius:3px;width:{{ ad.pct }};background:#E95D2C"></div></div></div></sc-if>
+        <sc-if value="{{ ad.unlocked }}"><div style="padding:10px 12px;border-radius:12px;background:#1A2730;font-size:13px;color:#C9D2DC;display:flex;gap:8px;align-items:center"><i class="ph ph-calendar-check" style="color:#B0CEE2"></i>{{ ad.when }}</div></sc-if>
+      </sc-if>
+      <sc-if value="{{ sheetExport }}">
+        <h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Exportar meus dados</h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#C9D2DC">Vamos preparar um arquivo JSON com todos os seus dados e enviar o link para lucas.andrade@gmail.com em até 48 h, conforme a LGPD.</p>
+        <button onClick="{{ doExport }}" style="min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer">Solicitar exportação</button>
+      </sc-if>
+      <sc-if value="{{ sheetDelete }}">
+        <h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Excluir conta?</h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#C9D2DC">Seu perfil, garagem e inscrições serão apagados em até 30 dias. Resultados já publicados ficam anonimizados no ranking. Esta ação não pode ser desfeita.</p>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Digite EXCLUIR para confirmar</span><input value="{{ delText }}" onChange="{{ onDelText }}" autocapitalize="characters" style="min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:15px Inter;outline:none"></label>
+        <div style="display:flex;gap:8px"><button onClick="{{ closeSheet }}" style="flex:1;min-height:52px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer">Cancelar</button><button onClick="{{ doDelete }}" disabled="{{ delDisabled }}" style="flex:1;min-height:52px;border-radius:12px;border:1px solid #EF4444;background:transparent;color:#F87171;font:500 15px Inter;cursor:pointer;opacity:{{ delOp }}">Excluir conta</button></div>
+      </sc-if>
+      <sc-if value="{{ sheetLogout }}">
+        <h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Sair da conta?</h3>
+        <p style="margin:0;font-size:14px;color:#C9D2DC">Seus dados continuam salvos. Entre de novo quando quiser.</p>
+        <div style="display:flex;gap:8px"><button onClick="{{ closeSheet }}" style="flex:1;min-height:52px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer">Cancelar</button><button onClick="{{ doLogout }}" style="flex:1;min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer">Sair</button></div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ toast }}"><div role="status" style="position:absolute;top:60px;left:16px;right:16px;z-index:55;padding:12px 14px;border-radius:12px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);display:flex;gap:12px;align-items:center;font-size:14px"><i class="ph-fill ph-check-circle" style="font-size:20px;color:#22C55E"></i><span style="flex:1">{{ toast }}</span></div></sc-if>
+  <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#F5F7FA;opacity:.8;z-index:70;pointer-events:none"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ACH = [
+  ['first', 'Primeira largada', 'ph ph-flag-checkered', true, 'Participou do primeiro evento.', 'Desbloqueada em 10 ago · Arrancada Toledo'],
+  ['podium', 'Primeiro pódio', 'ph ph-trophy', true, 'Terminou entre os 3 primeiros da categoria.', 'Desbloqueada em 24 ago · Desafio em Pista · Turbo'],
+  ['five', '5 eventos', 'ph ph-calendar-check', true, 'Participou de 5 eventos autorizados.', 'Desbloqueada em 14 set'],
+  ['regular', 'Frequente', 'ph ph-repeat', true, 'Participou de eventos em 3 meses seguidos.', 'Desbloqueada em 12 out'],
+  ['win', 'Vitória', 'ph ph-crown', false, 'Vença uma bateria em qualquer categoria.', null, 0, 1],
+  ['ten', '10 pódios', 'ph ph-medal', false, 'Some 10 pódios na temporada.', null, 4, 10],
+  ['explorer', 'Explorador', 'ph ph-map-trifold', false, 'Participe de eventos em 4 locais autorizados diferentes.', null, 3, 4],
+  ['garage', 'Garagem completa', 'ph ph-garage', false, 'Cadastre 3 veículos com especificações técnicas.', null, 2, 3],
+  ['hundred', '200 pontos', 'ph ph-lightning', false, 'Alcance 200 pontos no ranking semestral.', null, 121, 200]
+];
+const HIST = [
+  ['h1', 'Track Day Zilmar Beux · Etapa 3', '12 out', 'Turbo', 'Honda Civic Si', 3, 15, 'out', 6, 'Piloto destaque'],
+  ['h2', 'Track Day Zilmar Beux · Etapa 2', '14 set', 'Turbo', 'Honda Civic Si', 5, 10, 'set', 8],
+  ['h3', 'Desafio em Pista · Turbo', '24 ago', 'Turbo', 'Honda Civic Si', 2, 18, 'ago', 10],
+  ['h4', 'Arrancada Toledo · Street', '10 ago', 'Turbo', 'VW Golf GTI', 7, 6, 'ago', 12],
+  ['h5', 'Encontro Clássicos do Oeste', '27 jul', 'Clássicos', 'Chevrolet Opala SS', 1, 25, 'jul', 5],
+  ['h6', 'Track Day Zilmar Beux · Etapa 1', '13 jul', 'Turbo', 'Honda Civic Si', 3, 15, 'jul', 9]
+];
+const TABLE = [['Ana Beatriz Moraes', 25], ['Rafael Kowalski', 18], ['Lucas Andrade', 15], ['Camila Rocha', 12], ['Diego Farias', 10], ['Thiago Nishimura', 8]];
+const PTS = [25, 18, 15, 12, 10, 8, 6, 4];
+const NOTIFS = [['conf', 'Inscrição confirmada ou aprovada', 'Quando o organizador aprovar', true], ['rec', 'Inscrição recusada', 'Com o motivo informado', true], ['near', 'Novo evento na região', 'Dentro do seu raio de busca', true], ['remind', 'Lembrete de evento', 'Na véspera, com horário do briefing', true], ['result', 'Resultado publicado', 'Sua posição e pontos', true], ['ach', 'Conquista desbloqueada', '', false]];
+
+class Component extends DCLogic {
+  state = { screen: 'profile', tab: 'ach', hCat: 'all', hPer: 'all', sel: null, ach: null, sheet: null, notifs: Object.fromEntries(NOTIFS.map(n => [n[0], n[3]])), role: 'piloto', delText: '', toast: null, jump: 'profile' };
+  componentWillUnmount() { clearTimeout(this.t); }
+  flash(m) { clearTimeout(this.t); this.setState({ toast: m }); this.t = setTimeout(() => this.setState({ toast: null }), 3000); }
+  renderVals() {
+    const st = this.state;
+    const tint = (a) => ({ bg: a ? 'rgba(233,93,44,.10)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', bar: a ? 'inset 2px 0 0 #E95D2C' : 'none' });
+    const seg = (a) => ({ border: a ? '#E95D2C' : 'transparent', bg: a ? 'rgba(233,93,44,.12)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC' });
+    const chip = (a) => ({ border: a ? '#E95D2C' : '#45586C', bg: a ? 'rgba(233,93,44,.12)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC' });
+    const achV = (a) => { const [id, name, icon, un, desc, when, cur, max] = a; return { id, name, icon, locked: !un, unlocked: un, desc, when, progress: un ? '' : cur + ' de ' + max, pct: un ? '100%' : Math.round(cur / max * 100) + '%',
+      iconBg: un ? 'rgba(176,206,226,.14)' : '#1A2730', iconColor: un ? '#B0CEE2' : '#6B7F95', iconBorder: un ? 'rgba(176,206,226,.4)' : '#2C3D4B', ring: un ? 'rgba(176,206,226,.3)' : '#2C3D4B', labelColor: un ? '#F5F7FA' : '#9AA4B2',
+      kicker: un ? 'Desbloqueada' : 'Bloqueada', kickerColor: un ? '#B0CEE2' : '#9AA4B2' }; };
+    const perMap = { all: null, m: ['out'], s: ['jul', 'ago', 'set', 'out'] };
+    const hist = HIST.filter(h => (st.hCat === 'all' || h[3] === st.hCat) && (!perMap[st.hPer] || perMap[st.hPer].includes(h[7]))).map(h => { const [id, name, date, cat, car, pos, pts] = h; const top = pos <= 3; return { name, date, cat, car, pos: 'P' + pos, pts, badgeBg: top ? '#B0CEE2' : '#2C3D4B', badgeInk: top ? '#1A2730' : '#F5F7FA', open: () => this.setState({ screen: 'result', sel: id, jump: 'result' }) }; });
+    const sel = HIST.find(h => h[0] === st.sel) || HIST[0];
+    const tbl = TABLE.slice(); if (sel[5] !== 3) { tbl.splice(2, 1); tbl.splice(sel[5] - 1, 0, ['Lucas Andrade', PTS[sel[5] - 1]]); }
+    const top = sel[5] <= 3;
+    const ad = st.ach ? achV(ACH.find(a => a[0] === st.ach)) : {};
+    const J = [['profile', 'UC-18 · Perfil · conquistas'], ['achOpen', 'UC-31 · Detalhe · desbloqueada'], ['achLocked', 'UC-31 · Detalhe · bloqueada'], ['hist', 'UC-32 · Histórico com filtros'], ['histEmpty', 'UC-32 · Histórico vazio'], ['result', 'UC-32 · Resultado do piloto'], ['settings', 'Configurações'], ['export', 'LGPD · Exportar dados'], ['delete', 'LGPD · Excluir conta'], ['logout', 'Sair']];
+    const go = (k) => {
+      const b = { jump: k, sheet: null };
+      const M = { profile: { screen: 'profile', tab: 'ach' }, achOpen: { screen: 'profile', tab: 'ach', sheet: 'ach', ach: 'podium' }, achLocked: { screen: 'profile', tab: 'ach', sheet: 'ach', ach: 'ten' }, hist: { screen: 'profile', tab: 'hist', hCat: 'all', hPer: 'all' }, histEmpty: { screen: 'profile', tab: 'hist', hCat: 'Clássicos', hPer: 'm' }, result: { screen: 'result', sel: 'h1' }, settings: { screen: 'settings' }, export: { screen: 'settings', sheet: 'export' }, delete: { screen: 'settings', sheet: 'delete', delText: '' }, logout: { screen: 'settings', sheet: 'logout' } };
+      this.setState({ ...b, ...M[k] });
+    };
+    return {
+      jumps: J.map(([k, label]) => ({ label, ...tint(st.jump === k), go: () => go(k) })), screenLabel: (J.find(j => j[0] === st.jump) || J[0])[1],
+      s: { profile: st.screen === 'profile', result: st.screen === 'result', settings: st.screen === 'settings' },
+      isOrg: st.role === 'org' || true,
+      tabs: [['ach', 'Conquistas'], ['hist', 'Histórico']].map(([id, label]) => { const a = st.tab === id; return { label, color: a ? '#F28A62' : '#C9D2DC', bar: a ? 'inset 0 -2px 0 #E95D2C' : 'none', pick: () => this.setState({ tab: id, jump: id === 'ach' ? 'profile' : 'hist' }) }; }),
+      tabAch: st.tab === 'ach', tabHist: st.tab === 'hist',
+      achCount: ACH.filter(a => a[3]).length + ' de ' + ACH.length + ' desbloqueadas',
+      ach: ACH.map(a => ({ ...achV(a), open: () => this.setState({ sheet: 'ach', ach: a[0], jump: a[3] ? 'achOpen' : 'achLocked' }) })),
+      hCats: [['all', 'Todas'], ['Turbo', 'Turbo'], ['Clássicos', 'Clássicos'], ['Turismo', 'Turismo']].map(([id, label]) => ({ label, ...chip(st.hCat === id), pick: () => this.setState({ hCat: id }) })),
+      hPeriods: [['all', 'Tudo'], ['m', 'Este mês'], ['s', 'Semestre']].map(([id, label]) => ({ label, ...seg(st.hPer === id), pick: () => this.setState({ hPer: id }) })),
+      hist, histEmpty: !hist.length,
+      r: { name: sel[1], date: sel[2], cat: sel[3], car: sel[4], pos: 'P' + sel[5], pts: sel[6], of: sel[5] + 'º de ' + sel[8] + ' pilotos', award: sel[9] || '', cardBg: top ? 'rgba(176,206,226,.08)' : '#22323E', ring: top ? 'rgba(176,206,226,.4)' : '#2C3D4B', posColor: top ? '#B0CEE2' : '#F5F7FA',
+        table: tbl.slice(0, Math.min(6, sel[8])).map(([name, pts], i) => { const me = name === 'Lucas Andrade'; return { pos: i + 1, name: me ? name + ' (você)' : name, pts: PTS[i] ?? pts, posColor: i < 3 ? '#B0CEE2' : '#9AA4B2', bg: me ? 'rgba(233,93,44,.08)' : 'transparent', pad: me ? '8px' : '0', radius: me ? '10px' : '0' }; }) },
+      toHist: () => this.setState({ screen: 'profile', tab: 'hist', jump: 'hist' }), toProfile: () => this.setState({ screen: 'profile', jump: 'profile' }), toSettings: () => this.setState({ screen: 'settings', jump: 'settings' }),
+      roles: [['piloto', 'Piloto', 'ph ph-steering-wheel'], ['org', 'Organizador', 'ph ph-clipboard-text']].map(([id, label, icon]) => ({ label, icon, ...seg(st.role === id), pick: () => { this.setState({ role: id }); this.flash(id === 'org' ? 'Modo Organizador: a Central aparece na navegação' : 'Modo Piloto ativado'); } })),
+      roleNote: st.role === 'org' ? 'A Central do Organizador aparece na navegação. Sua garagem e ranking continuam disponíveis.' : 'Sua conta também é Organizador verificado. Troque para gerenciar seus eventos.',
+      notifs: NOTIFS.map(([id, label, sub]) => { const on = st.notifs[id]; return { label, sub, aria: on ? 'true' : 'false', border: on ? '#E95D2C' : '#45586C', bg: on ? 'rgba(233,93,44,.25)' : '#22323E', knob: on ? '#E95D2C' : '#9AA4B2', left: on ? '24px' : '3px', toggle: () => this.setState(x => ({ notifs: { ...x.notifs, [id]: !x.notifs[id] } })) }; }),
+      sheet: !!st.sheet, sheetAch: st.sheet === 'ach', sheetExport: st.sheet === 'export', sheetDelete: st.sheet === 'delete', sheetLogout: st.sheet === 'logout', closeSheet: () => this.setState({ sheet: null }),
+      ad,
+      askExport: () => this.setState({ sheet: 'export', jump: 'export' }), askDelete: () => this.setState({ sheet: 'delete', delText: '', jump: 'delete' }), askLogout: () => this.setState({ sheet: 'logout', jump: 'logout' }),
+      doExport: () => { this.setState({ sheet: null }); this.flash('Solicitação registrada. Você receberá o link por e-mail.'); },
+      delText: st.delText, onDelText: (e) => this.setState({ delText: e.target.value.toUpperCase() }), delDisabled: st.delText !== 'EXCLUIR', delOp: st.delText === 'EXCLUIR' ? 1 : 0.45,
+      doDelete: () => { if (st.delText !== 'EXCLUIR') return; this.setState({ sheet: null }); this.flash('Exclusão agendada. Enviamos a confirmação por e-mail.'); },
+      doLogout: () => { this.setState({ sheet: null }); this.flash('Você saiu da conta (volta para o Login no app).'); },
+      noop: (e) => e.preventDefault(),
+      toast: st.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

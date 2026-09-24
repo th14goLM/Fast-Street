@@ -1,0 +1,144 @@
+.screen {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 130px;
+}
+.hero {
+  height: 300px;
+  position: relative;
+}
+.heroShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #1a2730 0%, rgba(26, 39, 48, 0) 55%, rgba(26, 39, 48, 0.55) 100%);
+  pointer-events: none;
+}
+.heroBar {
+  position: absolute;
+  top: calc(8px + env(safe-area-inset-top));
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+.content {
+  padding: 0 20px;
+  margin-top: -36px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.org {
+  min-height: 56px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: 0;
+  background: var(--fs-surface);
+  color: var(--fs-text);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+}
+.org:hover {
+  background: var(--fs-surface-elevated);
+}
+.info {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.info > i {
+  margin-top: 1px;
+}
+.info > span {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.infoMain {
+  font-size: 15px;
+  font-weight: 500;
+}
+.infoSub {
+  font-size: 13px;
+  color: var(--fs-text-secondary);
+}
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--fs-text-body);
+}
+.rules li {
+  display: flex;
+  gap: 10px;
+}
+.more {
+  align-self: flex-start;
+  min-height: 40px;
+  padding: 0 8px;
+  margin-left: -8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--fs-primary-text);
+  font: 500 14px var(--fs-font-body);
+  cursor: pointer;
+}
+.ctaBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, #1a2730 75%, rgba(26, 39, 48, 0));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ctaNote {
+  font-size: 12px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+.mine {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(176, 206, 226, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(176, 206, 226, 0.35);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.resRow {
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  box-shadow: inset 0 -1px 0 var(--fs-surface-elevated);
+}

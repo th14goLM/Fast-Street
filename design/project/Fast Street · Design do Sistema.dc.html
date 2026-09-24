@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/styles.css">
+<script src="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="./image-slot.js"></script>
+<style>body{margin:0;background:#1A2730;color:#F5F7FA;font-family:Inter,system-ui,sans-serif}a{color:#F28A62}a:hover{color:#E95D2C}input[type=range]{accent-color:#E95D2C}</style>
+</helmet>
+<div style="max-width:1440px;padding:64px 64px 96px;display:flex;flex-direction:column;gap:72px;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;background:#1A2730">
+
+<header style="display:flex;flex-direction:column;gap:16px;max-width:880px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="width:40px;height:40px;border-radius:12px;border:1px solid #E95D2C;display:grid;place-items:center;color:#F28A62"><i class="ph ph-flag-checkered" style="font-size:22px"></i></div>
+    <span style="font:600 20px/1 'Barlow Condensed',sans-serif;letter-spacing:.12em;text-transform:uppercase">Fast Street</span>
+    <span style="font-size:12px;color:#9AA4B2;padding:4px 10px;border:1px solid #45586C;border-radius:8px">Design System · v0.1</span>
+  </div>
+  <h1 style="margin:0;font:600 72px/0.95 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.01em">Tokens e componentes</h1>
+  <p style="margin:0;font-size:16px;line-height:1.6;color:#9AA4B2;text-wrap:pretty">Estrutura do Nocturne (bordas que esmaecem, primário em contorno, sombras discretas) com a paleta extraída da foto de referência. Tema escuro como padrão; versão clara dos componentes principais no fim da página. Grid de 8pt, raios de 12–16px, alvos de toque ≥ 44px.</p>
+</header>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 14px 'Barlow Condensed';color:#F28A62;letter-spacing:.1em">01</span><h2 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Cor</h2></div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,#45586C 48px,#45586C calc(100% - 48px),transparent)"></div>
+  <p style="margin:0;font-size:13px;color:#9AA4B2">Paleta da foto</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px">
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:112px;border-radius:12px;background:#1A2730;box-shadow:0 0 0 1px #45586C"></div><b style="font-weight:500;font-size:14px">background</b><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">#1A2730</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:112px;border-radius:12px;background:#424048"></div><b style="font-weight:500;font-size:14px">neutral-warm</b><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">#424048 · chips, tags</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:112px;border-radius:12px;background:#45586C"></div><b style="font-weight:500;font-size:14px">line / slate</b><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">#45586C · bordas</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:112px;border-radius:12px;background:#B0CEE2"></div><b style="font-weight:500;font-size:14px">secondary · gulf</b><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">#B0CEE2 · pódio, conquistas</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:112px;border-radius:12px;background:#A63E1B"></div><b style="font-weight:500;font-size:14px">primary-pressed</b><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">#A63E1B</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:112px;border-radius:12px;background:#E95D2C"></div><b style="font-weight:500;font-size:14px">primary · racing orange</b><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">#E95D2C</span></div>
+  </div>
+  <p style="margin:16px 0 0;font-size:13px;color:#9AA4B2">Derivados (mistura de #1A2730 com #45586C) e semânticos</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px">
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border-radius:12px;background:#22323E"></div><b style="font-weight:500;font-size:13px">surface</b><span style="font:11px ui-monospace,Menlo,monospace;color:#9AA4B2">#22323E</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border-radius:12px;background:#2C3D4B"></div><b style="font-weight:500;font-size:13px">surface-elevated</b><span style="font:11px ui-monospace,Menlo,monospace;color:#9AA4B2">#2C3D4B</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border-radius:12px;background:#F28A62"></div><b style="font-weight:500;font-size:13px">primary-text</b><span style="font:11px ui-monospace,Menlo,monospace;color:#9AA4B2">#F28A62 · texto laranja</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border-radius:12px;background:#F5F7FA"></div><b style="font-weight:500;font-size:13px">text</b><span style="font:11px ui-monospace,Menlo,monospace;color:#9AA4B2">#F5F7FA</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border-radius:12px;background:#9AA4B2"></div><b style="font-weight:500;font-size:13px">text-secondary</b><span style="font:11px ui-monospace,Menlo,monospace;color:#9AA4B2">#9AA4B2</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border-radius:12px;background:#22C55E"></div><b style="font-weight:500;font-size:13px">success</b><span style="font:11px ui-monospace,Menlo,monospace;color:#9AA4B2">#22C55E</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border-radius:12px;background:#F59E0B"></div><b style="font-weight:500;font-size:13px">warning</b><span style="font:11px ui-monospace,Menlo,monospace;color:#9AA4B2">#F59E0B</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border-radius:12px;background:#EF4444"></div><b style="font-weight:500;font-size:13px">danger</b><span style="font:11px ui-monospace,Menlo,monospace;color:#9AA4B2">#EF4444 · texto #F87171</span></div>
+  </div>
+  <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+    <p style="margin:0;font-size:13px;line-height:1.6;color:#9AA4B2;max-width:760px">Contraste: #E95D2C sobre o fundo fica em ~4,4:1, então é usado em bordas, ícones e títulos grandes. Texto laranja em tamanho de corpo usa #F28A62 (≥ 5,5:1). O azul Gulf é reservado a pódio, conquistas, selos e o badge "Principal"; nunca aparece em grandes áreas.</p>
+  </sc-if>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 14px 'Barlow Condensed';color:#F28A62;letter-spacing:.1em">02</span><h2 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Tipografia</h2></div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,#45586C 48px,#45586C calc(100% - 48px),transparent)"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:48px">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px"><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">display-xl 56/1</span><span style="font:600 56px/1 'Barlow Condensed';text-transform:uppercase">Track Day Cascavel</span></div>
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px"><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">display-l 40/1</span><span style="font:600 40px/1 'Barlow Condensed';text-transform:uppercase">Ranking mensal</span></div>
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px"><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">title 28/1.1</span><span style="font:600 28px/1.1 'Barlow Condensed';text-transform:uppercase">Perto de você</span></div>
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px"><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">subtitle 20/1.2</span><span style="font:600 20px/1.2 'Barlow Condensed';text-transform:uppercase;letter-spacing:.04em">Arrancada Autorizada</span></div>
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px"><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">overline 12/1</span><span style="font:600 12px/1 'Barlow Condensed';text-transform:uppercase;letter-spacing:.16em;color:#F28A62">Desafio em pista</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">body-l · Inter 16/1.6 · 400</span><span style="font-size:16px;line-height:1.6">Track day no Autódromo Zilmar Beux com baterias por categoria e briefing obrigatório às 7h30.</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">body · Inter 14/1.5 · 400</span><span style="font-size:14px;line-height:1.5">Sua inscrição foi enviada ao organizador. Você será notificado quando for aprovada.</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">label · Inter 14/1.2 · 500</span><span style="font-size:14px;font-weight:500">Inscrever-se</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">caption · Inter 12/1.4 · 400</span><span style="font-size:12px;color:#9AA4B2">Atualizado há 12 min · 4,2 km</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="font:12px ui-monospace,Menlo,monospace;color:#9AA4B2">numeric · Barlow Condensed 600, tabular</span><span style="font:600 32px/1 'Barlow Condensed';font-variant-numeric:tabular-nums">1.240 PTS · P3 ↑2</span></div>
+    </div>
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 14px 'Barlow Condensed';color:#F28A62;letter-spacing:.1em">03</span><h2 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Espaço, raio, elevação</h2></div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,#45586C 48px,#45586C calc(100% - 48px),transparent)"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:48px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span style="font-size:13px;color:#9AA4B2">Espaçamento · base 8pt</span>
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:4px;height:16px;background:#E95D2C;border-radius:2px"></div><span style="font:12px ui-monospace,Menlo,monospace">space-0.5 · 4</span></div>
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:8px;height:16px;background:#E95D2C;border-radius:2px"></div><span style="font:12px ui-monospace,Menlo,monospace">space-1 · 8</span></div>
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:16px;height:16px;background:#E95D2C;border-radius:2px"></div><span style="font:12px ui-monospace,Menlo,monospace">space-2 · 16</span></div>
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:24px;height:16px;background:#E95D2C;border-radius:2px"></div><span style="font:12px ui-monospace,Menlo,monospace">space-3 · 24</span></div>
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:32px;height:16px;background:#E95D2C;border-radius:2px"></div><span style="font:12px ui-monospace,Menlo,monospace">space-4 · 32</span></div>
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:48px;height:16px;background:#E95D2C;border-radius:2px"></div><span style="font:12px ui-monospace,Menlo,monospace">space-6 · 48</span></div>
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:64px;height:16px;background:#E95D2C;border-radius:2px"></div><span style="font:12px ui-monospace,Menlo,monospace">space-8 · 64</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span style="font-size:13px;color:#9AA4B2">Raios</span>
+      <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start"><div style="width:64px;height:64px;border-radius:8px;background:#22323E;box-shadow:0 0 0 1px #45586C"></div><span style="font:12px ui-monospace,Menlo,monospace">8 · chips</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start"><div style="width:64px;height:64px;border-radius:12px;background:#22323E;box-shadow:0 0 0 1px #45586C"></div><span style="font:12px ui-monospace,Menlo,monospace">12 · controles</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start"><div style="width:64px;height:64px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #45586C"></div><span style="font:12px ui-monospace,Menlo,monospace">16 · cards</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start"><div style="width:64px;height:64px;border-radius:24px 24px 0 0;background:#22323E;box-shadow:0 0 0 1px #45586C"></div><span style="font:12px ui-monospace,Menlo,monospace">24 · sheet</span></div>
+      </div>
+      <span style="font-size:13px;color:#9AA4B2;margin-top:16px">Alvo de toque mínimo</span>
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:44px;height:44px;border-radius:12px;border:1px dashed #F28A62;display:grid;place-items:center;color:#F28A62"><i class="ph ph-bell" style="font-size:20px"></i></div><span style="font:12px ui-monospace,Menlo,monospace">44 × 44</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:13px;color:#9AA4B2">Elevação · borda + escuridão ambiente</span>
+      <div style="padding:16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;font:12px ui-monospace,Menlo,monospace">elev-sm · cards</div>
+      <div style="padding:16px;border-radius:16px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);font:12px ui-monospace,Menlo,monospace">elev-md · menus, toast</div>
+      <div style="padding:16px;border-radius:16px;background:#2C3D4B;box-shadow:0 0 0 1px #5D7189,0 16px 40px rgba(0,0,0,.6);font:12px ui-monospace,Menlo,monospace">elev-lg · sheet, modal</div>
+    </div>
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 14px 'Barlow Condensed';color:#F28A62;letter-spacing:.1em">04</span><h2 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Botões</h2></div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,#45586C 48px,#45586C calc(100% - 48px),transparent)"></div>
+  <div style="display:grid;grid-template-columns:140px repeat(5,minmax(150px,1fr));gap:16px 24px;align-items:center;overflow-x:auto;padding-bottom:4px">
+    <span></span>
+    <span style="font-size:12px;color:#9AA4B2">Padrão (interativo)</span><span style="font-size:12px;color:#9AA4B2">Hover</span><span style="font-size:12px;color:#9AA4B2">Pressionado</span><span style="font-size:12px;color:#9AA4B2">Desabilitado</span><span style="font-size:12px;color:#9AA4B2">Carregando</span>
+
+    <span style="font-size:13px">Primário</span>
+    <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px" style-hover="background:rgba(233,93,44,.12)" style-active="background:rgba(166,62,27,.35);border-color:#A63E1B">Inscrever-se</button>
+    <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #E95D2C;background:rgba(233,93,44,.12);color:#F28A62;font:500 14px Inter">Inscrever-se</button>
+    <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #A63E1B;background:rgba(166,62,27,.35);color:#F5F7FA;font:500 14px Inter">Inscrever-se</button>
+    <button disabled="" style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;opacity:.45;cursor:not-allowed">Inscrever-se</button>
+    <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;display:inline-flex;align-items:center;justify-content:center;gap:8px"><i class="ph ph-circle-notch" style="font-size:16px"></i>Enviando</button>
+
+    <span style="font-size:13px">Secundário</span>
+    <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.07)" style-active="background:rgba(245,247,250,.14)">Ver detalhes</button>
+    <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #45586C;background:rgba(245,247,250,.07);color:#F5F7FA;font:500 14px Inter">Ver detalhes</button>
+    <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #5D7189;background:rgba(245,247,250,.14);color:#F5F7FA;font:500 14px Inter">Ver detalhes</button>
+    <button disabled="" style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;opacity:.45">Ver detalhes</button>
+    <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;display:inline-flex;align-items:center;justify-content:center;gap:8px"><i class="ph ph-circle-notch" style="font-size:16px"></i>Carregando</button>
+
+    <span style="font-size:13px">Ghost</span>
+    <button style="min-height:44px;padding:0 12px;border-radius:12px;border:0;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer;display:inline-flex;align-items:center;gap:8px" style-hover="background:rgba(233,93,44,.10)" style-active="background:rgba(233,93,44,.18)"><i class="ph ph-navigation-arrow" style="font-size:16px"></i>Abrir no Maps/Waze</button>
+    <button style="min-height:44px;padding:0 12px;border-radius:12px;border:0;background:rgba(233,93,44,.10);color:#F28A62;font:500 14px Inter;display:inline-flex;align-items:center;gap:8px"><i class="ph ph-navigation-arrow" style="font-size:16px"></i>Abrir no Maps/Waze</button>
+    <button style="min-height:44px;padding:0 12px;border-radius:12px;border:0;background:rgba(233,93,44,.18);color:#F28A62;font:500 14px Inter;display:inline-flex;align-items:center;gap:8px"><i class="ph ph-navigation-arrow" style="font-size:16px"></i>Abrir no Maps/Waze</button>
+    <button disabled="" style="min-height:44px;padding:0 12px;border-radius:12px;border:0;background:transparent;color:#F28A62;font:500 14px Inter;opacity:.45;display:inline-flex;align-items:center;gap:8px"><i class="ph ph-navigation-arrow" style="font-size:16px"></i>Abrir no Maps/Waze</button>
+    <span></span>
+
+    <span style="font-size:13px">Destrutivo</span>
+    <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #EF4444;background:transparent;color:#F87171;font:500 14px Inter;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px" style-hover="background:rgba(239,68,68,.12)" style-active="background:rgba(239,68,68,.24)"><i class="ph ph-flag" style="font-size:16px"></i>Denunciar evento</button>
+    <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #EF4444;background:rgba(239,68,68,.12);color:#F87171;font:500 14px Inter;display:inline-flex;align-items:center;justify-content:center;gap:8px"><i class="ph ph-flag" style="font-size:16px"></i>Denunciar evento</button>
+    <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #EF4444;background:rgba(239,68,68,.24);color:#FECACA;font:500 14px Inter;display:inline-flex;align-items:center;justify-content:center;gap:8px"><i class="ph ph-flag" style="font-size:16px"></i>Denunciar evento</button>
+    <button disabled="" style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #EF4444;background:transparent;color:#F87171;font:500 14px Inter;opacity:.45;display:inline-flex;align-items:center;justify-content:center;gap:8px"><i class="ph ph-trash" style="font-size:16px"></i>Remover piloto</button>
+    <span></span>
+  </div>
+  <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-top:8px">
+    <span style="font-size:13px;color:#9AA4B2;width:140px">Ícone · bloco</span>
+    <button aria-label="Notificações" style="width:44px;height:44px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;display:grid;place-items:center;cursor:pointer;position:relative" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-bell" style="font-size:20px"></i><span style="position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:#E95D2C"></span></button>
+    <button aria-label="Filtros" style="width:44px;height:44px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;display:grid;place-items:center;cursor:pointer" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-sliders-horizontal" style="font-size:20px"></i></button>
+    <button style="min-height:48px;width:320px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)">Criar conta</button>
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 14px 'Barlow Condensed';color:#F28A62;letter-spacing:.1em">05</span><h2 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Inputs</h2></div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,#45586C 48px,#45586C calc(100% - 48px),transparent)"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:32px">
+    <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">E-mail · padrão</span><input placeholder="voce@email.com" style="min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px Inter;outline:none" style-hover="border-color:#6B7F95" style-focus="border-color:#E95D2C;box-shadow:0 0 0 3px rgba(233,93,44,.25)"><span style="font-size:12px;color:#9AA4B2">Usaremos para confirmar sua conta.</span></label>
+    <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">E-mail · foco</span><input value="lucas.andrade@" readonly="" style="min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #E95D2C;box-shadow:0 0 0 3px rgba(233,93,44,.25);background:#22323E;color:#F5F7FA;font:15px Inter;outline:none"><span style="font-size:12px;color:#9AA4B2">Digitando…</span></label>
+    <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">E-mail · erro</span><div style="position:relative"><input value="lucas.andrade@gmail.com" readonly="" aria-invalid="true" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 44px 0 14px;border-radius:12px;border:1px solid #EF4444;background:rgba(239,68,68,.06);color:#F5F7FA;font:15px Inter;outline:none"><i class="ph ph-warning-circle" style="position:absolute;right:14px;top:14px;font-size:20px;color:#F87171"></i></div><span style="font-size:12px;color:#F87171">E-mail já cadastrado. <a href="#" style="color:#F28A62">Entrar</a></span></label>
+    <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Senha · medidor de força (digite)</span><input type="password" value="{{ pwd }}" onChange="{{ onPwd }}" placeholder="Mínimo 8 caracteres" style="min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px Inter;outline:none" style-focus="border-color:#E95D2C;box-shadow:0 0 0 3px rgba(233,93,44,.25)">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px"><sc-for list="{{ bars }}" as="b" hint-placeholder-count="4"><div style="height:4px;border-radius:2px;background:{{ b.c }}"></div></sc-for></div>
+      <span style="font-size:12px;color:#9AA4B2">{{ pwdLabel }}</span></label>
+    <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Categoria · select (lista fechada)</span><div style="position:relative"><select style="width:100%;appearance:none;min-height:48px;padding:0 44px 0 14px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px Inter;outline:none"><option>Turbo</option><option>Street Legal</option><option>Turismo</option><option>Aspirado</option><option>Clássicos</option></select><i class="ph ph-caret-down" style="position:absolute;right:14px;top:14px;font-size:18px;color:#9AA4B2;pointer-events:none"></i></div></label>
+    <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Desabilitado</span><input value="Autódromo Zilmar Beux" disabled="" style="min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px Inter;opacity:.45"></label>
+  </div>
+  <div style="display:flex;gap:48px;flex-wrap:wrap;align-items:flex-start">
+    <label style="display:flex;gap:12px;align-items:flex-start;max-width:420px;cursor:pointer" onClick="{{ toggleTerms }}">
+      <span style="flex:none;width:24px;height:24px;border-radius:6px;border:1.5px solid {{ termsBorder }};background:{{ termsBg }};display:grid;place-items:center;color:#1A2730;margin-top:1px"><sc-if value="{{ terms }}"><i class="ph-bold ph-check" style="font-size:14px"></i></sc-if></span>
+      <span style="font-size:14px;line-height:1.5">Li e aceito os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a> (LGPD).</span>
+    </label>
+    <label style="display:flex;gap:12px;align-items:flex-start;max-width:420px">
+      <span style="flex:none;width:24px;height:24px;border-radius:6px;border:1.5px solid #EF4444;margin-top:1px"></span>
+      <span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:14px;line-height:1.5">Li e aceito os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a> (LGPD).</span><span style="font-size:12px;color:#F87171">Aceite obrigatório para criar a conta.</span></span>
+    </label>
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 14px 'Barlow Condensed';color:#F28A62;letter-spacing:.1em">06</span><h2 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Seleção e controles</h2></div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,#45586C 48px,#45586C calc(100% - 48px),transparent)"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:48px 64px">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:13px;color:#9AA4B2">Chips de categoria · multi-select</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="5">
+          <button onClick="{{ c.toggle }}" style="min-height:40px;padding:0 14px;border-radius:8px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 13px Inter;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><sc-if value="{{ c.on }}"><i class="ph-bold ph-check" style="font-size:12px"></i></sc-if>{{ c.label }}</button>
+        </sc-for>
+      </div>
+      <span style="font-size:12px;color:#9AA4B2">Compacto (em cards, não interativo)</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px;color:#E6E8EC">Turbo</span>
+        <span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px;color:#E6E8EC">Aspirado</span>
+        <span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px;color:#E6E8EC">Street Legal</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:13px;color:#9AA4B2">Segmented control</span>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <div style="display:inline-flex;padding:4px;gap:4px;border-radius:12px;background:#22323E;box-shadow:inset 0 0 0 1px #2C3D4B">
+          <sc-for list="{{ seg1 }}" as="s" hint-placeholder-count="2"><button onClick="{{ s.pick }}" style="min-height:36px;padding:0 16px;border-radius:9px;border:1px solid {{ s.border }};background:{{ s.bg }};color:{{ s.color }};font:500 13px Inter;cursor:pointer">{{ s.label }}</button></sc-for>
+        </div>
+        <div style="display:inline-flex;padding:4px;gap:4px;border-radius:12px;background:#22323E;box-shadow:inset 0 0 0 1px #2C3D4B">
+          <sc-for list="{{ seg2 }}" as="s" hint-placeholder-count="2"><button onClick="{{ s.pick }}" style="min-height:36px;padding:0 16px;border-radius:9px;border:1px solid {{ s.border }};background:{{ s.bg }};color:{{ s.color }};font:500 13px Inter;cursor:pointer">{{ s.label }}</button></sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;color:#9AA4B2">Slider · raio de busca</span><span style="font:600 22px/1 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ radius }} KM · <span style="color:#F28A62">{{ pins }} eventos</span></span></div>
+      <input type="range" min="5" max="200" step="5" value="{{ radius }}" onChange="{{ onRadius }}" style="width:100%;height:24px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#9AA4B2"><span>5 km</span><span>200 km</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:13px;color:#9AA4B2">Switch</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;max-width:420px;min-height:44px">
+        <span style="font-size:14px">Novo evento na minha região</span>
+        <button role="switch" aria-checked="{{ notif }}" onClick="{{ toggleNotif }}" style="width:48px;height:28px;border-radius:14px;border:1px solid {{ swBorder }};background:{{ swBg }};padding:0;position:relative;cursor:pointer"><span style="position:absolute;top:3px;left:{{ swLeft }};width:20px;height:20px;border-radius:50%;background:{{ swKnob }};transition:left .15s"></span></button>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;grid-column:1 / -1">
+      <span style="font-size:13px;color:#9AA4B2">Stepper · wizard do organizador (passo 2 de 4)</span>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:880px">
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:3px;border-radius:2px;background:#E95D2C"></div><div style="display:flex;gap:8px;align-items:center"><span style="width:22px;height:22px;border-radius:50%;background:#E95D2C;color:#1A2730;display:grid;place-items:center"><i class="ph-bold ph-check" style="font-size:12px"></i></span><span style="font-size:13px;color:#9AA4B2">Informações</span></div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:3px;border-radius:2px;background:linear-gradient(to right,#E95D2C 50%,#45586C 50%)"></div><div style="display:flex;gap:8px;align-items:center"><span style="width:22px;height:22px;border-radius:50%;border:1px solid #E95D2C;color:#F28A62;display:grid;place-items:center;font:600 13px 'Barlow Condensed'">2</span><span style="font-size:13px;font-weight:500">Categorias e vagas</span></div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:3px;border-radius:2px;background:#45586C"></div><div style="display:flex;gap:8px;align-items:center"><span style="width:22px;height:22px;border-radius:50%;border:1px solid #45586C;color:#9AA4B2;display:grid;place-items:center;font:600 13px 'Barlow Condensed'">3</span><span style="font-size:13px;color:#9AA4B2">Data e local</span></div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:3px;border-radius:2px;background:#45586C"></div><div style="display:flex;gap:8px;align-items:center"><span style="width:22px;height:22px;border-radius:50%;border:1px solid #45586C;color:#9AA4B2;display:grid;place-items:center;font:600 13px 'Barlow Condensed'">4</span><span style="font-size:13px;color:#9AA4B2">Visibilidade</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 14px 'Barlow Condensed';color:#F28A62;letter-spacing:.1em">07</span><h2 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Badges e selos</h2></div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,#45586C 48px,#45586C calc(100% - 48px),transparent)"></div>
+  <div style="display:grid;grid-template-columns:160px 1fr;gap:20px 24px;align-items:center">
+    <span style="font-size:13px;color:#9AA4B2">Status do evento</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:rgba(34,197,94,.14);color:#4ADE80;font:500 12px Inter"><span style="width:6px;height:6px;border-radius:50%;background:#22C55E"></span>Aberto</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:rgba(233,93,44,.16);color:#F28A62;font:500 12px Inter"><span style="width:6px;height:6px;border-radius:50%;background:#E95D2C;box-shadow:0 0 0 3px rgba(233,93,44,.3)"></span>Em andamento</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:#424048;color:#D5D8DE;font:500 12px Inter"><i class="ph ph-flag-checkered" style="font-size:12px"></i>Encerrado</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:rgba(239,68,68,.14);color:#F87171;font:500 12px Inter"><i class="ph ph-x-circle" style="font-size:12px"></i>Cancelado</span>
+    </div>
+    <span style="font-size:13px;color:#9AA4B2">Status da inscrição</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:rgba(34,197,94,.14);color:#4ADE80;font:500 12px Inter"><i class="ph-bold ph-check" style="font-size:12px"></i>Confirmada</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:rgba(245,158,11,.14);color:#FBBF24;font:500 12px Inter"><i class="ph ph-hourglass-medium" style="font-size:12px"></i>Pendente</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:rgba(239,68,68,.14);color:#F87171;font:500 12px Inter"><i class="ph-bold ph-x" style="font-size:12px"></i>Recusada</span>
+    </div>
+    <span style="font-size:13px;color:#9AA4B2">Visibilidade</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;border:1px solid #45586C;color:#F5F7FA;font:500 12px Inter"><i class="ph ph-globe-simple" style="font-size:12px"></i>Público</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;border:1px solid #F59E0B;color:#FBBF24;font:500 12px Inter"><i class="ph ph-lock-simple" style="font-size:12px"></i>Requer aprovação</span>
+    </div>
+    <span style="font-size:13px;color:#9AA4B2">Tipo de local autorizado</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:#2C3D4B;color:#F5F7FA;font:500 12px Inter"><i class="ph ph-flag-checkered" style="font-size:13px;color:#B0CEE2"></i>Autódromo</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:#2C3D4B;color:#F5F7FA;font:500 12px Inter"><i class="ph ph-arrows-out-line-horizontal" style="font-size:13px;color:#B0CEE2"></i>Pista de Arrancada</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:#2C3D4B;color:#F5F7FA;font:500 12px Inter"><i class="ph ph-fence" style="font-size:13px;color:#B0CEE2"></i>Área Privada</span>
+    </div>
+    <span style="font-size:13px;color:#9AA4B2">Tipo de evento (overline)</span>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">
+      <span>Track Day</span><span>Arrancada Autorizada</span><span>Desafio em Pista</span><span>Encontro</span>
+    </div>
+    <span style="font-size:13px;color:#9AA4B2">Selos</span>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+      <span style="display:inline-flex;align-items:center;gap:6px;color:#B0CEE2;font:500 13px Inter"><i class="ph-fill ph-seal-check" style="font-size:18px"></i>Organizador verificado</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:rgba(176,206,226,.14);color:#B0CEE2;font:500 12px Inter"><i class="ph-fill ph-star" style="font-size:12px"></i>Principal</span>
+      <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;background:#B0CEE2;color:#1A2730;font:700 14px 'Barlow Condensed'">P1</span>
+      <span style="display:inline-flex;align-items:center;gap:4px;font:600 13px Inter;color:#4ADE80"><i class="ph-bold ph-arrow-up" style="font-size:12px"></i>2</span>
+      <span style="display:inline-flex;align-items:center;gap:4px;font:600 13px Inter;color:#F87171"><i class="ph-bold ph-arrow-down" style="font-size:12px"></i>1</span>
+      <span style="min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#E95D2C;color:#1A2730;font:700 11px/20px Inter;text-align:center">3</span>
+    </div>
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 14px 'Barlow Condensed';color:#F28A62;letter-spacing:.1em">08</span><h2 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Cards</h2></div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,#45586C 48px,#45586C calc(100% - 48px),transparent)"></div>
+  <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#9AA4B2">Card de evento · público</span>
+    <article style="width:358px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden;display:flex;flex-direction:column">
+      <div style="position:relative;height:180px"><image-slot id="ds-evento-1" shape="rect" placeholder="Autódromo / grid de largada"></image-slot>
+        <div style="position:absolute;inset:auto 0 0 0;height:72px;background:linear-gradient(to top,#22323E,transparent);pointer-events:none"></div>
+        <span style="position:absolute;top:12px;right:12px;display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:rgba(26,39,48,.85);border:1px solid #45586C;color:#F5F7FA;font:500 12px Inter"><i class="ph ph-globe-simple" style="font-size:12px"></i>Público</span>
+      </div>
+      <div style="padding:4px 16px 16px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">Track Day</span>
+          <h3 style="margin:0;font:600 26px/1.05 'Barlow Condensed';text-transform:uppercase;letter-spacing:.01em">Track Day Zilmar Beux · Etapa 3</h3>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#C9D2DC">
+          <span style="display:flex;gap:8px;align-items:center"><i class="ph ph-calendar-blank" style="font-size:16px;color:#9AA4B2"></i>Sáb, 12 out · 08:00</span>
+          <span style="display:flex;gap:8px;align-items:center"><i class="ph ph-flag-checkered" style="font-size:16px;color:#B0CEE2"></i>Autódromo · Cascavel <span style="color:#9AA4B2">· 4,2 km</span></span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px;color:#E6E8EC">Turismo</span><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px;color:#E6E8EC">Turbo</span><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px;color:#E6E8EC">Aspirado</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#9AA4B2">Vagas restantes</span><span style="font-weight:500">18 de 40</span></div>
+          <div style="height:4px;border-radius:2px;background:#2C3D4B"><div style="width:55%;height:4px;border-radius:2px;background:#E95D2C"></div></div>
+        </div>
+      </div>
+    </article></div>
+
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#9AA4B2">Card de evento · requer aprovação, poucas vagas</span>
+    <article style="width:358px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden;display:flex;flex-direction:column">
+      <div style="position:relative;height:180px"><image-slot id="ds-evento-2" shape="rect" placeholder="Pista de arrancada"></image-slot>
+        <div style="position:absolute;inset:auto 0 0 0;height:72px;background:linear-gradient(to top,#22323E,transparent);pointer-events:none"></div>
+        <span style="position:absolute;top:12px;right:12px;display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:rgba(26,39,48,.85);border:1px solid #F59E0B;color:#FBBF24;font:500 12px Inter"><i class="ph ph-lock-simple" style="font-size:12px"></i>Requer aprovação</span>
+      </div>
+      <div style="padding:4px 16px 16px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">Arrancada Autorizada</span>
+          <h3 style="margin:0;font:600 26px/1.05 'Barlow Condensed';text-transform:uppercase;letter-spacing:.01em">Noite da Arrancada 201m</h3>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#C9D2DC">
+          <span style="display:flex;gap:8px;align-items:center"><i class="ph ph-calendar-blank" style="font-size:16px;color:#9AA4B2"></i>Sex, 18 out · 19:30</span>
+          <span style="display:flex;gap:8px;align-items:center"><i class="ph ph-arrows-out-line-horizontal" style="font-size:16px;color:#B0CEE2"></i>Pista de Arrancada · Cascavel <span style="color:#9AA4B2">· 9,8 km</span></span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px;color:#E6E8EC">Street Legal</span><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px;color:#E6E8EC">Turbo</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#FBBF24">Últimas vagas</span><span style="font-weight:500">3 de 32</span></div>
+          <div style="height:4px;border-radius:2px;background:#2C3D4B"><div style="width:9%;height:4px;border-radius:2px;background:#F59E0B"></div></div>
+        </div>
+      </div>
+    </article></div>
+
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#9AA4B2">Card de evento · skeleton</span>
+    <article style="width:358px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden;display:flex;flex-direction:column" aria-busy="true">
+      <div style="height:180px;background:#2C3D4B"></div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+        <div style="width:30%;height:10px;border-radius:4px;background:#2C3D4B"></div>
+        <div style="width:85%;height:22px;border-radius:6px;background:#2C3D4B"></div>
+        <div style="width:60%;height:12px;border-radius:4px;background:#2C3D4B"></div>
+        <div style="width:70%;height:12px;border-radius:4px;background:#2C3D4B"></div>
+        <div style="display:flex;gap:6px"><div style="width:56px;height:20px;border-radius:6px;background:#2C3D4B"></div><div style="width:48px;height:20px;border-radius:6px;background:#2C3D4B"></div><div style="width:64px;height:20px;border-radius:6px;background:#2C3D4B"></div></div>
+        <div style="height:4px;border-radius:2px;background:#2C3D4B"></div>
+      </div>
+    </article></div>
+
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#9AA4B2">Card de veículo · principal</span>
+    <article style="width:358px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden;display:flex">
+      <div style="width:132px;flex:none;position:relative"><image-slot id="ds-veiculo-1" shape="rect" placeholder="Foto do carro"></image-slot></div>
+      <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0">
+        <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:6px;background:rgba(176,206,226,.14);color:#B0CEE2;font:500 11px Inter"><i class="ph-fill ph-star" style="font-size:11px"></i>Principal</span>
+        <h3 style="margin:0;font:600 22px/1.05 'Barlow Condensed';text-transform:uppercase">Honda Civic Si</h3>
+        <span style="font-size:12px;color:#9AA4B2">2019 · Cinza Grafite</span>
+        <div style="display:flex;gap:6px;align-items:center"><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px;color:#E6E8EC">Turbo</span><span style="font-size:12px;color:#C9D2DC">205 cv · 1.5T</span></div>
+      </div>
+    </article>
+    <span style="font-size:12px;color:#9AA4B2;margin-top:16px">Card de veículo · seleção na inscrição</span>
+    <div style="width:358px;display:flex;flex-direction:column;gap:8px">
+      <div style="padding:12px 14px;border-radius:12px;border:1px solid #E95D2C;background:rgba(233,93,44,.08);display:flex;gap:12px;align-items:center;min-height:56px"><span style="width:20px;height:20px;border-radius:50%;border:1.5px solid #E95D2C;box-shadow:inset 0 0 0 4px #22323E;background:#E95D2C;flex:none"></span><span style="display:flex;flex-direction:column;flex:1"><span style="font-size:14px;font-weight:500">Honda Civic Si · 2019</span><span style="font-size:12px;color:#9AA4B2">Turbo</span></span><span style="padding:3px 8px;border-radius:6px;background:rgba(176,206,226,.14);color:#B0CEE2;font:500 11px Inter">Principal</span></div>
+      <div style="padding:12px 14px;border-radius:12px;border:1px solid #2C3D4B;display:flex;gap:12px;align-items:center;min-height:56px;opacity:.55" aria-disabled="true"><span style="width:20px;height:20px;border-radius:50%;border:1.5px solid #45586C;flex:none"></span><span style="display:flex;flex-direction:column;flex:1"><span style="font-size:14px;font-weight:500">Chevrolet Opala SS · 1976</span><span style="font-size:12px;color:#F87171;display:flex;gap:4px;align-items:center"><i class="ph ph-prohibit" style="font-size:12px"></i>Clássicos não é aceito neste evento</span></span></div>
+    </div></div>
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 14px 'Barlow Condensed';color:#F28A62;letter-spacing:.1em">09</span><h2 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Feedback</h2></div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,#45586C 48px,#45586C calc(100% - 48px),transparent)"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:48px">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:13px;color:#9AA4B2">Toasts</span>
+      <div style="max-width:420px;padding:12px 14px;border-radius:12px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);display:flex;gap:12px;align-items:center"><i class="ph-fill ph-check-circle" style="font-size:22px;color:#22C55E"></i><span style="flex:1;font-size:14px">Inscrição confirmada</span><button style="min-height:36px;padding:0 10px;border:0;background:transparent;color:#F28A62;font:500 13px Inter;border-radius:8px;cursor:pointer">Ver</button></div>
+      <div style="max-width:420px;padding:12px 14px;border-radius:12px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);display:flex;gap:12px;align-items:center"><i class="ph-fill ph-warning-circle" style="font-size:22px;color:#EF4444"></i><span style="flex:1;font-size:14px">Falha ao enviar foto 2 de 3</span><button style="min-height:36px;padding:0 10px;border:0;background:transparent;color:#F28A62;font:500 13px Inter;border-radius:8px;cursor:pointer">Tentar novamente</button></div>
+      <div style="max-width:420px;padding:12px 14px;border-radius:12px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);display:flex;gap:12px;align-items:center"><i class="ph-fill ph-trophy" style="font-size:22px;color:#B0CEE2"></i><span style="flex:1;font-size:14px">Conquista desbloqueada: Primeiro pódio</span></div>
+      <span style="font-size:13px;color:#9AA4B2;margin-top:12px">Banner offline</span>
+      <div style="max-width:420px;padding:10px 14px;border-radius:12px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.35);display:flex;gap:10px;align-items:center;font-size:13px;color:#FCD34D"><i class="ph ph-wifi-slash" style="font-size:18px"></i><span style="flex:1">Exibindo dados salvos · atualizado há 12 min</span></div>
+      <span style="font-size:13px;color:#9AA4B2;margin-top:12px">Erro com retry</span>
+      <div style="max-width:420px;padding:16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;gap:12px;align-items:flex-start"><i class="ph ph-cloud-warning" style="font-size:24px;color:#F87171"></i><div style="display:flex;flex-direction:column;gap:8px;flex:1"><span style="font-size:14px;font-weight:500">Não foi possível carregar os eventos</span><span style="font-size:13px;color:#9AA4B2">Verifique sua conexão e tente de novo.</span><button style="align-self:flex-start;min-height:40px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-arrow-clockwise" style="font-size:14px"></i>Tentar novamente</button></div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:13px;color:#9AA4B2">Empty state</span>
+      <div style="max-width:420px;padding:32px 24px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+        <div style="width:56px;height:56px;border-radius:16px;border:1px solid #45586C;display:grid;place-items:center;color:#B0CEE2"><i class="ph ph-garage" style="font-size:28px"></i></div>
+        <h3 style="margin:0;font:600 26px/1.05 'Barlow Condensed';text-transform:uppercase">Sua garagem está vazia</h3>
+        <p style="margin:0;font-size:14px;line-height:1.5;color:#9AA4B2">Cadastre seu primeiro veículo para se inscrever em eventos.</p>
+        <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center" style-hover="background:rgba(233,93,44,.12)"><i class="ph ph-plus" style="font-size:16px"></i>Cadastrar veículo</button>
+      </div>
+      <span style="font-size:13px;color:#9AA4B2;margin-top:12px">Upload de foto · progresso individual</span>
+      <div style="display:flex;gap:12px">
+        <div style="width:96px;height:96px;border-radius:12px;background:#2C3D4B;position:relative;overflow:hidden;display:grid;place-items:center"><i class="ph-fill ph-check-circle" style="font-size:22px;color:#22C55E"></i><span style="position:absolute;bottom:6px;left:8px;font-size:11px;color:#C9D2DC">Enviada</span></div>
+        <div style="width:96px;height:96px;border-radius:12px;background:#2C3D4B;position:relative;overflow:hidden;display:grid;place-items:center"><span style="font:600 20px 'Barlow Condensed'">64%</span><div style="position:absolute;left:0;bottom:0;height:4px;width:64%;background:#E95D2C"></div></div>
+        <div style="width:96px;height:96px;border-radius:12px;border:1px solid #EF4444;background:rgba(239,68,68,.06);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#F87171"><i class="ph ph-arrow-clockwise" style="font-size:20px"></i><span style="font-size:11px">Tentar novamente</span></div>
+        <div style="width:96px;height:96px;border-radius:12px;border:1px dashed #45586C;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#9AA4B2"><i class="ph ph-plus" style="font-size:20px"></i><span style="font-size:11px">Adicionar</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 14px 'Barlow Condensed';color:#F28A62;letter-spacing:.1em">10</span><h2 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Superfícies e navegação</h2></div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,#45586C 48px,#45586C calc(100% - 48px),transparent)"></div>
+  <div style="display:flex;gap:48px;flex-wrap:wrap;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#9AA4B2">Bottom sheet · filtros</span>
+    <div style="width:390px;border-radius:24px 24px 0 0;background:#2C3D4B;box-shadow:0 0 0 1px #5D7189,0 16px 40px rgba(0,0,0,.6);padding:8px 16px 16px;display:flex;flex-direction:column;gap:16px">
+      <div style="width:40px;height:4px;border-radius:2px;background:#6B7F95;align-self:center"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0;font:600 24px/1 'Barlow Condensed';text-transform:uppercase">Filtros</h3><span style="font-size:13px;color:#F28A62">{{ filterCount }} ativos</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#C9D2DC">Categoria</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ chips }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.toggle }}" style="min-height:40px;padding:0 12px;border-radius:8px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 13px Inter;cursor:pointer">{{ c.label }}</button></sc-for></div></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#C9D2DC">Data</span><div style="display:flex;padding:4px;gap:4px;border-radius:12px;background:#22323E"><button style="flex:1;min-height:36px;border-radius:9px;border:1px solid #E95D2C;background:rgba(233,93,44,.12);color:#F28A62;font:500 13px Inter">Esta semana</button><button style="flex:1;min-height:36px;border-radius:9px;border:1px solid transparent;background:transparent;color:#C9D2DC;font:500 13px Inter">Este mês</button><button style="flex:1;min-height:36px;border-radius:9px;border:1px solid transparent;background:transparent;color:#C9D2DC;font:500 13px Inter">Escolher</button></div></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:#C9D2DC">Distância</span><span style="font-size:13px;font-weight:500">até {{ radius }} km</span></div><input type="range" min="5" max="200" step="5" value="{{ radius }}" onChange="{{ onRadius }}" style="width:100%"></div>
+      <div style="display:flex;gap:12px"><button style="min-height:48px;padding:0 16px;border-radius:12px;border:0;background:transparent;color:#F28A62;font:500 14px Inter">Limpar</button><button style="flex:1;min-height:48px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 14px Inter">Aplicar filtros ({{ filterCount }})</button></div>
+    </div></div>
+
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#9AA4B2">Bottom nav · mobile 390</span>
+      <nav style="width:390px;padding:8px 8px 20px;background:#1A2730;box-shadow:0 -1px 0 #2C3D4B;display:grid;grid-template-columns:repeat(5,1fr)">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+          <button onClick="{{ n.pick }}" style="min-height:52px;border:0;background:transparent;color:{{ n.color }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter;cursor:pointer;position:relative"><span style="position:absolute;top:-8px;width:24px;height:2px;border-radius:1px;background:{{ n.bar }}"></span><i class="{{ n.icon }}" style="font-size:22px"></i>{{ n.label }}</button>
+        </sc-for>
+      </nav></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#9AA4B2">Sidebar · item desktop</span>
+      <div style="width:248px;padding:12px;border-radius:16px;background:#1A2730;box-shadow:0 0 0 1px #2C3D4B;display:flex;flex-direction:column;gap:4px">
+        <a href="#" style="min-height:44px;padding:0 12px;border-radius:12px;display:flex;align-items:center;gap:12px;color:#F28A62;background:rgba(233,93,44,.10);text-decoration:none;font:500 14px Inter;box-shadow:inset 2px 0 0 #E95D2C"><i class="ph ph-map-trifold" style="font-size:20px"></i>Mapa</a>
+        <a href="#" style="min-height:44px;padding:0 12px;border-radius:12px;display:flex;align-items:center;gap:12px;color:#C9D2DC;text-decoration:none;font:500 14px Inter" style-hover="background:rgba(245,247,250,.06)"><i class="ph ph-garage" style="font-size:20px"></i>Garagem</a>
+        <a href="#" style="min-height:44px;padding:0 12px;border-radius:12px;display:flex;align-items:center;gap:12px;color:#C9D2DC;text-decoration:none;font:500 14px Inter" style-hover="background:rgba(245,247,250,.06)"><i class="ph ph-clipboard-text" style="font-size:20px"></i><span style="flex:1">Central do Organizador</span><span style="min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#E95D2C;color:#1A2730;font:700 11px/20px Inter;text-align:center">5</span></a>
+      </div></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#9AA4B2">Modal de confirmação</span>
+      <div style="width:390px;padding:20px;border-radius:16px;background:#2C3D4B;box-shadow:0 0 0 1px #5D7189,0 16px 40px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:12px">
+        <h3 style="margin:0;font:600 24px/1 'Barlow Condensed';text-transform:uppercase">Remover piloto?</h3>
+        <p style="margin:0;font-size:14px;line-height:1.5;color:#C9D2DC">Rafael Kowalski será removido do Track Day Zilmar Beux e notificado. A vaga volta a ficar disponível.</p>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px"><button style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter">Cancelar</button><button style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #EF4444;background:transparent;color:#F87171;font:500 14px Inter">Remover</button></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 14px 'Barlow Condensed';color:#F28A62;letter-spacing:.1em">11</span><h2 style="margin:0;font:600 36px/1 'Barlow Condensed';text-transform:uppercase">Tema claro</h2></div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,#45586C 48px,#45586C calc(100% - 48px),transparent)"></div>
+  <div style="padding:40px;border-radius:24px;background:#EEF3F7;color:#1A2730;display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:16px;min-width:280px">
+      <span style="font-size:12px;color:#45586C">Tokens claros: bg #EEF3F7 · surface #FBFCFD · line #B0CEE2 · text #1A2730 · text-2 #45586C · primary #A63E1B</span>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #A63E1B;background:transparent;color:#A63E1B;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(166,62,27,.08)" style-active="background:rgba(166,62,27,.16)">Inscrever-se</button>
+        <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #B0CEE2;background:transparent;color:#1A2730;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(26,39,48,.05)">Ver detalhes</button>
+        <button style="min-height:44px;padding:0 12px;border-radius:12px;border:0;background:transparent;color:#A63E1B;font:500 14px Inter">Abrir no Maps/Waze</button>
+        <button style="min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #DC2626;background:transparent;color:#B91C1C;font:500 14px Inter">Denunciar evento</button>
+      </div>
+      <label style="display:flex;flex-direction:column;gap:6px;max-width:360px"><span style="font-size:13px;color:#45586C">E-mail</span><input placeholder="voce@email.com" style="min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #B0CEE2;background:#FBFCFD;color:#1A2730;font:15px Inter;outline:none" style-focus="border-color:#A63E1B;box-shadow:0 0 0 3px rgba(166,62,27,.18)"></label>
+      <label style="display:flex;flex-direction:column;gap:6px;max-width:360px"><span style="font-size:13px;color:#45586C">Senha</span><input value="12345" readonly="" style="min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #DC2626;background:#FEF2F2;color:#1A2730;font:15px Inter;outline:none"><span style="font-size:12px;color:#B91C1C">E-mail ou senha incorretos.</span></label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:#DCFCE7;color:#166534;font:500 12px Inter">Aberto</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:#FDE9E1;color:#A63E1B;font:500 12px Inter">Em andamento</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:#E2E6EA;color:#424048;font:500 12px Inter">Encerrado</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:#FEE2E2;color:#991B1B;font:500 12px Inter">Cancelado</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:#FEF3C7;color:#92400E;font:500 12px Inter">Pendente</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:#DCEAF4;color:#1A2730;font:500 12px Inter"><i class="ph-fill ph-seal-check" style="font-size:13px;color:#45586C"></i>Organizador verificado</span>
+      </div>
+    </div>
+    <article style="width:358px;border-radius:16px;background:#FBFCFD;box-shadow:0 0 0 1px #D3E2EC,0 6px 18px rgba(26,39,48,.08);overflow:hidden;display:flex;flex-direction:column">
+      <div style="position:relative;height:160px"><image-slot id="ds-evento-light" shape="rect" placeholder="Autódromo / pit lane"></image-slot></div>
+      <div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px">
+        <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#A63E1B">Desafio em Pista</span>
+        <h3 style="margin:0;font:600 26px/1.05 'Barlow Condensed';text-transform:uppercase">Desafio Clássicos Londrina</h3>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#45586C"><span style="display:flex;gap:8px;align-items:center"><i class="ph ph-calendar-blank" style="font-size:16px"></i>Dom, 27 out · 09:00</span><span style="display:flex;gap:8px;align-items:center"><i class="ph ph-flag-checkered" style="font-size:16px"></i>Autódromo · Londrina · 3,1 km</span></div>
+        <div style="display:flex;gap:6px"><span style="padding:3px 8px;border-radius:6px;background:#E2E6EA;font-size:11px;color:#424048">Clássicos</span><span style="padding:3px 8px;border-radius:6px;background:#E2E6EA;font-size:11px;color:#424048">Aspirado</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#45586C">Vagas restantes</span><span style="font-weight:500">12 de 24</span></div><div style="height:4px;border-radius:2px;background:#DCEAF4"><div style="width:50%;height:4px;border-radius:2px;background:#E95D2C"></div></div></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<footer style="font-size:13px;color:#9AA4B2">Próximo: fluxo (a) Cadastro → dados opcionais → permissões → primeiro veículo → Feed.</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { cats: { 'Turbo': true, 'Aspirado': true }, s1: 'Geral', s2: 'Mensal', radius: 50, pwd: '', terms: true, notif: true, nav: 'Feed' };
+  renderVals() {
+    const st = this.state;
+    const on = (a) => a
+      ? { border: '#E95D2C', bg: 'rgba(233,93,44,.12)', color: '#F28A62' }
+      : { border: '#45586C', bg: 'transparent', color: '#C9D2DC' };
+    const chips = ['Street Legal', 'Turismo', 'Aspirado', 'Turbo', 'Clássicos'].map(label => ({
+      label, on: !!st.cats[label], ...on(!!st.cats[label]),
+      toggle: () => this.setState(s => ({ cats: { ...s.cats, [label]: !s.cats[label] } }))
+    }));
+    const seg = (opts, key) => opts.map(label => {
+      const a = st[key] === label;
+      return { label, border: a ? '#E95D2C' : 'transparent', bg: a ? 'rgba(233,93,44,.12)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', pick: () => this.setState({ [key]: label }) };
+    });
+    const p = st.pwd;
+    let score = 0;
+    if (p.length >= 8) score++;
+    if (/[A-Z]/.test(p) && /[a-z]/.test(p)) score++;
+    if (/\d/.test(p)) score++;
+    if (/[^A-Za-z0-9]/.test(p) && p.length >= 10) score++;
+    if (p.length && !score) score = 1;
+    const colors = ['#EF4444', '#F59E0B', '#B0CEE2', '#22C55E'];
+    const labels = ['Digite uma senha', 'Fraca', 'Razoável', 'Boa', 'Forte'];
+    const nav = [['Feed', 'ph ph-house-simple'], ['Mapa', 'ph ph-map-trifold'], ['Garagem', 'ph ph-garage'], ['Ranking', 'ph ph-trophy'], ['Perfil', 'ph ph-user-circle']];
+    return {
+      showNotes: this.props.showNotes ?? true,
+      chips,
+      filterCount: chips.filter(c => c.on).length + 2,
+      seg1: seg(['Geral', 'Por categoria'], 's1'),
+      seg2: seg(['Mensal', 'Semestral'], 's2'),
+      radius: st.radius,
+      pins: Math.max(1, Math.round(Math.sqrt(st.radius) * 2.4)),
+      onRadius: (e) => this.setState({ radius: +e.target.value }),
+      pwd: p,
+      onPwd: (e) => this.setState({ pwd: e.target.value }),
+      bars: [0, 1, 2, 3].map(i => ({ c: i < score ? colors[score - 1] : '#2C3D4B' })),
+      pwdLabel: 'Força: ' + labels[score] + (score < 3 ? ' · use 8+ caracteres, maiúsculas e números' : ''),
+      terms: st.terms,
+      termsBorder: st.terms ? '#E95D2C' : '#6B7F95',
+      termsBg: st.terms ? '#E95D2C' : 'transparent',
+      toggleTerms: (e) => { e.preventDefault(); this.setState(s => ({ terms: !s.terms })); },
+      notif: st.notif ? 'true' : 'false',
+      swBorder: st.notif ? '#E95D2C' : '#45586C',
+      swBg: st.notif ? 'rgba(233,93,44,.25)' : '#22323E',
+      swKnob: st.notif ? '#E95D2C' : '#9AA4B2',
+      swLeft: st.notif ? '24px' : '3px',
+      toggleNotif: () => this.setState(s => ({ notif: !s.notif })),
+      navItems: nav.map(([label, icon]) => ({ label, icon, color: st.nav === label ? '#F28A62' : '#9AA4B2', bar: st.nav === label ? '#E95D2C' : 'transparent', pick: () => this.setState({ nav: label }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>
