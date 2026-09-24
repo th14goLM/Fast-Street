@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/styles.css">
+<script src="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="./image-slot.js"></script>
+<style>*{scrollbar-width:none}*::-webkit-scrollbar{display:none}body{margin:0;background:#141F27;color:#F5F7FA;font-family:Inter,system-ui,sans-serif}a{color:#F28A62}a:hover{color:#E95D2C}</style>
+</helmet>
+<div style="min-height:100vh;padding:48px;display:flex;gap:56px;flex-wrap:wrap;align-items:flex-start;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;background:#141F27">
+
+<aside style="width:300px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-09</span>
+    <h1 style="margin:0;font:600 40px/1 'Barlow Condensed';text-transform:uppercase">Notificações</h1>
+    <p style="margin:0;font-size:14px;line-height:1.55;color:#9AA4B2;text-wrap:pretty">Central no app agrupada por dia, com os 8 tipos de aviso. Ao lado, o push na tela de bloqueio: toque nele para abrir a notificação correspondente.</p>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px">
+    <span style="font-size:12px;color:#9AA4B2;margin-bottom:6px">Estados</span>
+    <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="4"><button onClick="{{ j.go }}" style="min-height:36px;padding:0 12px;border:0;border-radius:10px;text-align:left;background:{{ j.bg }};color:{{ j.color }};box-shadow:{{ j.bar }};font:500 13px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">{{ j.label }}</button></sc-for>
+  </nav>
+</aside>
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;color:#9AA4B2">Central in-app</span>
+<div style="flex:none;width:390px;height:844px;border-radius:52px;box-shadow:0 0 0 10px #0F171D,0 0 0 11px #45586C,0 40px 80px rgba(0,0,0,.5);position:relative;overflow:hidden;background:#1A2730" data-screen-label="UC-09 · Central de notificações">
+  <div style="position:absolute;top:0;left:0;right:0;height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 34px;z-index:60;pointer-events:none;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="ph-fill ph-cell-signal-full"></i><i class="{{ wifiIcon }}"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#0F171D;z-index:61"></div>
+  <div style="position:absolute;inset:47px 0 0 0;display:flex;flex-direction:column">
+    <header style="padding:4px 16px 8px 8px;display:flex;align-items:center;gap:4px"><button aria-label="Voltar" style="width:44px;height:44px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;display:grid;place-items:center"><i class="ph ph-arrow-left" style="font-size:22px"></i></button><h1 style="margin:0;flex:1;font:600 30px/1 'Barlow Condensed';text-transform:uppercase">Notificações</h1><sc-if value="{{ unread }}"><button onClick="{{ readAll }}" style="min-height:40px;padding:0 10px;border:0;border-radius:10px;background:transparent;color:#F28A62;font:500 13px Inter;cursor:pointer;white-space:nowrap" style-hover="background:rgba(233,93,44,.10)">Ler todas</button></sc-if></header>
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px;display:flex;flex-direction:column;gap:20px">
+      <sc-if value="{{ isOffline }}"><div role="status" style="padding:10px 14px;border-radius:12px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.35);display:flex;gap:10px;align-items:center;font-size:13px;color:#FCD34D"><i class="ph ph-wifi-slash" style="font-size:18px"></i>Exibindo dados salvos · atualizado há 20 min</div></sc-if>
+      <sc-if value="{{ isLoading }}"><sc-for list="{{ skel }}" as="k" hint-placeholder-count="5"><div style="height:72px;border-radius:14px;background:#22323E"></div></sc-for></sc-if>
+      <sc-if value="{{ isEmpty }}"><div style="padding:48px 8px;display:flex;flex-direction:column;gap:10px;align-items:flex-start"><div style="width:56px;height:56px;border-radius:16px;border:1px solid #45586C;display:grid;place-items:center;color:#B0CEE2"><i class="ph ph-bell-simple" style="font-size:28px"></i></div><h3 style="margin:0;font:600 28px/1.05 'Barlow Condensed';text-transform:uppercase">Tudo em dia</h3><p style="margin:0;font-size:14px;line-height:1.5;color:#9AA4B2">Avisos de inscrições, novos eventos e resultados aparecem aqui.</p></div></sc-if>
+      <sc-if value="{{ isError }}"><div style="padding:16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;gap:12px;align-items:flex-start"><i class="ph ph-cloud-warning" style="font-size:24px;color:#F87171"></i><div style="display:flex;flex-direction:column;gap:8px;flex:1"><span style="font-size:14px;font-weight:500">Não foi possível carregar as notificações</span><button onClick="{{ retry }}" style="align-self:flex-start;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center"><i class="ph ph-arrow-clockwise"></i>Tentar novamente</button></div></div></sc-if>
+      <sc-if value="{{ hasData }}">
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+          <section style="display:flex;flex-direction:column;gap:6px">
+            <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#9AA4B2;padding:0 4px 4px">{{ g.day }}</span>
+            <sc-for list="{{ g.items }}" as="n" hint-placeholder-count="2">
+              <button onClick="{{ n.open }}" style="padding:12px;border-radius:14px;border:0;background:{{ n.bg }};box-shadow:0 0 0 1px {{ n.ring }};color:#F5F7FA;display:flex;gap:12px;align-items:flex-start;text-align:left;cursor:pointer;position:relative" style-hover="background:#263845">
+                <span style="width:40px;height:40px;flex:none;border-radius:12px;background:{{ n.iconBg }};display:grid;place-items:center;color:{{ n.iconColor }}"><i class="{{ n.icon }}" style="font-size:20px"></i></span>
+                <span style="flex:1;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:14px;font-weight:{{ n.weight }};line-height:1.35">{{ n.title }}</span><span style="font-size:13px;line-height:1.4;color:#9AA4B2">{{ n.body }}</span><span style="font-size:11px;color:#6B7F95">{{ n.time }}</span></span>
+                <sc-if value="{{ n.unread }}"><span aria-label="Não lida" style="width:8px;height:8px;flex:none;border-radius:50%;background:#E95D2C;margin-top:6px"></span></sc-if>
+              </button>
+            </sc-for>
+          </section>
+        </sc-for>
+      </sc-if>
+    </div>
+  </div>
+  <sc-if value="{{ toast }}"><div role="status" style="position:absolute;bottom:40px;left:16px;right:16px;z-index:55;padding:12px 14px;border-radius:12px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);display:flex;gap:12px;align-items:center;font-size:13px"><i class="ph-fill ph-arrow-square-out" style="font-size:18px;color:#B0CEE2"></i><span style="flex:1">{{ toast }}</span></div></sc-if>
+  <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#F5F7FA;opacity:.8;z-index:70;pointer-events:none"></div>
+</div></div>
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;color:#9AA4B2">Push na tela de bloqueio</span>
+<div style="flex:none;width:390px;height:844px;border-radius:52px;box-shadow:0 0 0 10px #0F171D,0 0 0 11px #45586C,0 40px 80px rgba(0,0,0,.5);position:relative;overflow:hidden;background:#0F171D" data-screen-label="UC-09 · Push · tela de bloqueio">
+  <div style="position:absolute;inset:0"><image-slot id="nt-lock-bg" shape="rect" placeholder="Papel de parede (opcional)"></image-slot></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(15,23,29,.55),rgba(15,23,29,.2) 40%,rgba(15,23,29,.7));pointer-events:none"></div>
+  <div style="position:absolute;top:0;left:0;right:0;height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 34px;z-index:60;pointer-events:none;font:600 15px -apple-system,system-ui"><span>TIM</span><span style="display:flex;gap:6px;font-size:16px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#000;z-index:61;opacity:.9"></div>
+  <div style="position:absolute;top:84px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;font-family:-apple-system,system-ui,sans-serif"><i class="ph-fill ph-lock-simple" style="font-size:18px;color:rgba(245,247,250,.85)"></i><span style="font-size:18px;font-weight:500;color:rgba(245,247,250,.9);margin-top:6px">sábado, 12 de outubro</span><span style="font-size:88px;font-weight:600;line-height:1;letter-spacing:-.02em;color:rgba(245,247,250,.95)">7:02</span></div>
+  <div style="position:absolute;left:12px;right:12px;top:330px;display:flex;flex-direction:column;gap:8px;font-family:-apple-system,system-ui,sans-serif">
+    <sc-for list="{{ pushes }}" as="p" hint-placeholder-count="3">
+      <button onClick="{{ p.open }}" style="padding:12px 14px;border-radius:20px;border:0;background:rgba(44,52,60,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#F5F7FA;display:flex;gap:12px;align-items:flex-start;text-align:left;cursor:pointer;opacity:{{ p.op }};transform:scale({{ p.scale }});transform-origin:50% 0">
+        <span style="width:38px;height:38px;flex:none;border-radius:9px;background:#1A2730;border:1px solid #E95D2C;display:grid;place-items:center;color:#F28A62"><i class="ph ph-flag-checkered" style="font-size:20px"></i></span>
+        <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="display:flex;justify-content:space-between;gap:8px"><span style="font-size:15px;font-weight:600">{{ p.title }}</span><span style="font-size:13px;color:rgba(245,247,250,.6)">{{ p.time }}</span></span><span style="font-size:15px;line-height:1.3;color:rgba(245,247,250,.9)">{{ p.body }}</span></span>
+      </button>
+    </sc-for>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:44px;display:flex;justify-content:space-between;padding:0 48px;pointer-events:none"><span style="width:50px;height:50px;border-radius:50%;background:rgba(44,52,60,.7);display:grid;place-items:center"><i class="ph-fill ph-flashlight" style="font-size:22px"></i></span><span style="width:50px;height:50px;border-radius:50%;background:rgba(44,52,60,.7);display:grid;place-items:center"><i class="ph-fill ph-camera" style="font-size:22px"></i></span></div>
+  <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#F5F7FA;opacity:.9;z-index:70;pointer-events:none"></div>
+</div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TYPES = {
+  confirmed: ['ph-fill ph-check-circle', '#22C55E', 'rgba(34,197,94,.14)'],
+  pending: ['ph ph-hourglass-medium', '#FBBF24', 'rgba(245,158,11,.14)'],
+  approved: ['ph-bold ph-check', '#4ADE80', 'rgba(34,197,94,.14)'],
+  rejected: ['ph ph-x-circle', '#F87171', 'rgba(239,68,68,.14)'],
+  newEvent: ['ph ph-flag-checkered', '#F28A62', 'rgba(233,93,44,.14)'],
+  reminder: ['ph ph-alarm', '#F28A62', 'rgba(233,93,44,.14)'],
+  result: ['ph-fill ph-trophy', '#B0CEE2', 'rgba(176,206,226,.14)'],
+  achievement: ['ph-fill ph-medal', '#B0CEE2', 'rgba(176,206,226,.14)']
+};
+const N = () => [
+  { id: 'n1', day: 'Hoje', t: 'reminder', title: 'Lembrete: Track Day Zilmar Beux hoje', body: 'Briefing às 7h30 no box 3. Leve capacete homologado.', time: '07:00', unread: true, dest: 'Detalhe do evento' },
+  { id: 'n2', day: 'Hoje', t: 'approved', title: 'Inscrição aprovada', body: 'Arrancada Oeste aprovou sua inscrição na Noite da Arrancada 201m.', time: '06:48', unread: true, dest: 'Detalhe do evento' },
+  { id: 'n3', day: 'Ontem', t: 'result', title: 'Resultado publicado: Etapa 2', body: 'Você terminou em P5 na Turbo e somou +10 pts.', time: '18:20', unread: true, dest: 'Resultado do piloto (Perfil)' },
+  { id: 'n4', day: 'Ontem', t: 'achievement', title: 'Conquista desbloqueada: Frequente', body: 'Eventos em 3 meses seguidos.', time: '18:20', unread: false, dest: 'Detalhe da conquista' },
+  { id: 'n5', day: 'Ontem', t: 'newEvent', title: 'Novo evento a 9,8 km', body: 'Noite da Arrancada 201m · Pista de Arrancada Cascavel · 18 out.', time: '10:05', unread: false, dest: 'Detalhe do evento' },
+  { id: 'n6', day: 'Qua, 9 out', t: 'pending', title: 'Inscrição pendente', body: 'Noite da Arrancada 201m exige aprovação. Avisaremos quando o organizador responder.', time: '21:14', unread: false, dest: 'Detalhe do evento' },
+  { id: 'n7', day: 'Qua, 9 out', t: 'confirmed', title: 'Inscrição confirmada', body: 'Track Day Zilmar Beux · Etapa 3 · Honda Civic Si · Turbo.', time: '14:32', unread: false, dest: 'Detalhe do evento' },
+  { id: 'n8', day: 'Qua, 9 out', t: 'rejected', title: 'Inscrição recusada', body: 'Encontro Tríplice Fronteira: vagas reservadas a clubes convidados.', time: '09:10', unread: false, dest: 'Detalhe do evento' }
+];
+class Component extends DCLogic {
+  state = { items: N(), view: 'ok', toast: null, jump: 'ok' };
+  componentWillUnmount() { clearTimeout(this.t); clearTimeout(this.l); }
+  open(id) { const n = this.state.items.find(x => x.id === id); clearTimeout(this.t); this.setState(x => ({ items: x.items.map(y => y.id === id ? { ...y, unread: false } : y), toast: 'Abre: ' + n.dest })); this.t = setTimeout(() => this.setState({ toast: null }), 2400); }
+  renderVals() {
+    const st = this.state, v = st.view;
+    const ready = v === 'ok' || v === 'offline';
+    const days = [...new Set(st.items.map(n => n.day))];
+    const groups = days.map(day => ({ day, items: st.items.filter(n => n.day === day).map(n => { const [icon, color, bg] = TYPES[n.t]; return { ...n, icon, iconColor: color, iconBg: bg, bg: n.unread ? '#22323E' : 'transparent', ring: n.unread ? '#2C3D4B' : 'transparent', weight: n.unread ? 600 : 500, open: () => this.open(n.id) }; }) }));
+    const J = [['ok', 'Sucesso · agrupado por dia'], ['empty', 'Vazio'], ['loading', 'Carregando'], ['error', 'Erro com retry'], ['offline', 'Offline (cache)']];
+    const go = (k) => { if (k === 'loading') { clearTimeout(this.l); this.l = setTimeout(() => this.setState({ view: 'ok', jump: 'ok' }), 1400); } this.setState({ view: k === 'empty' ? 'ok' : k, items: k === 'empty' ? [] : N(), jump: k }); };
+    const push = [['n1', 'Fast Street', 'agora', 'Hoje tem Track Day no Zilmar Beux. Briefing às 7h30 no box 3.'], ['n2', 'Fast Street', '14 min', 'Inscrição aprovada na Noite da Arrancada 201m.'], ['n3', 'Fast Street', 'ontem', 'Resultado publicado: você fez P5 na Turbo (+10 pts).']];
+    return {
+      jumps: J.map(([k, label]) => { const a = st.jump === k; return { label, bg: a ? 'rgba(233,93,44,.10)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', bar: a ? 'inset 2px 0 0 #E95D2C' : 'none', go: () => go(k) }; }),
+      wifiIcon: v === 'offline' ? 'ph ph-wifi-slash' : 'ph ph-wifi-high',
+      isOffline: v === 'offline', isLoading: v === 'loading', isError: v === 'error', isEmpty: ready && !st.items.length, hasData: ready && st.items.length > 0, skel: [1, 2, 3, 4, 5],
+      retry: () => { this.setState({ view: 'loading' }); clearTimeout(this.l); this.l = setTimeout(() => this.setState({ view: 'ok', jump: 'ok' }), 900); },
+      unread: ready && st.items.some(n => n.unread), readAll: () => this.setState(x => ({ items: x.items.map(n => ({ ...n, unread: false })) })),
+      groups,
+      pushes: push.map(([id, title, time, body], i) => ({ title, time, body, op: i === 2 ? 0.75 : 1, scale: i === 2 ? 0.96 : 1, open: () => { if (!st.items.length) this.setState({ items: N(), view: 'ok', jump: 'ok' }); this.open(id); } })),
+      toast: st.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

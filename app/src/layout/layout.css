@@ -1,0 +1,206 @@
+/* ---------- App column (mobile-first pilot app) ---------- */
+.fs-column {
+  position: relative;
+  height: 100dvh;
+  width: 100%;
+  max-width: var(--fs-mobile-width);
+  margin: 0 auto;
+  background: var(--fs-bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+@media (min-width: 520px) {
+  .fs-column {
+    box-shadow: 0 0 0 1px var(--fs-surface), 0 40px 80px rgba(0, 0, 0, 0.35);
+  }
+}
+.fs-column__view {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Screen scaffold ---------- */
+.fs-screen {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: env(safe-area-inset-top);
+}
+.fs-screen__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.fs-screen__footer {
+  padding: 12px 24px calc(20px + env(safe-area-inset-bottom));
+  box-shadow: 0 -1px 0 var(--fs-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--fs-bg);
+}
+.fs-screen__footer--plain {
+  box-shadow: none;
+}
+.fs-topbar {
+  padding: 8px 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 52px;
+}
+
+/* ---------- Bottom navigation ---------- */
+.fs-bottom-nav {
+  flex: none;
+  padding: 8px 8px calc(12px + env(safe-area-inset-bottom));
+  background: var(--fs-bg);
+  box-shadow: 0 -1px 0 var(--fs-surface-elevated);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  position: relative;
+  z-index: 20;
+}
+.fs-bottom-nav__item {
+  min-height: 52px;
+  border: 0;
+  background: transparent;
+  color: var(--fs-text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font: 500 11px var(--fs-font-body);
+  position: relative;
+  text-decoration: none;
+}
+.fs-bottom-nav__item:hover {
+  color: var(--fs-text);
+}
+.fs-bottom-nav__item i {
+  font-size: 22px;
+}
+.fs-bottom-nav__item.active {
+  color: var(--fs-primary-text);
+}
+.fs-bottom-nav__item.active::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  width: 24px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--fs-primary);
+}
+
+/* ---------- Desktop shell ---------- */
+.fs-desktop {
+  display: flex;
+  height: 100dvh;
+  background: var(--fs-bg);
+}
+.fs-sidebar {
+  width: var(--fs-sidebar-width);
+  flex: none;
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 1px 0 0 var(--fs-surface);
+  overflow-y: auto;
+}
+.fs-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 20px;
+  color: var(--fs-text);
+  text-decoration: none;
+}
+.fs-sidebar__logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--fs-primary);
+  display: grid;
+  place-items: center;
+  color: var(--fs-primary-text);
+  font-size: 20px;
+}
+.fs-sidebar__item {
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: var(--fs-radius-control);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--fs-text-body);
+  text-decoration: none;
+  font: 500 14px var(--fs-font-body);
+}
+.fs-sidebar__item i {
+  font-size: 20px;
+}
+.fs-sidebar__item:hover {
+  background: rgba(245, 247, 250, 0.06);
+  color: var(--fs-text);
+}
+.fs-sidebar__item.active {
+  color: var(--fs-primary-text);
+  background: rgba(233, 93, 44, 0.1);
+  box-shadow: inset 2px 0 0 var(--fs-primary);
+}
+.fs-sidebar__section {
+  padding: 0 12px 6px;
+  font: 600 11px/1 var(--fs-font-display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fs-text-secondary);
+}
+.fs-sidebar__divider {
+  height: 1px;
+  margin: 12px 8px;
+  background: linear-gradient(to right, var(--fs-surface-elevated), transparent);
+}
+.fs-sidebar__user {
+  margin-top: auto;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--fs-surface);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--fs-text);
+  text-decoration: none;
+}
+.fs-desktop__main {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.fs-desktop__pilot {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  background: var(--fs-canvas);
+}
+.fs-desktop__pilot .fs-column {
+  height: 100%;
+}
+.fs-desktop__wide {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  position: relative;
+}

@@ -1,0 +1,88 @@
+/*
+ * Fast Street design tokens.
+ * Source: "Fast Street · Design do Sistema" (palette from the reference photo,
+ * structure from Nocturne: fading rules, outlined primary, quiet elevation).
+ */
+:root {
+  /* Palette from the reference photo */
+  --fs-bg: #1a2730;
+  --fs-neutral-warm: #424048; /* chips, tags */
+  --fs-line: #45586c; /* borders / slate */
+  --fs-secondary: #b0cee2; /* gulf blue: podium, achievements, seals */
+  --fs-primary-pressed: #a63e1b;
+  --fs-primary: #e95d2c; /* racing orange: borders, icons, large titles */
+
+  /* Derived surfaces */
+  --fs-canvas: #141f27; /* area outside the app column on large screens */
+  --fs-inset: #0f171d;
+  --fs-surface: #22323e;
+  --fs-surface-hover: #263845;
+  --fs-surface-elevated: #2c3d4b;
+  --fs-line-strong: #5d7189;
+  --fs-line-muted: #56697d;
+  --fs-map: #15212a;
+
+  /* Text */
+  --fs-text: #f5f7fa;
+  --fs-text-body: #c9d2dc;
+  --fs-text-secondary: #9aa4b2;
+  --fs-text-muted: #6b7f95;
+  --fs-text-tag: #e6e8ec;
+  --fs-primary-text: #f28a62; /* orange at body size (>= 5.5:1) */
+
+  /* Semantic */
+  --fs-success: #22c55e;
+  --fs-success-text: #4ade80;
+  --fs-success-soft: #86efac;
+  --fs-warning: #f59e0b;
+  --fs-warning-text: #fbbf24;
+  --fs-warning-soft: #fcd34d;
+  --fs-danger: #ef4444;
+  --fs-danger-text: #f87171;
+  --fs-danger-soft: #fca5a5;
+
+  /* Tints */
+  --fs-primary-tint: rgba(233, 93, 44, 0.12);
+  --fs-primary-tint-soft: rgba(233, 93, 44, 0.08);
+  --fs-primary-tint-strong: rgba(166, 62, 27, 0.35);
+  --fs-secondary-tint: rgba(176, 206, 226, 0.14);
+  --fs-success-tint: rgba(34, 197, 94, 0.14);
+  --fs-warning-tint: rgba(245, 158, 11, 0.14);
+  --fs-danger-tint: rgba(239, 68, 68, 0.14);
+  --fs-hover: rgba(245, 247, 250, 0.07);
+  --fs-hover-strong: rgba(245, 247, 250, 0.14);
+  --fs-scrim: rgba(10, 15, 19, 0.5);
+
+  /* Type */
+  --fs-font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --fs-font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --fs-font-mono: ui-monospace, Menlo, monospace;
+
+  /* 8pt spacing */
+  --fs-space-05: 4px;
+  --fs-space-1: 8px;
+  --fs-space-2: 16px;
+  --fs-space-3: 24px;
+  --fs-space-4: 32px;
+  --fs-space-6: 48px;
+  --fs-space-8: 64px;
+
+  /* Radii */
+  --fs-radius-chip: 8px;
+  --fs-radius-control: 12px;
+  --fs-radius-card: 16px;
+  --fs-radius-sheet: 24px;
+
+  /* Elevation: edge + ambient darkness */
+  --fs-elev-sm: 0 0 0 1px var(--fs-surface-elevated);
+  --fs-elev-md: 0 0 0 1px var(--fs-line), 0 6px 18px rgba(0, 0, 0, 0.45);
+  --fs-elev-lg: 0 0 0 1px var(--fs-line-strong), 0 16px 40px rgba(0, 0, 0, 0.6);
+
+  --fs-touch: 44px;
+  --fs-focus-ring: 0 0 0 3px rgba(233, 93, 44, 0.25);
+
+  /* Layout */
+  --fs-mobile-width: 480px;
+  --fs-sidebar-width: 248px;
+  --fs-bottom-nav-height: 86px;
+}

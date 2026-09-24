@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/styles.css">
+<script src="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="./image-slot.js"></script>
+<style>*{scrollbar-width:none}*::-webkit-scrollbar{display:none}body{margin:0;background:#141F27;color:#F5F7FA;font-family:Inter,system-ui,sans-serif}a{color:#F28A62}a:hover{color:#E95D2C}textarea::placeholder{color:#6B7F95}</style>
+</helmet>
+<div style="min-height:100vh;padding:48px;display:flex;gap:64px;flex-wrap:wrap;align-items:flex-start;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;background:#141F27">
+
+<aside style="width:340px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">Módulo 4</span>
+    <h1 style="margin:0;font:600 40px/1 'Barlow Condensed';text-transform:uppercase">Detalhe do evento</h1>
+    <p style="margin:0;font-size:14px;line-height:1.55;color:#9AA4B2;text-wrap:pretty">A ação principal muda conforme o estado da inscrição e do evento. "Denunciar evento" está em todos os estados.</p>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px">
+    <span style="font-size:12px;color:#9AA4B2;margin-bottom:6px">Botão principal</span>
+    <sc-for list="{{ ctaJumps }}" as="j" hint-placeholder-count="5"><button onClick="{{ j.go }}" style="min-height:36px;padding:0 12px;border:0;border-radius:10px;text-align:left;background:{{ j.bg }};color:{{ j.color }};box-shadow:{{ j.bar }};font:500 13px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">{{ j.label }}</button></sc-for>
+    <span style="font-size:12px;color:#9AA4B2;margin:14px 0 6px">Estados da tela</span>
+    <sc-for list="{{ stateJumps }}" as="j" hint-placeholder-count="6"><button onClick="{{ j.go }}" style="min-height:36px;padding:0 12px;border:0;border-radius:10px;text-align:left;background:{{ j.bg }};color:{{ j.color }};box-shadow:{{ j.bar }};font:500 13px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">{{ j.label }}</button></sc-for>
+  </nav>
+</aside>
+
+<div style="flex:none;width:390px;height:844px;border-radius:52px;box-shadow:0 0 0 10px #0F171D,0 0 0 11px #45586C,0 40px 80px rgba(0,0,0,.5);position:relative;overflow:hidden;background:#1A2730" data-screen-label="{{ screenLabel }}">
+  <div style="position:absolute;top:0;left:0;right:0;height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 34px;z-index:60;pointer-events:none;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="ph-fill ph-cell-signal-full"></i><i class="{{ wifiIcon }}"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#0F171D;z-index:61"></div>
+
+  <sc-if value="{{ isLoading }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;gap:16px" aria-busy="true">
+      <div style="height:300px;background:#22323E"></div>
+      <div style="padding:0 20px;display:flex;flex-direction:column;gap:12px"><div style="width:30%;height:12px;border-radius:4px;background:#22323E"></div><div style="width:85%;height:30px;border-radius:6px;background:#22323E"></div><div style="width:60%;height:14px;border-radius:4px;background:#22323E"></div><div style="height:64px;border-radius:14px;background:#22323E;margin-top:8px"></div><div style="height:120px;border-radius:14px;background:#22323E"></div></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isError }}">
+    <div style="position:absolute;inset:0;padding:120px 28px;display:flex;flex-direction:column;gap:14px">
+      <button onClick="{{ noop }}" aria-label="Voltar" style="position:absolute;top:52px;left:12px;width:44px;height:44px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;display:grid;place-items:center"><i class="ph ph-arrow-left" style="font-size:22px"></i></button>
+      <i class="ph ph-cloud-warning" style="font-size:40px;color:#F87171"></i>
+      <h2 style="margin:0;font:600 34px/1 'Barlow Condensed';text-transform:uppercase">Não foi possível carregar o evento</h2>
+      <p style="margin:0;font-size:14px;line-height:1.5;color:#9AA4B2">Verifique sua conexão e tente de novo.</p>
+      <button onClick="{{ retry }}" style="align-self:flex-start;min-height:48px;padding:0 18px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-arrow-clockwise" style="font-size:16px"></i>Tentar novamente</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isContent }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;overflow-y:auto;padding-bottom:120px">
+      <div style="height:300px;position:relative">
+        <image-slot id="de-hero" shape="rect" placeholder="Hero: autódromo, grid de largada ou pit lane"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,#1A2730 0%,rgba(26,39,48,0) 55%,rgba(26,39,48,.55) 100%);pointer-events:none"></div>
+        <div style="position:absolute;top:52px;left:12px;right:12px;display:flex;justify-content:space-between">
+          <button onClick="{{ noop }}" aria-label="Voltar" style="width:44px;height:44px;border-radius:12px;border:0;background:rgba(26,39,48,.75);color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-arrow-left" style="font-size:22px"></i></button>
+          <button onClick="{{ noop }}" aria-label="Compartilhar" style="width:44px;height:44px;border-radius:12px;border:0;background:rgba(26,39,48,.75);color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-share-network" style="font-size:20px"></i></button>
+        </div>
+      </div>
+      <div style="padding:0 20px;margin-top:-36px;position:relative;display:flex;flex-direction:column;gap:20px">
+        <sc-if value="{{ isOffline }}"><div role="status" style="padding:10px 14px;border-radius:12px;background:rgba(40,34,20,.95);border:1px solid rgba(245,158,11,.45);display:flex;gap:10px;align-items:center;font-size:13px;color:#FCD34D"><i class="ph ph-wifi-slash" style="font-size:18px"></i>Exibindo dados salvos · atualizado há 7 min</div></sc-if>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">Track Day</span><span style="display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:8px;background:{{ st.bg }};color:{{ st.color }};font:500 12px Inter"><span style="width:6px;height:6px;border-radius:50%;background:{{ st.dot }}"></span>{{ st.label }}</span><span style="display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:8px;border:1px solid #45586C;font:500 12px Inter"><i class="ph ph-globe-simple" style="font-size:12px"></i>Público</span></div>
+          <h1 style="margin:0;font:600 40px/0.95 'Barlow Condensed';text-transform:uppercase">Track Day Zilmar Beux · Etapa 3</h1>
+        </div>
+        <button onClick="{{ noop }}" style="min-height:56px;padding:8px 12px;border-radius:14px;border:0;background:#22323E;color:#F5F7FA;display:flex;gap:12px;align-items:center;text-align:left;cursor:pointer" style-hover="background:#2C3D4B"><span style="width:40px;height:40px;flex:none;border-radius:50%;background:#45586C;display:grid;place-items:center;font:600 13px Inter">OT</span><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:500">Oeste Track Club</span><span style="font-size:12px;color:#B0CEE2;display:flex;gap:4px;align-items:center"><i class="ph-fill ph-seal-check" style="font-size:14px"></i>Organizador verificado</span></span><i class="ph ph-caret-right" style="color:#9AA4B2"></i></button>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;gap:12px;align-items:flex-start"><i class="ph ph-calendar-blank" style="font-size:20px;color:#9AA4B2;margin-top:1px"></i><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:500">Sábado, 12 de outubro</span><span style="font-size:13px;color:#9AA4B2">08:00 às 17:00 · briefing 07:30</span></span></div>
+          <div style="display:flex;gap:12px;align-items:flex-start"><i class="ph ph-flag-checkered" style="font-size:20px;color:#B0CEE2;margin-top:1px"></i><span style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font-size:15px;font-weight:500">Autódromo Zilmar Beux</span><span style="font-size:13px;color:#9AA4B2">Cascavel, PR · 4,2 km de você</span><span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:8px;background:#2C3D4B;font:500 12px Inter;margin-top:2px"><i class="ph ph-shield-check" style="font-size:13px;color:#B0CEE2"></i>Local autorizado · Autódromo</span></span></div>
+          <button onClick="{{ openRoute }}" style="align-self:flex-start;min-height:44px;padding:0 12px 0 8px;border-radius:12px;border:0;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center;margin-left:24px" style-hover="background:rgba(233,93,44,.10)"><i class="ph ph-navigation-arrow" style="font-size:18px"></i>Abrir no Maps/Waze</button>
+        </div>
+        <div style="height:1px;background:linear-gradient(to right,transparent,#2C3D4B 48px,#2C3D4B calc(100% - 48px),transparent)"></div>
+        <section style="display:flex;flex-direction:column;gap:8px"><h3 style="margin:0;font:600 22px/1 'Barlow Condensed';text-transform:uppercase">Sobre</h3><p style="margin:0;font-size:14px;line-height:1.6;color:#C9D2DC">Terceira etapa do campeonato regional. Baterias de 20 minutos por categoria, com instrutores na pit lane e área de box coberta para todos os inscritos.</p></section>
+        <section style="display:flex;flex-direction:column;gap:10px"><h3 style="margin:0;font:600 22px/1 'Barlow Condensed';text-transform:uppercase">Regras</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#C9D2DC">
+            <span style="display:flex;gap:10px"><i class="ph ph-check" style="color:#F28A62;margin-top:3px"></i>Capacete homologado, macacão e luvas.</span>
+            <span style="display:flex;gap:10px"><i class="ph ph-check" style="color:#F28A62;margin-top:3px"></i>Briefing obrigatório às 7h30.</span>
+            <sc-if value="{{ rulesOpen }}"><span style="display:flex;gap:10px"><i class="ph ph-check" style="color:#F28A62;margin-top:3px"></i>Vistoria técnica na entrada do box.</span><span style="display:flex;gap:10px"><i class="ph ph-check" style="color:#F28A62;margin-top:3px"></i>Ultrapassagens apenas nas retas sinalizadas.</span><span style="display:flex;gap:10px"><i class="ph ph-check" style="color:#F28A62;margin-top:3px"></i>Bandeira vermelha: reduza e retorne ao box.</span></sc-if>
+          </div>
+          <button onClick="{{ toggleRules }}" style="align-self:flex-start;min-height:40px;padding:0 8px;margin-left:-8px;border:0;border-radius:10px;background:transparent;color:#F28A62;font:500 14px Inter;cursor:pointer">{{ rulesLabel }}</button>
+        </section>
+        <section style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between;align-items:baseline"><h3 style="margin:0;font:600 22px/1 'Barlow Condensed';text-transform:uppercase">Vagas por categoria</h3><span style="font-size:13px;color:#9AA4B2">{{ totalLeft }}</span></div>
+          <sc-for list="{{ vagas }}" as="v" hint-placeholder-count="3"><div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:13px"><span>{{ v.cat }}</span><span style="color:{{ v.color }}">{{ v.label }}</span></div><div style="height:4px;border-radius:2px;background:#2C3D4B"><div style="height:4px;border-radius:2px;width:{{ v.pct }};background:{{ v.bar }}"></div></div></div></sc-for>
+        </section>
+        <section style="display:flex;flex-direction:column;gap:10px"><h3 style="margin:0;font:600 22px/1 'Barlow Condensed';text-transform:uppercase">Inscritos</h3>
+          <div style="display:flex;align-items:center;gap:12px"><div style="display:flex"><sc-for list="{{ avatars }}" as="a" hint-placeholder-count="5"><span style="width:36px;height:36px;border-radius:50%;background:{{ a.bg }};border:2px solid #1A2730;margin-left:-8px;display:grid;place-items:center;font:600 11px Inter;color:#F5F7FA">{{ a.ini }}</span></sc-for></div><span style="font-size:13px;color:#C9D2DC">{{ inscritosLabel }}</span></div>
+        </section>
+        <button onClick="{{ openReport }}" style="align-self:flex-start;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid rgba(239,68,68,.5);background:transparent;color:#F87171;font:500 14px Inter;cursor:pointer;display:inline-flex;gap:8px;align-items:center;margin-top:4px" style-hover="background:rgba(239,68,68,.10)"><i class="ph ph-flag" style="font-size:16px"></i>Denunciar evento</button>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:0;z-index:20;padding:12px 20px 30px;background:linear-gradient(to top,#1A2730 75%,rgba(26,39,48,0));display:flex;flex-direction:column;gap:8px">
+      <sc-if value="{{ ctaNote }}"><span style="font-size:12px;color:{{ ctaNoteColor }};display:flex;gap:6px;align-items:center;justify-content:center"><i class="{{ ctaNoteIcon }}"></i>{{ ctaNote }}</span></sc-if>
+      <div style="display:flex;gap:8px">
+        <sc-if value="{{ showCancel }}"><button onClick="{{ askCancel }}" style="min-height:52px;padding:0 16px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.07)">Cancelar inscrição</button></sc-if>
+        <button onClick="{{ ctaAction }}" disabled="{{ ctaDisabled }}" style="flex:1;min-height:52px;border-radius:12px;border:1px solid {{ cta.border }};background:{{ cta.bg }};color:{{ cta.color }};font:500 15px Inter;cursor:{{ cta.cursor }};display:inline-flex;gap:8px;align-items:center;justify-content:center;opacity:{{ cta.op }}"><i class="{{ cta.icon }}" style="font-size:18px"></i>{{ cta.label }}</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ sheet }}">
+    <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:40;background:rgba(10,15,19,.5)"></div>
+    <div role="dialog" aria-modal="true" style="position:absolute;left:0;right:0;bottom:0;z-index:41;max-height:760px;overflow-y:auto;border-radius:24px 24px 0 0;background:#22323E;box-shadow:0 0 0 1px #45586C,0 -16px 40px rgba(0,0,0,.5);padding:8px 20px 32px;display:flex;flex-direction:column;gap:14px">
+      <div style="width:40px;height:4px;border-radius:2px;background:#56697D;align-self:center"></div>
+      <sc-if value="{{ sheetReport }}">
+        <h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Denunciar evento</h3>
+        <p style="margin:0;font-size:13px;line-height:1.5;color:#9AA4B2">A denúncia é anônima para o organizador. Nossa equipe analisa em até 24 h.</p>
+        <div role="radiogroup" style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{ reasons }}" as="r" hint-placeholder-count="5"><button onClick="{{ r.pick }}" role="radio" aria-checked="{{ r.aria }}" style="min-height:48px;padding:0 12px;border-radius:12px;border:1px solid {{ r.border }};background:{{ r.bg }};color:#F5F7FA;display:flex;gap:12px;align-items:center;text-align:left;cursor:pointer;font:14px Inter"><span style="width:20px;height:20px;flex:none;border-radius:50%;border:1.5px solid {{ r.border }};background:{{ r.dot }};box-shadow:inset 0 0 0 4px #22323E"></span>{{ r.label }}</button></sc-for></div>
+        <textarea placeholder="Detalhes (opcional)" style="min-height:80px;padding:10px 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px/1.5 Inter;outline:none;resize:none"></textarea>
+        <button onClick="{{ sendReport }}" disabled="{{ noReason }}" style="min-height:52px;border-radius:12px;border:1px solid #EF4444;background:transparent;color:#F87171;font:500 15px Inter;cursor:pointer;opacity:{{ reportOp }}" style-hover="background:rgba(239,68,68,.10)">Enviar denúncia</button>
+      </sc-if>
+      <sc-if value="{{ sheetCancel }}">
+        <h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Cancelar inscrição?</h3>
+        <p style="margin:0;font-size:14px;line-height:1.5;color:#C9D2DC">Sua vaga volta a ficar disponível e o organizador é avisado. Você pode se inscrever de novo enquanto houver vagas.</p>
+        <div style="display:flex;gap:8px"><button onClick="{{ closeSheet }}" style="flex:1;min-height:52px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer">Manter</button><button onClick="{{ doCancel }}" style="flex:1;min-height:52px;border-radius:12px;border:1px solid #EF4444;background:transparent;color:#F87171;font:500 15px Inter;cursor:pointer">Cancelar inscrição</button></div>
+      </sc-if>
+      <sc-if value="{{ sheetResults }}">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Resultados</h3><span style="font-size:12px;color:#9AA4B2">Publicado em 13 out</span></div>
+        <div style="padding:12px 14px;border-radius:12px;background:rgba(176,206,226,.10);box-shadow:inset 0 0 0 1px rgba(176,206,226,.35);display:flex;gap:12px;align-items:center"><span style="padding:2px 8px;border-radius:6px;background:#B0CEE2;color:#1A2730;font:700 18px 'Barlow Condensed'">P3</span><span style="flex:1;display:flex;flex-direction:column"><span style="font-size:14px;font-weight:500">Seu resultado · Turbo</span><span style="font-size:12px;color:#C9D2DC">Honda Civic Si · +15 pts no ranking</span></span><i class="ph-fill ph-trophy" style="font-size:22px;color:#B0CEE2"></i></div>
+        <div style="display:flex;padding:4px;gap:4px;border-radius:12px;background:#1A2730"><sc-for list="{{ resCats }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.pick }}" style="flex:1;min-height:36px;border-radius:9px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 13px Inter;cursor:pointer">{{ c.label }}</button></sc-for></div>
+        <div style="display:flex;flex-direction:column"><sc-for list="{{ resList }}" as="r" hint-placeholder-count="5"><div style="min-height:52px;display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;box-shadow:inset 0 -1px 0 #2C3D4B;background:{{ r.bg }}"><span style="font:600 20px 'Barlow Condensed';color:{{ r.posColor }}">P{{ r.pos }}</span><span style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:500">{{ r.name }}</span><span style="font-size:12px;color:#9AA4B2">{{ r.car }}</span></span><span style="font:600 16px 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ r.pts }} PTS</span></div></sc-for></div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ routeOpen }}">
+    <div onClick="{{ closeRoute }}" style="position:absolute;inset:0;z-index:45;background:rgba(10,15,19,.45)"></div>
+    <div style="position:absolute;left:8px;right:8px;bottom:30px;z-index:46;display:flex;flex-direction:column;gap:8px;font-family:-apple-system,system-ui,sans-serif">
+      <div style="border-radius:14px;background:rgba(44,44,48,.97);overflow:hidden;text-align:center"><div style="padding:12px;font-size:13px;color:#A0A0A8">Abrir rota até Autódromo Zilmar Beux em</div><button onClick="{{ closeRoute }}" style="display:block;width:100%;min-height:56px;border:0;border-top:1px solid rgba(255,255,255,.1);background:transparent;color:#0A84FF;font:20px -apple-system,system-ui;cursor:pointer">Google Maps</button><button onClick="{{ closeRoute }}" style="display:block;width:100%;min-height:56px;border:0;border-top:1px solid rgba(255,255,255,.1);background:transparent;color:#0A84FF;font:20px -apple-system,system-ui;cursor:pointer">Waze</button></div>
+      <button onClick="{{ closeRoute }}" style="min-height:56px;border:0;border-radius:14px;background:rgba(44,44,48,.97);color:#0A84FF;font:600 20px -apple-system,system-ui;cursor:pointer">Cancelar</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ toast }}"><div role="status" style="position:absolute;top:60px;left:16px;right:16px;z-index:55;padding:12px 14px;border-radius:12px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);display:flex;gap:12px;align-items:center;font-size:14px"><i class="ph-fill ph-check-circle" style="font-size:20px;color:#22C55E"></i><span style="flex:1">{{ toast }}</span></div></sc-if>
+  <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#F5F7FA;opacity:.8;z-index:70;pointer-events:none"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const VAGAS = { Turismo: [4, 12], Turbo: [6, 16], Aspirado: [8, 12] };
+const RES = { Turbo: [['Ana Beatriz Moraes', 'Toyota Supra MK4', 25], ['Rafael Kowalski', 'VW Golf GTI', 18], ['Lucas Andrade', 'Honda Civic Si', 15, true], ['Camila Rocha', 'Audi S3', 12], ['Diego Farias', 'VW Jetta GLI', 10]],
+  Turismo: [['Patrícia Weber', 'BMW 330i', 25], ['Marcos Vinícius Lopes', 'Ford Mustang GT', 18], ['Eduardo Sartori', 'Toyota Corolla GR', 15], ['Letícia Hoffmann', 'Honda Civic Touring', 12]],
+  Aspirado: [['Fernanda Zanella', 'Honda Civic Si 2008', 25], ['Bruno Takahashi', 'VW Gol GTI', 18], ['Gustavo Andreatta', 'Peugeot 206 RC', 15], ['Renata Oliveira', 'Honda Fit EX', 12]] };
+const REASONS = ['Local não é autorizado', 'Atividade fora do local informado', 'Informações falsas ou enganosas', 'Conteúdo impróprio', 'Outro motivo'];
+const CTA = ['open', 'pending', 'confirmed', 'full', 'closed'];
+const CTA_L = { open: 'Inscrever-se', pending: 'Inscrição pendente', confirmed: 'Inscrito', full: 'Vagas esgotadas', closed: 'Encerrado · ver resultados' };
+
+class Component extends DCLogic {
+  state = { cta: 'open', view: 'ok', rules: false, sheet: null, reason: null, route: false, toast: null, resCat: 'Turbo' };
+  componentWillUnmount() { clearTimeout(this.t); clearTimeout(this.l); }
+  flash(msg) { clearTimeout(this.t); this.setState({ toast: msg }); this.t = setTimeout(() => this.setState({ toast: null }), 3000); }
+  renderVals() {
+    const st = this.state, c = st.cta;
+    const tint = (a) => ({ bg: a ? 'rgba(233,93,44,.10)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', bar: a ? 'inset 2px 0 0 #E95D2C' : 'none' });
+    const full = c === 'full', closed = c === 'closed';
+    const vagas = Object.entries(VAGAS).map(([cat, [left, tot]]) => { const l = full ? 0 : left; return { cat, label: closed ? tot + ' pilotos' : l ? l + ' de ' + tot + ' livres' : 'Esgotada', pct: (closed ? 100 : Math.round((tot - l) / tot * 100)) + '%', bar: closed ? '#45586C' : l ? '#E95D2C' : '#EF4444', color: l || closed ? '#9AA4B2' : '#F87171' }; });
+    const leftTotal = full || closed ? 0 : 18;
+    const cta = {
+      open: { label: 'Inscrever-se', icon: 'ph ph-lightning', border: '#E95D2C', bg: 'transparent', color: '#F28A62', cursor: 'pointer', op: 1 },
+      pending: { label: 'Inscrição pendente', icon: 'ph ph-hourglass-medium', border: '#F59E0B', bg: 'rgba(245,158,11,.10)', color: '#FBBF24', cursor: 'default', op: 1 },
+      confirmed: { label: 'Inscrito', icon: 'ph-bold ph-check', border: '#22C55E', bg: 'rgba(34,197,94,.10)', color: '#4ADE80', cursor: 'default', op: 1 },
+      full: { label: 'Vagas esgotadas', icon: 'ph ph-prohibit', border: '#45586C', bg: 'transparent', color: '#9AA4B2', cursor: 'not-allowed', op: 0.6 },
+      closed: { label: 'Ver resultados', icon: 'ph ph-trophy', border: '#B0CEE2', bg: 'transparent', color: '#B0CEE2', cursor: 'pointer', op: 1 }
+    }[c];
+    const notes = { pending: ['Aguardando aprovação do Oeste Track Club', '#FBBF24', 'ph ph-info'], confirmed: ['Confirmada · Honda Civic Si · Turbo', '#4ADE80', 'ph-bold ph-check'], full: ['Todas as categorias estão completas', '#9AA4B2', 'ph ph-info'], closed: ['Evento encerrado em 12 out', '#9AA4B2', 'ph ph-flag-checkered'] };
+    const n = notes[c];
+    const stMap = { closed: { label: 'Encerrado', bg: '#424048', color: '#D5D8DE', dot: '#9AA4B2' } };
+    const stB = stMap[c] || { label: 'Aberto', bg: 'rgba(34,197,94,.14)', color: '#4ADE80', dot: '#22C55E' };
+    const view = st.view;
+    const stateJumps = [['ok', 'Sucesso'], ['loading', 'Carregando (skeleton)'], ['error', 'Erro com retry'], ['offline', 'Offline (cache)'], ['report', 'Denunciar evento · sheet'], ['cancel', 'Cancelar inscrição · sheet']].map(([k, label]) => ({ label, ...tint((k === view && !st.sheet) || (k === 'report' && st.sheet === 'report') || (k === 'cancel' && st.sheet === 'cancel')), go: () => {
+      if (k === 'report') return this.setState({ view: 'ok', sheet: 'report', reason: null });
+      if (k === 'cancel') return this.setState({ view: 'ok', cta: 'confirmed', sheet: 'cancel' });
+      this.setState({ view: k, sheet: null });
+    } }));
+    const av = ['RK', 'AM', 'TN', 'CR', 'DF'];
+    const avBg = ['#45586C', '#424048', '#2C3D4B', '#45586C', '#424048'];
+    return {
+      screenLabel: 'Detalhe do evento · ' + CTA_L[c],
+      ctaJumps: CTA.map(k => ({ label: CTA_L[k], ...tint(c === k), go: () => this.setState({ cta: k, view: 'ok', sheet: null }) })),
+      stateJumps,
+      wifiIcon: view === 'offline' ? 'ph ph-wifi-slash' : 'ph ph-wifi-high',
+      isLoading: view === 'loading', isError: view === 'error', isContent: view === 'ok' || view === 'offline', isOffline: view === 'offline',
+      retry: () => { this.setState({ view: 'loading' }); this.l = setTimeout(() => this.setState({ view: 'ok' }), 900); },
+      noop: () => {},
+      st: stB, vagas, totalLeft: closed ? '40 pilotos participaram' : leftTotal ? leftTotal + ' de 40 livres' : 'Esgotado',
+      avatars: av.map((ini, i) => ({ ini, bg: avBg[i] })), inscritosLabel: closed ? '40 pilotos participaram' : (full ? 40 : 22) + ' pilotos inscritos',
+      rulesOpen: st.rules, rulesLabel: st.rules ? 'Mostrar menos' : 'Ver todas as regras', toggleRules: () => this.setState(x => ({ rules: !x.rules })),
+      cta, ctaDisabled: full || c === 'pending' || c === 'confirmed',
+      ctaNote: n ? n[0] : '', ctaNoteColor: n ? n[1] : '', ctaNoteIcon: n ? n[2] : '',
+      showCancel: c === 'pending' || c === 'confirmed',
+      ctaAction: () => { if (c === 'open') { this.setState({ cta: 'confirmed' }); this.flash('Inscrição confirmada · abre o fluxo de inscrição (fluxo b)'); } if (c === 'closed') this.setState({ sheet: 'results' }); },
+      askCancel: () => this.setState({ sheet: 'cancel' }),
+      doCancel: () => { this.setState({ sheet: null, cta: 'open' }); this.flash('Inscrição cancelada. O organizador foi avisado.'); },
+      openReport: () => this.setState({ sheet: 'report', reason: null }),
+      sheet: !!st.sheet, sheetReport: st.sheet === 'report', sheetCancel: st.sheet === 'cancel', sheetResults: st.sheet === 'results',
+      closeSheet: () => this.setState({ sheet: null }),
+      reasons: REASONS.map((label, i) => { const a = st.reason === i; return { label, aria: a ? 'true' : 'false', border: a ? '#EF4444' : '#45586C', bg: a ? 'rgba(239,68,68,.08)' : 'transparent', dot: a ? '#EF4444' : 'transparent', pick: () => this.setState({ reason: i }) }; }),
+      noReason: st.reason === null, reportOp: st.reason === null ? 0.45 : 1,
+      sendReport: () => { if (st.reason === null) return; this.setState({ sheet: null }); this.flash('Denúncia enviada. Nossa equipe analisa em até 24 h.'); },
+      resCats: Object.keys(RES).map(k => { const a = st.resCat === k; return { label: k, border: a ? '#E95D2C' : 'transparent', bg: a ? 'rgba(233,93,44,.12)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', pick: () => this.setState({ resCat: k }) }; }),
+      resList: RES[st.resCat].map(([name, car, pts, me], i) => ({ pos: i + 1, name: me ? name + ' (você)' : name, car, pts, posColor: i < 3 ? '#B0CEE2' : '#9AA4B2', bg: me ? 'rgba(176,206,226,.06)' : 'transparent' })),
+      openRoute: () => this.setState({ route: true }), routeOpen: st.route, closeRoute: () => this.setState({ route: false }),
+      toast: st.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

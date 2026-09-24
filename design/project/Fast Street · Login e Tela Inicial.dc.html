@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/styles.css">
+<script src="_ds/nocturne-2a8e22c7-5f05-4cd9-a092-10cd6b20e56d/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="./image-slot.js"></script>
+<style>*{scrollbar-width:none}*::-webkit-scrollbar{display:none}body{margin:0;background:#141F27;color:#F5F7FA;font-family:Inter,system-ui,sans-serif}a{color:#F28A62}a:hover{color:#E95D2C}input[type=range]{accent-color:#E95D2C}input::placeholder,textarea::placeholder{color:#6B7F95}select option{background:#22323E}</style>
+</helmet>
+<div style="min-height:100vh;padding:48px;display:flex;gap:64px;flex-wrap:wrap;align-items:flex-start;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;background:#141F27">
+
+<aside style="width:340px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">Protótipo · fluxo (a)</span>
+    <h1 style="margin:0;font:600 40px/1 'Barlow Condensed';text-transform:uppercase">Cadastro até o Feed</h1>
+    <p style="margin:0;font-size:14px;line-height:1.55;color:#9AA4B2;text-wrap:pretty">Cadastro → dados opcionais → permissões → primeiro veículo → Feed. Navegue pelo celular ou salte para qualquer tela e estado na lista.</p>
+  </div>
+  <div style="padding:16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;flex-direction:column;gap:8px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;color:#9AA4B2">Tempo do fluxo</span><span style="font-size:12px;color:#9AA4B2">meta 02:00</span></div>
+    <span style="font:600 44px/1 'Barlow Condensed';font-variant-numeric:tabular-nums;color:{{ timerColor }}">{{ timer }}</span>
+    <div style="height:4px;border-radius:2px;background:#2C3D4B"><div style="height:4px;border-radius:2px;width:{{ timerPct }};background:{{ timerColor }}"></div></div>
+    <span style="font-size:12px;color:#9AA4B2">{{ timerNote }}</span>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button onClick="{{ fillDemo }}" style="min-height:40px;padding:0 14px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center" style-hover="background:rgba(233,93,44,.12)"><i class="ph ph-magic-wand" style="font-size:15px"></i>Preencher dados fictícios</button>
+    <button onClick="{{ restart }}" style="min-height:40px;padding:0 14px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 13px Inter;cursor:pointer;display:inline-flex;gap:6px;align-items:center" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-arrow-counter-clockwise" style="font-size:15px"></i>Reiniciar</button>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px">
+    <span style="font-size:12px;color:#9AA4B2;margin-bottom:6px">Telas e estados</span>
+    <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="12">
+      <button onClick="{{ j.go }}" style="min-height:36px;padding:0 12px;border:0;border-radius:10px;text-align:left;background:{{ j.bg }};color:{{ j.color }};box-shadow:{{ j.bar }};font:500 13px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">{{ j.label }}</button>
+    </sc-for>
+  </nav>
+  <p style="margin:0;font-size:12px;line-height:1.5;color:#9AA4B2">Login de teste: qualquer e-mail + senha com 8+ caracteres entra. Um e-mail com "naoverificado" mostra a conta não verificada. No cadastro, piloto@faststreet.com.br já existe.</p>
+</aside>
+
+<div style="flex:none;width:390px;height:844px;border-radius:52px;box-shadow:0 0 0 10px #0F171D,0 0 0 11px #45586C,0 40px 80px rgba(0,0,0,.5);position:relative;overflow:hidden;background:#1A2730" data-screen-label="{{ screenLabel }}">
+  <div style="position:absolute;top:0;left:0;right:0;height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 34px;z-index:30;pointer-events:none;font:600 15px Inter;color:#F5F7FA"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#0F171D;z-index:31"></div>
+
+  <sc-if value="{{ s.splash }}" hint-placeholder-val="{{ true }}">
+    <div onClick="{{ toCarousel }}" style="position:absolute;inset:0;cursor:pointer">
+      <image-slot id="fa-splash" shape="rect" placeholder="Grid de largada / autódromo à noite"></image-slot>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,#1A2730 30%,rgba(26,39,48,.4) 70%,rgba(26,39,48,.2));pointer-events:none"></div>
+      <div style="position:absolute;left:28px;right:28px;bottom:72px;display:flex;flex-direction:column;gap:16px;pointer-events:none">
+        <div style="width:56px;height:56px;border-radius:16px;border:1px solid #E95D2C;display:grid;place-items:center;color:#F28A62;background:rgba(26,39,48,.6)"><i class="ph ph-flag-checkered" style="font-size:30px"></i></div>
+        <span style="font:600 64px/0.9 'Barlow Condensed';text-transform:uppercase;letter-spacing:.02em">Fast<br>Street</span>
+        <span style="font-size:15px;color:#C9D2DC">Eventos legalizados em locais autorizados.</span>
+        <div style="height:2px;width:120px;border-radius:1px;background:linear-gradient(to right,#E95D2C,transparent)"></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.carousel }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;background:#1A2730">
+      <div style="position:relative;height:480px;flex:none">
+        <sc-if value="{{ slide0 }}"><image-slot id="fa-ob-1" shape="rect" placeholder="Carro nos boxes"></image-slot></sc-if>
+        <sc-if value="{{ slide1 }}"><image-slot id="fa-ob-2" shape="rect" placeholder="Vista aérea do autódromo"></image-slot></sc-if>
+        <sc-if value="{{ slide2 }}"><image-slot id="fa-ob-3" shape="rect" placeholder="Pódio / pit lane"></image-slot></sc-if>
+        <div style="position:absolute;inset:auto 0 0 0;height:160px;background:linear-gradient(to top,#1A2730,rgba(26,39,48,0));pointer-events:none"></div>
+        <button onClick="{{ toSignup }}" style="position:absolute;top:52px;right:16px;min-height:44px;padding:0 14px;border-radius:12px;border:0;background:rgba(26,39,48,.7);color:#F5F7FA;font:500 14px Inter;cursor:pointer">Pular</button>
+      </div>
+      <div style="flex:1;padding:0 28px;display:flex;flex-direction:column;gap:12px">
+        <span style="font:600 13px/1 'Barlow Condensed';letter-spacing:.16em;color:#F28A62">{{ slideNum }} / 03</span>
+        <sc-if value="{{ slide0 }}"><h2 style="margin:0;font:600 40px/0.95 'Barlow Condensed';text-transform:uppercase">Sua garagem virtual</h2><p style="margin:0;font-size:15px;line-height:1.55;color:#9AA4B2">Cadastre seus carros com fotos e especificações e escolha o principal para se inscrever em eventos.</p></sc-if>
+        <sc-if value="{{ slide1 }}"><h2 style="margin:0;font:600 40px/0.95 'Barlow Condensed';text-transform:uppercase">Eventos no mapa</h2><p style="margin:0;font-size:15px;line-height:1.55;color:#9AA4B2">Track days, arrancadas autorizadas e encontros em autódromos e áreas privadas perto de você.</p></sc-if>
+        <sc-if value="{{ slide2 }}"><h2 style="margin:0;font:600 40px/0.95 'Barlow Condensed';text-transform:uppercase">Suba no ranking</h2><p style="margin:0;font-size:15px;line-height:1.55;color:#9AA4B2">Resultados publicados pelos organizadores viram pontos, pódios e conquistas.</p></sc-if>
+        <div style="display:flex;gap:6px;margin-top:4px"><sc-for list="{{ dots }}" as="d" hint-placeholder-count="3"><button onClick="{{ d.go }}" aria-label="Slide" style="width:{{ d.w }};height:6px;border-radius:3px;border:0;padding:0;background:{{ d.c }};cursor:pointer;transition:width .2s"></button></sc-for></div>
+      </div>
+      <div style="padding:16px 28px 36px;display:flex;flex-direction:column;gap:8px">
+        <button onClick="{{ nextSlide }}" style="min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)" style-active="background:rgba(166,62,27,.35)">{{ slideCta }}</button>
+        <button onClick="{{ toLogin }}" style="min-height:48px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">Já tenho conta</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.login }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding-top:47px;background:#1A2730">
+      <div style="padding:4px 12px;display:flex;align-items:center"><button onClick="{{ toCarousel }}" aria-label="Voltar" style="width:44px;height:44px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-arrow-left" style="font-size:22px"></i></button></div>
+      <div style="flex:1;overflow-y:auto;padding:8px 24px 24px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-10</span><h2 style="margin:0;font:600 44px/0.95 'Barlow Condensed';text-transform:uppercase">Entrar</h2></div>
+        <sc-if value="{{ loginErr }}">
+          <div role="alert" style="padding:12px 14px;border-radius:12px;background:rgba(239,68,68,.10);border:1px solid rgba(239,68,68,.4);display:flex;gap:10px;align-items:center;font-size:14px;color:#FCA5A5"><i class="ph ph-warning-circle" style="font-size:20px;color:#F87171"></i>E-mail ou senha incorretos</div>
+        </sc-if>
+        <sc-if value="{{ loginUnverified }}">
+          <div role="alert" style="padding:16px;border-radius:12px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.4);display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;gap:10px;align-items:center"><i class="ph ph-envelope-simple-open" style="font-size:20px;color:#FBBF24"></i><span style="font-size:15px;font-weight:500">Confirme seu e-mail</span></div>
+            <span style="font-size:13px;line-height:1.5;color:#C9D2DC">Sua conta ainda não foi verificada. Abra o link que enviamos para {{ loginEmail }} (confira também o spam).</span>
+            <sc-if value="{{ notResent }}"><button onClick="{{ resend }}" style="align-self:flex-start;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #F59E0B;background:transparent;color:#FBBF24;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(245,158,11,.12)">Reenviar e-mail de verificação</button></sc-if>
+            <sc-if value="{{ resent }}"><span style="font-size:13px;color:#4ADE80;display:flex;gap:6px;align-items:center"><i class="ph-bold ph-check"></i>E-mail reenviado. Você pode reenviar de novo em 60 s.</span></sc-if>
+          </div>
+        </sc-if>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">E-mail</span><input type="email" value="{{ lg.email }}" onChange="{{ on.lgEmail }}" placeholder="voce@email.com" autocomplete="email" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px Inter;outline:none" style-focus="border-color:#E95D2C;box-shadow:0 0 0 3px rgba(233,93,44,.25)"></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Senha</span><div style="position:relative"><input type="{{ pwdType }}" value="{{ lg.pwd }}" onChange="{{ on.lgPwd }}" placeholder="Sua senha" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 48px 0 14px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px Inter;outline:none" style-focus="border-color:#E95D2C;box-shadow:0 0 0 3px rgba(233,93,44,.25)"><button onClick="{{ togglePwd }}" aria-label="Mostrar senha" style="position:absolute;right:2px;top:2px;width:44px;height:44px;border:0;background:transparent;color:#9AA4B2;display:grid;place-items:center;cursor:pointer"><i class="{{ pwdIcon }}" style="font-size:20px"></i></button></div></label>
+        <a href="#" onClick="{{ noop }}" style="align-self:flex-start;font-size:14px;margin-top:-8px;padding:6px 0">Esqueci minha senha</a>
+        <button onClick="{{ doLogin }}" style="min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)" style-active="background:rgba(166,62,27,.35)">Entrar</button>
+        <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:#9AA4B2"><div style="flex:1;height:1px;background:linear-gradient(to right,transparent,#45586C)"></div>ou<div style="flex:1;height:1px;background:linear-gradient(to left,transparent,#45586C)"></div></div>
+        <button onClick="{{ toFeedSocial }}" style="min-height:48px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer;display:flex;gap:10px;align-items:center;justify-content:center" style-hover="background:rgba(245,247,250,.07)"><i class="ph ph-google-logo" style="font-size:20px"></i>Entrar com Google</button>
+        <button onClick="{{ toFeedSocial }}" style="min-height:48px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer;display:flex;gap:10px;align-items:center;justify-content:center" style-hover="background:rgba(245,247,250,.07)"><i class="ph-fill ph-apple-logo" style="font-size:20px"></i>Entrar com Apple</button>
+      </div>
+      <div style="padding:12px 24px 34px;font-size:14px;color:#9AA4B2;display:flex;gap:6px;justify-content:center">Não tem conta? <a href="#" onClick="{{ toSignupLink }}">Criar conta</a></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.signup }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding-top:47px;background:#1A2730">
+      <div style="padding:4px 12px 0;display:flex;align-items:center;gap:8px"><button onClick="{{ toCarousel }}" aria-label="Voltar" style="width:44px;height:44px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;display:grid;place-items:center;cursor:pointer"><i class="ph ph-arrow-left" style="font-size:22px"></i></button>
+        <div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding-right:16px"><sc-for list="{{ prog }}" as="p" hint-placeholder-count="4"><div style="height:3px;border-radius:2px;background:{{ p.c }}"></div></sc-for></div></div>
+      <div id="su-scroll" style="flex:1;overflow-y:auto;padding:12px 24px 24px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-00 · Passo 1 de 4</span><h2 style="margin:0;font:600 40px/0.95 'Barlow Condensed';text-transform:uppercase">Criar conta</h2></div>
+        <sc-if value="{{ suHasErr }}"><div role="alert" style="padding:10px 14px;border-radius:12px;background:rgba(239,68,68,.10);border:1px solid rgba(239,68,68,.4);font-size:13px;color:#FCA5A5;display:flex;gap:8px;align-items:center"><i class="ph ph-warning-circle" style="font-size:18px;color:#F87171"></i>{{ suErrSummary }}</div></sc-if>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">E-mail</span><input type="email" value="{{ su.email }}" onChange="{{ on.email }}" placeholder="voce@email.com" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ b.email }};background:{{ bg.email }};color:#F5F7FA;font:15px Inter;outline:none" style-focus="box-shadow:0 0 0 3px rgba(233,93,44,.25)">
+          <sc-if value="{{ emailExists }}"><span style="font-size:12px;color:#F87171">E-mail já cadastrado. <a href="#" onClick="{{ toLoginLink }}">Entrar com este e-mail</a></span></sc-if>
+          <sc-if value="{{ er.email }}"><span style="font-size:12px;color:#F87171">{{ er.email }}</span></sc-if></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Senha</span><input type="password" value="{{ su.pwd }}" onChange="{{ on.pwd }}" placeholder="Mínimo 8 caracteres" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ b.pwd }};background:{{ bg.pwd }};color:#F5F7FA;font:15px Inter;outline:none" style-focus="box-shadow:0 0 0 3px rgba(233,93,44,.25)">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px"><sc-for list="{{ bars }}" as="x" hint-placeholder-count="4"><div style="height:4px;border-radius:2px;background:{{ x.c }}"></div></sc-for></div>
+          <span style="font-size:12px;color:{{ pwdHintColor }}">{{ pwdHint }}</span></label>
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#C9D2DC">Como você vai usar o Fast Street?</span>
+          <div style="display:flex;flex-direction:column;gap:8px"><sc-for list="{{ perfis }}" as="p" hint-placeholder-count="3">
+            <button onClick="{{ p.pick }}" role="radio" aria-checked="{{ p.aria }}" style="min-height:60px;padding:10px 14px;border-radius:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:#F5F7FA;display:flex;gap:12px;align-items:center;text-align:left;cursor:pointer;font:inherit"><span style="width:40px;height:40px;flex:none;border-radius:10px;background:#22323E;display:grid;place-items:center;color:{{ p.ic }}"><i class="{{ p.icon }}" style="font-size:22px"></i></span><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:500">{{ p.label }}</span><span style="font-size:12px;color:#9AA4B2">{{ p.sub }}</span></span><span style="width:20px;height:20px;flex:none;border-radius:50%;border:1.5px solid {{ p.border }};background:{{ p.dot }};box-shadow:inset 0 0 0 4px #1A2730"></span></button>
+          </sc-for></div></div>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Nome completo</span><input value="{{ su.nome }}" onChange="{{ on.nome }}" placeholder="Como aparece no ranking" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ b.nome }};background:{{ bg.nome }};color:#F5F7FA;font:15px Inter;outline:none" style-focus="box-shadow:0 0 0 3px rgba(233,93,44,.25)"><sc-if value="{{ er.nome }}"><span style="font-size:12px;color:#F87171">{{ er.nome }}</span></sc-if></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Cidade</span><div style="position:relative"><select value="{{ su.cidade }}" onChange="{{ on.cidade }}" style="width:100%;appearance:none;min-height:48px;padding:0 44px 0 14px;border-radius:12px;border:1px solid {{ b.cidade }};background:{{ bg.cidade }};color:#F5F7FA;font:15px Inter;outline:none"><option value="">Selecione</option><option>Cascavel, PR</option><option>Curitiba, PR</option><option>Londrina, PR</option><option>Maringá, PR</option></select><i class="ph ph-caret-down" style="position:absolute;right:14px;top:14px;font-size:18px;color:#9AA4B2;pointer-events:none"></i></div><sc-if value="{{ er.cidade }}"><span style="font-size:12px;color:#F87171">{{ er.cidade }}</span></sc-if></label>
+        <sc-if value="{{ isOrg }}">
+          <div style="display:flex;flex-direction:column;gap:18px;padding:16px;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B">
+            <div style="display:flex;gap:8px;align-items:center;color:#B0CEE2;font-size:13px"><i class="ph-fill ph-seal-check" style="font-size:18px"></i>Dados para verificação do organizador</div>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Nome da organização</span><input value="{{ su.org }}" onChange="{{ on.org }}" placeholder="Ex.: Oeste Track Club" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ b.org }};background:{{ bg.org }};color:#F5F7FA;font:15px Inter;outline:none"><sc-if value="{{ er.org }}"><span style="font-size:12px;color:#F87171">{{ er.org }}</span></sc-if></label>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">CPF ou CNPJ</span><input inputmode="numeric" value="{{ su.doc }}" onChange="{{ on.doc }}" placeholder="Somente números" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ b.doc }};background:{{ bg.doc }};color:#F5F7FA;font:15px Inter;outline:none"><sc-if value="{{ er.doc }}"><span style="font-size:12px;color:#F87171">{{ er.doc }}</span></sc-if></label>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Telefone</span><input inputmode="tel" value="{{ su.tel }}" onChange="{{ on.tel }}" placeholder="(45) 99999-0000" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ b.tel }};background:{{ bg.tel }};color:#F5F7FA;font:15px Inter;outline:none"><sc-if value="{{ er.tel }}"><span style="font-size:12px;color:#F87171">{{ er.tel }}</span></sc-if></label>
+          </div>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;gap:12px;align-items:flex-start"><button onClick="{{ toggleTerms }}" role="checkbox" aria-checked="{{ termsAria }}" aria-label="Aceitar termos" style="flex:none;width:44px;height:44px;margin:-10px 0 0 -10px;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;padding:0"><span style="width:24px;height:24px;border-radius:6px;border:1.5px solid {{ termsBorder }};background:{{ termsBg }};display:grid;place-items:center;color:#1A2730"><sc-if value="{{ su.terms }}"><i class="ph-bold ph-check" style="font-size:14px"></i></sc-if></span></button>
+          <span style="font-size:14px;line-height:1.5;margin-left:-10px">Li e aceito os <a href="#" onClick="{{ noop }}">Termos de Uso</a> e a <a href="#" onClick="{{ noop }}">Política de Privacidade</a> (LGPD).</span></div>
+          <sc-if value="{{ er.terms }}"><span style="font-size:12px;color:#F87171;padding-left:34px">{{ er.terms }}</span></sc-if>
+        </div>
+      </div>
+      <div style="padding:12px 24px 34px;box-shadow:0 -1px 0 #22323E">
+        <button onClick="{{ doSignup }}" style="width:100%;min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)" style-active="background:rgba(166,62,27,.35)">Criar conta</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.optional }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding-top:47px;background:#1A2730">
+      <div style="padding:4px 12px 0 24px;display:flex;align-items:center;gap:12px">
+        <div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:4px"><sc-for list="{{ prog }}" as="p" hint-placeholder-count="4"><div style="height:3px;border-radius:2px;background:{{ p.c }}"></div></sc-for></div>
+        <button onClick="{{ toPerm }}" style="min-height:44px;padding:0 14px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.07)">Pular</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:12px 24px 24px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-16 · Passo 2 de 4 · Opcional</span><h2 style="margin:0;font:600 40px/0.95 'Barlow Condensed';text-transform:uppercase">Complete seu perfil</h2><p style="margin:4px 0 0;font-size:14px;color:#9AA4B2">Você pode editar depois em Perfil.</p></div>
+        <div style="display:flex;gap:16px;align-items:center"><div style="width:96px;height:96px;flex:none"><image-slot id="fa-avatar" shape="circle" placeholder="Foto"></image-slot></div><div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15px;font-weight:500">Foto de perfil</span><span style="font-size:13px;color:#9AA4B2">Toque no círculo para escolher. Aparece no ranking e nas inscrições.</span></div></div>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC;display:flex;justify-content:space-between">Bio<span style="color:#9AA4B2">{{ bioCount }}/160</span></span><textarea maxlength="160" value="{{ opt.bio }}" onChange="{{ on.bio }}" placeholder="Ex.: Track days desde 2018, foco em Turismo." style="min-height:96px;padding:12px 14px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px/1.5 Inter;outline:none;resize:none" style-focus="border-color:#E95D2C;box-shadow:0 0 0 3px rgba(233,93,44,.25)"></textarea></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Instagram</span><div style="position:relative"><i class="ph ph-instagram-logo" style="position:absolute;left:14px;top:14px;font-size:20px;color:#9AA4B2"></i><input value="{{ opt.ig }}" onChange="{{ on.ig }}" placeholder="@seuperfil" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px 0 44px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px Inter;outline:none" style-focus="border-color:#E95D2C;box-shadow:0 0 0 3px rgba(233,93,44,.25)"></div></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">YouTube</span><div style="position:relative"><i class="ph ph-youtube-logo" style="position:absolute;left:14px;top:14px;font-size:20px;color:#9AA4B2"></i><input value="{{ opt.yt }}" onChange="{{ on.yt }}" placeholder="youtube.com/@canal" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px 0 44px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px Inter;outline:none" style-focus="border-color:#E95D2C;box-shadow:0 0 0 3px rgba(233,93,44,.25)"></div></label>
+      </div>
+      <div style="padding:12px 24px 34px;display:flex;gap:8px;box-shadow:0 -1px 0 #22323E">
+        <button onClick="{{ toPerm }}" style="min-height:52px;padding:0 20px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">Pular</button>
+        <button onClick="{{ toPerm }}" style="flex:1;min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)">Continuar</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.permLoc }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding-top:47px;background:radial-gradient(120% 60% at 0% 20%,#22323E,#1A2730 60%)">
+      <div style="padding:16px 24px 0"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px"><sc-for list="{{ prog }}" as="p" hint-placeholder-count="4"><div style="height:3px;border-radius:2px;background:{{ p.c }}"></div></sc-for></div></div>
+      <div style="flex:1;padding:48px 28px 24px;display:flex;flex-direction:column;gap:20px">
+        <div style="width:72px;height:72px;border-radius:20px;border:1px solid #E95D2C;display:grid;place-items:center;color:#F28A62;box-shadow:0 0 40px rgba(233,93,44,.25)"><i class="ph ph-map-pin-area" style="font-size:36px"></i></div>
+        <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">Passo 3 de 4 · Localização</span>
+        <h2 style="margin:0;font:600 44px/0.95 'Barlow Condensed';text-transform:uppercase">Eventos perto de você</h2>
+        <p style="margin:0;font-size:15px;line-height:1.55;color:#C9D2DC">Usamos sua localização para mostrar eventos e parceiros próximos e calcular a distância até cada local.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
+          <div style="display:flex;gap:12px;align-items:flex-start;font-size:14px;color:#C9D2DC"><i class="ph ph-eye-slash" style="font-size:20px;color:#B0CEE2;flex:none"></i>Sua posição nunca aparece para outros usuários.</div>
+          <div style="display:flex;gap:12px;align-items:flex-start;font-size:14px;color:#C9D2DC"><i class="ph ph-map-trifold" style="font-size:20px;color:#B0CEE2;flex:none"></i>O mapa mostra apenas eventos e parceiros.</div>
+          <div style="display:flex;gap:12px;align-items:flex-start;font-size:14px;color:#C9D2DC"><i class="ph ph-hand-pointing" style="font-size:20px;color:#B0CEE2;flex:none"></i>Prefere não permitir? Defina a cidade manualmente.</div>
+        </div>
+      </div>
+      <div style="padding:12px 24px 34px;display:flex;flex-direction:column;gap:8px">
+        <button onClick="{{ askLoc }}" style="min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)">Permitir localização</button>
+        <button onClick="{{ toNotif }}" style="min-height:48px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">Definir local manualmente</button>
+      </div>
+      <sc-if value="{{ nativeLoc }}">
+        <div style="position:absolute;inset:0;background:rgba(10,15,19,.55);display:grid;place-items:center;z-index:20">
+          <div style="width:270px;border-radius:14px;background:rgba(44,44,48,.97);overflow:hidden;text-align:center;font-family:-apple-system,system-ui,sans-serif">
+            <div style="padding:18px 16px 16px;display:flex;flex-direction:column;gap:6px"><span style="font-size:17px;font-weight:600;line-height:1.3">Permitir que "Fast Street" use sua localização?</span><span style="font-size:13px;line-height:1.35;color:#D0D0D6">Para mostrar eventos e parceiros perto de você.</span></div>
+            <button onClick="{{ toNotif }}" style="display:block;width:100%;min-height:44px;border:0;border-top:1px solid rgba(255,255,255,.12);background:transparent;color:#0A84FF;font:17px -apple-system,system-ui;cursor:pointer">Permitir uma vez</button>
+            <button onClick="{{ toNotif }}" style="display:block;width:100%;min-height:44px;border:0;border-top:1px solid rgba(255,255,255,.12);background:transparent;color:#0A84FF;font:600 17px -apple-system,system-ui;cursor:pointer">Permitir ao usar o app</button>
+            <button onClick="{{ toNotif }}" style="display:block;width:100%;min-height:44px;border:0;border-top:1px solid rgba(255,255,255,.12);background:transparent;color:#0A84FF;font:17px -apple-system,system-ui;cursor:pointer">Não permitir</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.permNotif }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding-top:47px;background:radial-gradient(120% 60% at 0% 20%,#22323E,#1A2730 60%)">
+      <div style="padding:16px 24px 0"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px"><sc-for list="{{ prog }}" as="p" hint-placeholder-count="4"><div style="height:3px;border-radius:2px;background:{{ p.c }}"></div></sc-for></div></div>
+      <div style="flex:1;padding:48px 28px 24px;display:flex;flex-direction:column;gap:20px">
+        <div style="width:72px;height:72px;border-radius:20px;border:1px solid #E95D2C;display:grid;place-items:center;color:#F28A62;box-shadow:0 0 40px rgba(233,93,44,.25)"><i class="ph ph-bell-ringing" style="font-size:36px"></i></div>
+        <span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">Passo 3 de 4 · Notificações</span>
+        <h2 style="margin:0;font:600 44px/0.95 'Barlow Condensed';text-transform:uppercase">Fique no grid</h2>
+        <p style="margin:0;font-size:15px;line-height:1.55;color:#C9D2DC">Avisamos quando algo importante acontecer com seus eventos. Você escolhe os tipos em Configurações.</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+          <div style="padding:12px 14px;border-radius:12px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;gap:12px;align-items:center;font-size:14px"><i class="ph-fill ph-check-circle" style="font-size:20px;color:#22C55E"></i>Inscrição aprovada</div>
+          <div style="padding:12px 14px;border-radius:12px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;gap:12px;align-items:center;font-size:14px"><i class="ph ph-flag-checkered" style="font-size:20px;color:#F28A62"></i>Novo evento na sua região</div>
+          <div style="padding:12px 14px;border-radius:12px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;display:flex;gap:12px;align-items:center;font-size:14px"><i class="ph-fill ph-trophy" style="font-size:20px;color:#B0CEE2"></i>Resultado publicado e conquistas</div>
+        </div>
+      </div>
+      <div style="padding:12px 24px 34px;display:flex;flex-direction:column;gap:8px">
+        <button onClick="{{ askNotif }}" style="min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(233,93,44,.12)">Ativar notificações</button>
+        <button onClick="{{ toVehicle }}" style="min-height:48px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;font:500 15px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">Agora não</button>
+      </div>
+      <sc-if value="{{ nativeNotif }}">
+        <div style="position:absolute;inset:0;background:rgba(10,15,19,.55);display:grid;place-items:center;z-index:20">
+          <div style="width:270px;border-radius:14px;background:rgba(44,44,48,.97);overflow:hidden;text-align:center;font-family:-apple-system,system-ui,sans-serif">
+            <div style="padding:18px 16px 16px;display:flex;flex-direction:column;gap:6px"><span style="font-size:17px;font-weight:600;line-height:1.3">"Fast Street" deseja enviar notificações</span><span style="font-size:13px;line-height:1.35;color:#D0D0D6">Alertas, sons e indicadores. Configure em Ajustes.</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid rgba(255,255,255,.12)"><button onClick="{{ toVehicle }}" style="min-height:44px;border:0;border-right:1px solid rgba(255,255,255,.12);background:transparent;color:#0A84FF;font:17px -apple-system,system-ui;cursor:pointer">Não permitir</button><button onClick="{{ toVehicle }}" style="min-height:44px;border:0;background:transparent;color:#0A84FF;font:600 17px -apple-system,system-ui;cursor:pointer">Permitir</button></div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.vehicle }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding-top:47px;background:#1A2730">
+      <div style="padding:4px 12px 0 24px;display:flex;align-items:center;gap:12px">
+        <div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:4px"><sc-for list="{{ prog }}" as="p" hint-placeholder-count="4"><div style="height:3px;border-radius:2px;background:{{ p.c }}"></div></sc-for></div>
+        <button onClick="{{ skipVehicle }}" style="min-height:44px;padding:0 14px;border-radius:12px;border:0;background:transparent;color:#F5F7FA;font:500 14px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.06)">Fazer depois</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:12px 24px 24px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">UC-01 · Passo 4 de 4</span><h2 style="margin:0;font:600 40px/0.95 'Barlow Condensed';text-transform:uppercase">Seu primeiro veículo</h2><p style="margin:4px 0 0;font-size:14px;color:#9AA4B2">Necessário para se inscrever em eventos. Ele será o seu veículo principal.</p></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;color:#C9D2DC">Fotos</span><span style="font-size:12px;color:{{ photoCountColor }}">{{ photoDone }}/3 mínimas</span></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="3">
+              <div style="aspect-ratio:1;border-radius:12px;position:relative;overflow:hidden;background:#22323E;border:1px solid {{ t.border }}">
+                <sc-if value="{{ t.done }}"><image-slot id="{{ t.slot }}" shape="rect" placeholder="Foto"></image-slot><span style="position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:#1A2730;display:grid;place-items:center;pointer-events:none"><i class="ph-fill ph-check-circle" style="font-size:18px;color:#22C55E"></i></span></sc-if>
+                <sc-if value="{{ t.up }}"><div style="position:absolute;inset:0;display:grid;place-items:center;font:600 22px 'Barlow Condensed';font-variant-numeric:tabular-nums">{{ t.pct }}</div><div style="position:absolute;left:0;bottom:0;height:4px;width:{{ t.pct }};background:#E95D2C"></div></sc-if>
+                <sc-if value="{{ t.err }}"><button onClick="{{ t.retry }}" style="position:absolute;inset:0;border:0;background:rgba(239,68,68,.08);color:#F87171;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 12px Inter;cursor:pointer"><i class="ph ph-arrow-clockwise" style="font-size:22px"></i>Tentar novamente</button></sc-if>
+                <sc-if value="{{ t.add }}"><button onClick="{{ addPhoto }}" style="position:absolute;inset:0;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 12px Inter;cursor:pointer" style-hover="background:rgba(245,247,250,.05)"><i class="ph ph-camera-plus" style="font-size:24px"></i>Adicionar</button></sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ hasPhotoErr }}"><span style="font-size:12px;color:#F87171">Falha no envio de 1 foto. Seus dados continuam salvos; toque para tentar de novo.</span></sc-if>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Marca</span><div style="position:relative"><select value="{{ veh.marca }}" onChange="{{ on.marca }}" style="width:100%;appearance:none;min-height:48px;padding:0 36px 0 14px;border-radius:12px;border:1px solid {{ vb.marca }};background:#22323E;color:#F5F7FA;font:15px Inter;outline:none"><option value="">Selecione</option><option>Chevrolet</option><option>Ford</option><option>Honda</option><option>Toyota</option><option>Volkswagen</option></select><i class="ph ph-caret-down" style="position:absolute;right:12px;top:14px;font-size:18px;color:#9AA4B2;pointer-events:none"></i></div></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Modelo</span><input value="{{ veh.modelo }}" onChange="{{ on.modelo }}" placeholder="Ex.: Civic Si" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ vb.modelo }};background:#22323E;color:#F5F7FA;font:15px Inter;outline:none" style-focus="box-shadow:0 0 0 3px rgba(233,93,44,.25)"></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Ano</span><input inputmode="numeric" maxlength="4" value="{{ veh.ano }}" onChange="{{ on.ano }}" placeholder="2019" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid {{ vb.ano }};background:#22323E;color:#F5F7FA;font:15px Inter;outline:none" style-focus="box-shadow:0 0 0 3px rgba(233,93,44,.25)"></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Cor</span><input value="{{ veh.cor }}" onChange="{{ on.cor }}" placeholder="Cinza" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #45586C;background:#22323E;color:#F5F7FA;font:15px Inter;outline:none" style-focus="box-shadow:0 0 0 3px rgba(233,93,44,.25)"></label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#C9D2DC">Categoria</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ cats }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.pick }}" style="min-height:40px;padding:0 14px;border-radius:8px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 13px Inter;cursor:pointer">{{ c.label }}</button></sc-for></div></div>
+        <div style="border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden">
+          <button onClick="{{ toggleSpecs }}" aria-expanded="{{ specsAria }}" style="width:100%;min-height:56px;padding:0 16px;border:0;background:transparent;color:#F5F7FA;display:flex;align-items:center;gap:12px;font:500 15px Inter;cursor:pointer;text-align:left"><i class="ph ph-wrench" style="font-size:20px;color:#B0CEE2"></i><span style="flex:1">Especificações técnicas <span style="color:#9AA4B2;font-weight:400">· opcional</span></span><i class="{{ specsIcon }}" style="font-size:18px;color:#9AA4B2"></i></button>
+          <sc-if value="{{ specs }}">
+            <div style="padding:4px 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <label style="display:flex;flex-direction:column;gap:6px;grid-column:1 / -1"><span style="font-size:13px;color:#C9D2DC">Motor</span><input placeholder="1.5 Turbo 16V" style="min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px Inter;outline:none"></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Potência (cv)</span><input inputmode="numeric" placeholder="205" style="min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px Inter;outline:none"></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Torque (kgfm)</span><input inputmode="decimal" placeholder="26,5" style="min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px Inter;outline:none"></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Peso (kg)</span><input inputmode="numeric" placeholder="1.335" style="min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px Inter;outline:none"></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C9D2DC">Transmissão</span><input placeholder="Manual 6M" style="min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px Inter;outline:none"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;grid-column:1 / -1"><span style="font-size:13px;color:#C9D2DC">Modificações</span><textarea placeholder="Uma por linha. Ex.: Intake, escape inox, pastilhas de competição" style="min-height:80px;padding:10px 12px;border-radius:12px;border:1px solid #45586C;background:#1A2730;color:#F5F7FA;font:14px/1.5 Inter;outline:none;resize:none"></textarea></label>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+      <div style="padding:12px 24px 34px;display:flex;flex-direction:column;gap:8px;box-shadow:0 -1px 0 #22323E">
+        <sc-if value="{{ vehMissing }}"><span style="font-size:12px;color:#9AA4B2;text-align:center">Falta: {{ vehMissing }}</span></sc-if>
+        <button onClick="{{ saveVehicle }}" disabled="{{ vehInvalid }}" style="min-height:52px;border-radius:12px;border:1px solid #E95D2C;background:transparent;color:#F28A62;font:500 15px Inter;cursor:pointer;opacity:{{ vehOpacity }}" style-hover="background:rgba(233,93,44,.12)">Salvar e ir para o Feed</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ s.feed }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding-top:47px;background:#1A2730">
+      <header style="padding:8px 16px 12px 20px;display:flex;align-items:center;gap:8px">
+        <button onClick="{{ noop }}" style="flex:1;min-height:44px;border:0;background:transparent;color:#F5F7FA;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:0;cursor:pointer"><span style="font-size:12px;color:#9AA4B2;display:flex;gap:4px;align-items:center"><i class="ph-fill ph-navigation-arrow" style="font-size:12px;color:#F28A62"></i>Sua região</span><span style="font:600 22px/1 'Barlow Condensed';text-transform:uppercase;display:flex;gap:6px;align-items:center">{{ city }}<span style="font:500 13px Inter;color:#F28A62;text-transform:none">Alterar local</span></span></button>
+        <button aria-label="Filtros" style="width:44px;height:44px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;display:grid;place-items:center"><i class="ph ph-sliders-horizontal" style="font-size:20px"></i></button>
+        <button aria-label="Notificações" style="width:44px;height:44px;border-radius:12px;border:1px solid #45586C;background:transparent;color:#F5F7FA;display:grid;place-items:center;position:relative"><i class="ph ph-bell" style="font-size:20px"></i><span style="position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:#E95D2C"></span></button>
+      </header>
+      <sc-if value="{{ toast }}">
+        <div role="status" style="position:absolute;top:112px;left:16px;right:16px;z-index:10;padding:12px 14px;border-radius:12px;background:#2C3D4B;box-shadow:0 0 0 1px #45586C,0 6px 18px rgba(0,0,0,.45);display:flex;gap:12px;align-items:center"><i class="{{ toastIcon }}" style="font-size:22px;color:{{ toastColor }}"></i><span style="flex:1;font-size:14px;line-height:1.35">{{ toast }}</span><button onClick="{{ closeToast }}" aria-label="Fechar" style="width:36px;height:36px;border:0;background:transparent;color:#9AA4B2;display:grid;place-items:center;cursor:pointer"><i class="ph ph-x" style="font-size:16px"></i></button></div>
+      </sc-if>
+      <div style="flex:1;overflow-y:auto;padding:4px 0 24px;display:flex;flex-direction:column;gap:28px">
+        <section style="display:flex;flex-direction:column;gap:12px">
+          <div style="padding:0 20px;display:flex;justify-content:space-between;align-items:baseline"><h3 style="margin:0;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Perto de você</h3><a href="#" onClick="{{ noop }}" style="font-size:13px">Ver mapa</a></div>
+          <div style="display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:0 20px 4px;scroll-snap-type:x mandatory">
+            <article style="flex:none;width:300px;scroll-snap-align:start;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden">
+              <div style="position:relative;height:150px"><image-slot id="fa-feed-1" shape="rect" placeholder="Autódromo Zilmar Beux"></image-slot><div style="position:absolute;inset:auto 0 0 0;height:60px;background:linear-gradient(to top,#22323E,transparent);pointer-events:none"></div><span style="position:absolute;top:10px;right:10px;padding:4px 10px;border-radius:8px;background:rgba(26,39,48,.85);border:1px solid #45586C;font:500 12px Inter;display:flex;gap:6px;align-items:center"><i class="ph ph-globe-simple" style="font-size:12px"></i>Público</span></div>
+              <div style="padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">Track Day</span><span style="font:600 24px/1.05 'Barlow Condensed';text-transform:uppercase">Track Day Zilmar Beux · Etapa 3</span></div>
+                <div style="display:flex;flex-direction:column;gap:4px;font-size:13px;color:#C9D2DC"><span style="display:flex;gap:8px;align-items:center"><i class="ph ph-calendar-blank" style="font-size:15px;color:#9AA4B2"></i>Sáb, 12 out · 08:00</span><span style="display:flex;gap:8px;align-items:center"><i class="ph ph-flag-checkered" style="font-size:15px;color:#B0CEE2"></i>Autódromo · 4,2 km</span></div>
+                <div style="display:flex;gap:6px"><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px">Turismo</span><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px">Turbo</span><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px">Aspirado</span></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#9AA4B2">Vagas restantes</span><span style="font-weight:500">18 de 40</span></div><div style="height:4px;border-radius:2px;background:#2C3D4B"><div style="width:55%;height:4px;border-radius:2px;background:#E95D2C"></div></div></div>
+              </div>
+            </article>
+            <article style="flex:none;width:300px;scroll-snap-align:start;border-radius:16px;background:#22323E;box-shadow:0 0 0 1px #2C3D4B;overflow:hidden">
+              <div style="position:relative;height:150px"><image-slot id="fa-feed-2" shape="rect" placeholder="Pista de Arrancada Cascavel"></image-slot><div style="position:absolute;inset:auto 0 0 0;height:60px;background:linear-gradient(to top,#22323E,transparent);pointer-events:none"></div><span style="position:absolute;top:10px;right:10px;padding:4px 10px;border-radius:8px;background:rgba(26,39,48,.85);border:1px solid #F59E0B;color:#FBBF24;font:500 12px Inter;display:flex;gap:6px;align-items:center"><i class="ph ph-lock-simple" style="font-size:12px"></i>Requer aprovação</span></div>
+              <div style="padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.16em;text-transform:uppercase;color:#F28A62">Arrancada Autorizada</span><span style="font:600 24px/1.05 'Barlow Condensed';text-transform:uppercase">Noite da Arrancada 201m</span></div>
+                <div style="display:flex;flex-direction:column;gap:4px;font-size:13px;color:#C9D2DC"><span style="display:flex;gap:8px;align-items:center"><i class="ph ph-calendar-blank" style="font-size:15px;color:#9AA4B2"></i>Sex, 18 out · 19:30</span><span style="display:flex;gap:8px;align-items:center"><i class="ph ph-arrows-out-line-horizontal" style="font-size:15px;color:#B0CEE2"></i>Pista de Arrancada · 9,8 km</span></div>
+                <div style="display:flex;gap:6px"><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px">Street Legal</span><span style="padding:3px 8px;border-radius:6px;background:#424048;font-size:11px">Turbo</span></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#FBBF24">Últimas vagas</span><span style="font-weight:500">3 de 32</span></div><div style="height:4px;border-radius:2px;background:#2C3D4B"><div style="width:9%;height:4px;border-radius:2px;background:#F59E0B"></div></div></div>
+              </div>
+            </article>
+          </div>
+        </section>
+        <section style="padding:0 20px;display:flex;flex-direction:column;gap:4px">
+          <h3 style="margin:0 0 8px;font:600 26px/1 'Barlow Condensed';text-transform:uppercase">Esta semana</h3>
+          <div style="min-height:64px;display:flex;gap:14px;align-items:center;padding:8px 0"><div style="width:52px;flex:none;display:flex;flex-direction:column;align-items:flex-start"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.12em;color:#9AA4B2">QUA</span><span style="font:600 28px/1 'Barlow Condensed'">09</span></div><div style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:15px;font-weight:500">Encontro Clássicos do Oeste</span><span style="font-size:12px;color:#9AA4B2">Área Privada · Cascavel · 6,1 km</span></div><i class="ph ph-caret-right" style="font-size:18px;color:#9AA4B2"></i></div>
+          <div style="height:1px;background:linear-gradient(to right,#2C3D4B,transparent)"></div>
+          <div style="min-height:64px;display:flex;gap:14px;align-items:center;padding:8px 0"><div style="width:52px;flex:none;display:flex;flex-direction:column;align-items:flex-start"><span style="font:600 12px/1 'Barlow Condensed';letter-spacing:.12em;color:#9AA4B2">SÁB</span><span style="font:600 28px/1 'Barlow Condensed'">12</span></div><div style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:15px;font-weight:500">Desafio em Pista · Turbo</span><span style="font-size:12px;color:#9AA4B2">Autódromo · Cascavel · 4,2 km</span></div><i class="ph ph-caret-right" style="font-size:18px;color:#9AA4B2"></i></div>
+        </section>
+      </div>
+      <nav style="padding:8px 8px 26px;background:#1A2730;box-shadow:0 -1px 0 #2C3D4B;display:grid;grid-template-columns:repeat(5,1fr)">
+        <button style="min-height:52px;border:0;background:transparent;color:#F28A62;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter;position:relative"><span style="position:absolute;top:-8px;width:24px;height:2px;border-radius:1px;background:#E95D2C"></span><i class="ph-fill ph-house-simple" style="font-size:22px"></i>Feed</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-map-trifold" style="font-size:22px"></i>Mapa</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-garage" style="font-size:22px"></i>Garagem</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-trophy" style="font-size:22px"></i>Ranking</button>
+        <button style="min-height:52px;border:0;background:transparent;color:#9AA4B2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px Inter"><i class="ph ph-user-circle" style="font-size:22px"></i>Perfil</button>
+      </nav>
+    </div>
+  </sc-if>
+  <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#F5F7FA;opacity:.8;z-index:30;pointer-events:none"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const EMPTY_SU = { email: '', pwd: '', perfil: 'piloto', nome: '', cidade: '', org: '', doc: '', tel: '', terms: false };
+const DEMO_SU = { email: 'lucas.andrade@gmail.com', pwd: 'Pista2026!', perfil: 'piloto', nome: 'Lucas Andrade', cidade: 'Cascavel, PR', org: '', doc: '', tel: '', terms: true };
+const EMPTY_VEH = { marca: '', modelo: '', ano: '', cor: '', cat: '' };
+const STEP = { signup: 0, optional: 1, permLoc: 2, permNotif: 2, vehicle: 3 };
+const LABELS = { splash: 'Splash', carousel: 'Onboarding', login: 'UC-10 · Login', signup: 'UC-00 · Cadastro', optional: 'UC-16 · Dados opcionais', permLoc: 'Pré-permissão · Localização', permNotif: 'Pré-permissão · Notificações', vehicle: 'UC-01 · Primeiro veículo', feed: 'UC-03 · Feed' };
+
+class Component extends DCLogic {
+  state = { screen: 'splash', slide: 0, lg: { email: '', pwd: '' }, loginState: 'default', showPwd: false, resent: false,
+    su: { ...EMPTY_SU }, suErr: {}, opt: { bio: '', ig: '', yt: '' }, native: null,
+    veh: { ...EMPTY_VEH }, specs: false, photos: [], t0: null, t1: null, now: Date.now(), toast: null, toastKind: 'ok', jump: 'splash' };
+
+  componentDidMount() {
+    this.iv = setInterval(() => this.tick(), 200);
+    this.splashTimer();
+  }
+  componentWillUnmount() { clearInterval(this.iv); clearTimeout(this.st); }
+  splashTimer() { clearTimeout(this.st); this.st = setTimeout(() => { if (this.state.screen === 'splash') this.go('carousel'); }, 1800); }
+  tick() {
+    const ph = this.state.photos;
+    const up = ph.some(p => p.st === 'up');
+    const patch = { now: Date.now() };
+    if (up) patch.photos = ph.map(p => {
+      if (p.st !== 'up') return p;
+      const n = p.p + 9 + Math.random() * 10;
+      if (p.fail && n > 60) return { ...p, st: 'err', p: 0 };
+      return n >= 100 ? { ...p, st: 'done', p: 100 } : { ...p, p: n };
+    });
+    if (up || (this.state.t0 && !this.state.t1)) this.setState(patch);
+  }
+  go(screen, extra = {}, jump) {
+    const patch = { screen, native: null, jump: jump || screen, ...extra };
+    if (screen === 'signup' && !this.state.t0 && !extra.t0) { patch.t0 = Date.now(); patch.t1 = null; }
+    if (screen === 'feed' && this.state.t0 && !this.state.t1) patch.t1 = Date.now();
+    this.setState(patch);
+    if (screen === 'splash') this.splashTimer();
+  }
+  validate(su) {
+    const e = {};
+    if (!/^\S+@\S+\.\S{2,}$/.test(su.email)) e.email = 'Informe um e-mail válido.';
+    else if (su.email.trim().toLowerCase() === 'piloto@faststreet.com.br') e.email = 'exists';
+    if (su.pwd.length < 8) e.pwd = 'A senha precisa ter ao menos 8 caracteres.';
+    if (!su.nome.trim()) e.nome = 'Campo obrigatório.';
+    if (!su.cidade) e.cidade = 'Selecione sua cidade.';
+    if (su.perfil !== 'piloto') {
+      if (!su.org.trim()) e.org = 'Campo obrigatório.';
+      const d = su.doc.replace(/\D/g, '');
+      if (d.length !== 11 && d.length !== 14) e.doc = 'CPF (11 dígitos) ou CNPJ (14 dígitos) inválido.';
+      if (su.tel.replace(/\D/g, '').length < 10) e.tel = 'Telefone inválido.';
+    }
+    if (!su.terms) e.terms = 'Aceite obrigatório para criar a conta.';
+    return e;
+  }
+  preset(key) {
+    const base = { t0: null, t1: null };
+    switch (key) {
+      case 'splash': return this.go('splash', base);
+      case 'ob1': case 'ob2': case 'ob3': return this.go('carousel', { slide: +key[2] - 1 }, key);
+      case 'login': return this.go('login', { loginState: 'default', lg: { email: '', pwd: '' } }, key);
+      case 'loginErr': return this.go('login', { loginState: 'erro', lg: { email: 'lucas.andrade@gmail.com', pwd: '12345678' } }, key);
+      case 'loginUnv': return this.go('login', { loginState: 'naoverificada', resent: false, lg: { email: 'lucas.naoverificado@gmail.com', pwd: 'Pista2026!' } }, key);
+      case 'signup': return this.go('signup', { su: { ...EMPTY_SU }, suErr: {} }, key);
+      case 'suExists': { const su = { ...DEMO_SU, email: 'piloto@faststreet.com.br' }; return this.go('signup', { su, suErr: this.validate(su) }, key); }
+      case 'suInvalid': { const su = { ...EMPTY_SU, email: 'lucas@', pwd: '1234', perfil: 'ambos', nome: 'Lucas Andrade', doc: '1234' }; return this.go('signup', { su, suErr: this.validate(su) }, key); }
+      case 'optional': return this.go('optional', {}, key);
+      case 'permLoc': return this.go('permLoc', {}, key);
+      case 'permLocNative': return this.go('permLoc', { native: 'loc' }, key);
+      case 'permNotif': return this.go('permNotif', {}, key);
+      case 'permNotifNative': return this.go('permNotif', { native: 'notif' }, key);
+      case 'vehicle': return this.go('vehicle', { veh: { ...EMPTY_VEH }, photos: [], specs: false }, key);
+      case 'vehicleErr': return this.go('vehicle', { veh: { marca: 'Honda', modelo: 'Civic Si', ano: '2019', cor: 'Cinza', cat: 'Turbo' }, specs: true, photos: [{ st: 'done', p: 100 }, { st: 'done', p: 100 }, { st: 'err', p: 0 }] }, key);
+      case 'feed': return this.go('feed', { toast: 'Garagem pronta · Honda Civic Si é seu veículo principal', toastKind: 'ok' }, key);
+    }
+  }
+  renderVals() {
+    const st = this.state, su = st.su, e = st.suErr;
+    const set = (grp, k) => (ev) => { const v = ev.target.value; this.setState(s => ({ [grp]: { ...s[grp], [k]: v }, ...(grp === 'su' && s.suErr[k] ? { suErr: { ...s.suErr, [k]: undefined } } : {}) })); };
+    const s = {}; Object.keys(LABELS).forEach(k => s[k] = st.screen === k);
+    const step = STEP[st.screen] ?? -1;
+    // password
+    const p = su.pwd; let score = 0;
+    if (p.length >= 8) score++; if (/[A-Z]/.test(p) && /[a-z]/.test(p)) score++; if (/\d/.test(p)) score++; if (/[^A-Za-z0-9]/.test(p) && p.length >= 10) score++;
+    if (p.length && !score) score = 1;
+    const pc = ['#EF4444', '#F59E0B', '#B0CEE2', '#22C55E'], pl = ['', 'fraca', 'razoável', 'boa', 'forte'];
+    const fields = ['email', 'pwd', 'nome', 'cidade', 'org', 'doc', 'tel'];
+    const b = {}, bg = {}, er = {};
+    fields.forEach(f => { b[f] = e[f] ? '#EF4444' : '#45586C'; bg[f] = e[f] ? 'rgba(239,68,68,.06)' : '#22323E'; er[f] = e[f] && e[f] !== 'exists' ? e[f] : ''; });
+    er.terms = e.terms || '';
+    const errCount = Object.values(e).filter(Boolean).length;
+    const perfis = [['piloto', 'Piloto', 'Garagem, inscrições e ranking', 'ph ph-steering-wheel'], ['org', 'Organizador', 'Criar eventos e publicar resultados', 'ph ph-clipboard-text'], ['ambos', 'Piloto e Organizador', 'Os dois papéis na mesma conta', 'ph ph-users-three']].map(([id, label, sub, icon]) => {
+      const a = su.perfil === id;
+      return { label, sub, icon, aria: a ? 'true' : 'false', border: a ? '#E95D2C' : '#2C3D4B', bg: a ? 'rgba(233,93,44,.08)' : 'transparent', dot: a ? '#E95D2C' : 'transparent', ic: a ? '#F28A62' : '#9AA4B2', pick: () => this.setState(s2 => ({ su: { ...s2.su, perfil: id } })) };
+    });
+    // vehicle
+    const v = st.veh, ph = st.photos;
+    const done = ph.filter(x => x.st === 'done').length;
+    const tiles = ph.map((x, i) => ({ done: x.st === 'done', up: x.st === 'up', err: x.st === 'err', add: false, pct: Math.round(x.p) + '%', slot: 'fa-veh-foto-' + (i + 1), border: x.st === 'err' ? '#EF4444' : '#2C3D4B', retry: () => this.setState(s2 => ({ photos: s2.photos.map((y, j) => j === i ? { st: 'up', p: 0, fail: false } : y) })) }));
+    if (ph.length < 6) tiles.push({ add: true, border: '#45586C', done: false, up: false, err: false });
+    const miss = [];
+    if (done < 3) miss.push((3 - done) + (3 - done > 1 ? ' fotos' : ' foto'));
+    if (!v.marca) miss.push('marca'); if (!v.modelo.trim()) miss.push('modelo'); if (!/^\d{4}$/.test(v.ano)) miss.push('ano'); if (!v.cat) miss.push('categoria');
+    const cats = ['Street Legal', 'Turismo', 'Aspirado', 'Turbo', 'Clássicos'].map(label => { const a = v.cat === label; return { label, border: a ? '#E95D2C' : '#45586C', bg: a ? 'rgba(233,93,44,.12)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', pick: () => this.setState(s2 => ({ veh: { ...s2.veh, cat: label } })) }; });
+    // timer
+    const el = st.t0 ? Math.floor(((st.t1 || st.now) - st.t0) / 1000) : 0;
+    const mm = String(Math.floor(el / 60)).padStart(2, '0'), ss = String(el % 60).padStart(2, '0');
+    const ok = el <= 120;
+    const jumps = [['splash', 'Splash'], ['ob1', 'Onboarding · 1 Garagem'], ['ob2', 'Onboarding · 2 Eventos no mapa'], ['ob3', 'Onboarding · 3 Ranking'], ['login', 'UC-10 · Login'], ['loginErr', 'UC-10 · Login · Erro'], ['loginUnv', 'UC-10 · Login · Conta não verificada'], ['signup', 'UC-00 · Cadastro'], ['suExists', 'UC-00 · Cadastro · E-mail já cadastrado'], ['suInvalid', 'UC-00 · Cadastro · Campos inválidos'], ['optional', 'UC-16 · Dados opcionais'], ['permLoc', 'Pré-permissão · Localização'], ['permLocNative', 'Pré-permissão · Localização · Prompt nativo'], ['permNotif', 'Pré-permissão · Notificações'], ['permNotifNative', 'Pré-permissão · Notificações · Prompt nativo'], ['vehicle', 'UC-01 · Primeiro veículo'], ['vehicleErr', 'UC-01 · Primeiro veículo · Erro no upload'], ['feed', 'UC-03 · Feed · Chegada']].map(([k, label]) => {
+      const a = st.jump === k;
+      return { label, bg: a ? 'rgba(233,93,44,.10)' : 'transparent', color: a ? '#F28A62' : '#C9D2DC', bar: a ? 'inset 2px 0 0 #E95D2C' : 'none', go: () => this.preset(k) };
+    });
+    return {
+      s, screenLabel: LABELS[st.screen],
+      toCarousel: () => this.go('carousel', { slide: 0 }), toLogin: () => this.go('login', { loginState: 'default' }),
+      toLoginLink: (ev) => { ev.preventDefault(); this.go('login', { loginState: 'default', lg: { email: su.email, pwd: '' } }); },
+      toSignup: () => this.go('signup'), toSignupLink: (ev) => { ev.preventDefault(); this.go('signup'); },
+      toPerm: () => this.go('permLoc'), toNotif: () => this.go('permNotif'),
+      askLoc: () => this.setState({ native: 'loc' }), askNotif: () => this.setState({ native: 'notif' }),
+      nativeLoc: st.native === 'loc', nativeNotif: st.native === 'notif',
+      toVehicle: () => su.perfil === 'org' ? this.go('feed', { toast: 'Conta criada · bem-vindo à Central do Organizador', toastKind: 'ok' }) : this.go('vehicle'),
+      skipVehicle: () => this.go('feed', { toast: 'Cadastre um veículo na Garagem para se inscrever em eventos.', toastKind: 'info' }),
+      toFeedSocial: () => this.go('feed', { toast: null }),
+      noop: (ev) => ev && ev.preventDefault && ev.preventDefault(),
+      slide0: st.slide === 0, slide1: st.slide === 1, slide2: st.slide === 2, slideNum: '0' + (st.slide + 1),
+      slideCta: st.slide === 2 ? 'Criar conta' : 'Próximo',
+      nextSlide: () => st.slide === 2 ? this.go('signup') : this.setState({ slide: st.slide + 1, jump: 'ob' + (st.slide + 2) }),
+      dots: [0, 1, 2].map(i => ({ w: i === st.slide ? '24px' : '6px', c: i === st.slide ? '#E95D2C' : '#45586C', go: () => this.setState({ slide: i }) })),
+      lg: st.lg, loginEmail: st.lg.email || 'seu e-mail',
+      loginErr: st.loginState === 'erro', loginUnverified: st.loginState === 'naoverificada', resent: st.resent, notResent: !st.resent,
+      resend: () => this.setState({ resent: true }),
+      pwdType: st.showPwd ? 'text' : 'password', pwdIcon: st.showPwd ? 'ph ph-eye-slash' : 'ph ph-eye', togglePwd: () => this.setState(x => ({ showPwd: !x.showPwd })),
+      doLogin: () => {
+        const { email, pwd } = st.lg;
+        if (/naoverificado/i.test(email)) return this.setState({ loginState: 'naoverificada', resent: false });
+        if (/^\S+@\S+\.\S{2,}$/.test(email) && pwd.length >= 8 && pwd !== '12345678') return this.go('feed', { toast: null });
+        this.setState({ loginState: 'erro' });
+      },
+      on: { lgEmail: set('lg', 'email'), lgPwd: set('lg', 'pwd'), email: set('su', 'email'), pwd: set('su', 'pwd'), nome: set('su', 'nome'), cidade: set('su', 'cidade'), org: set('su', 'org'), doc: set('su', 'doc'), tel: set('su', 'tel'), bio: set('opt', 'bio'), ig: set('opt', 'ig'), yt: set('opt', 'yt'), marca: set('veh', 'marca'), modelo: set('veh', 'modelo'), ano: set('veh', 'ano'), cor: set('veh', 'cor') },
+      su, b, bg, er, emailExists: e.email === 'exists', suHasErr: errCount > 0,
+      suErrSummary: e.email === 'exists' && errCount === 1 ? 'Este e-mail já tem uma conta.' : 'Revise ' + errCount + (errCount > 1 ? ' campos destacados.' : ' campo destacado.'),
+      bars: [0, 1, 2, 3].map(i => ({ c: i < score ? pc[score - 1] : '#2C3D4B' })),
+      pwdHint: p.length ? 'Força ' + pl[score] + (score < 3 ? ' · combine maiúsculas, números e símbolos' : '') : (er.pwd || 'Mínimo 8 caracteres'),
+      pwdHintColor: er.pwd && !p.length ? '#F87171' : (er.pwd ? '#F87171' : '#9AA4B2'),
+      perfis, isOrg: su.perfil !== 'piloto',
+      termsAria: su.terms ? 'true' : 'false', termsBorder: su.terms ? '#E95D2C' : (e.terms ? '#EF4444' : '#6B7F95'), termsBg: su.terms ? '#E95D2C' : 'transparent',
+      toggleTerms: () => this.setState(x => ({ su: { ...x.su, terms: !x.su.terms }, suErr: { ...x.suErr, terms: undefined } })),
+      doSignup: () => { const errs = this.validate(su); if (Object.keys(errs).length) { this.setState({ suErr: errs }); const el2 = document.getElementById('su-scroll'); if (el2) el2.scrollTop = 0; } else this.go('optional', { suErr: {} }); },
+      prog: [0, 1, 2, 3].map(i => ({ c: i <= step ? '#E95D2C' : '#2C3D4B' })),
+      opt: st.opt, bioCount: st.opt.bio.length,
+      veh: v, vb: { marca: '#45586C', modelo: '#45586C', ano: v.ano && !/^\d{4}$/.test(v.ano) ? '#EF4444' : '#45586C' },
+      tiles, photoDone: done, photoCountColor: done >= 3 ? '#4ADE80' : '#9AA4B2', hasPhotoErr: ph.some(x => x.st === 'err'),
+      addPhoto: () => this.setState(x => ({ photos: [...x.photos, { st: 'up', p: 0, fail: false }] })),
+      cats, specs: st.specs, specsAria: st.specs ? 'true' : 'false', specsIcon: st.specs ? 'ph ph-caret-up' : 'ph ph-caret-down', toggleSpecs: () => this.setState(x => ({ specs: !x.specs })),
+      vehMissing: miss.join(', '), vehInvalid: miss.length > 0, vehOpacity: miss.length ? '0.45' : '1',
+      saveVehicle: () => { if (!miss.length) this.go('feed', { toast: 'Garagem pronta · ' + v.marca + ' ' + v.modelo + ' é seu veículo principal', toastKind: 'ok' }); },
+      city: su.cidade ? su.cidade.split(',')[0] : 'Cascavel',
+      toast: st.toast, toastIcon: st.toastKind === 'ok' ? 'ph-fill ph-check-circle' : 'ph-fill ph-info', toastColor: st.toastKind === 'ok' ? '#22C55E' : '#B0CEE2', closeToast: () => this.setState({ toast: null }),
+      timer: mm + ':' + ss, timerPct: Math.min(100, el / 120 * 100) + '%', timerColor: !st.t0 ? '#9AA4B2' : ok ? '#22C55E' : '#F59E0B',
+      timerNote: !st.t0 ? 'Começa ao abrir o Cadastro.' : st.t1 ? (ok ? 'Concluído dentro da meta.' : 'Concluído acima da meta.') : 'Em andamento…',
+      jumps,
+      fillDemo: () => {
+        if (st.screen === 'vehicle') this.setState({ veh: { marca: 'Honda', modelo: 'Civic Si', ano: '2019', cor: 'Cinza Grafite', cat: 'Turbo' }, photos: [{ st: 'done', p: 100 }, { st: 'done', p: 100 }, { st: 'done', p: 100 }] });
+        else if (st.screen === 'login') this.setState({ lg: { email: 'lucas.andrade@gmail.com', pwd: 'Pista2026!' }, loginState: 'default' });
+        else if (st.screen === 'optional') this.setState({ opt: { bio: 'Track days desde 2018, foco em Turismo e Turbo.', ig: '@lucas.andrade.tt', yt: '' } });
+        else this.go('signup', { su: { ...DEMO_SU }, suErr: {} });
+      },
+      restart: () => this.go('splash', { t0: null, t1: null, su: { ...EMPTY_SU }, suErr: {}, veh: { ...EMPTY_VEH }, photos: [], slide: 0, toast: null })
+    };
+  }
+}
+</script>
+</body>
+</html>
