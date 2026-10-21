@@ -1,0 +1,25 @@
+# MySQL 8 para desenvolvimento local da Fast Street API.
+# Uso: docker compose up -d
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: fast-street-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: fast_street
+      MYSQL_USER: fast_street
+      MYSQL_PASSWORD: fast_street
+    ports:
+      - "3306:3306"
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci"]
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./api/docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      retries: 20
+
+volumes:
+  mysql-data:
