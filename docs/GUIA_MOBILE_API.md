@@ -25,7 +25,7 @@ O compose cria os bancos `fast_street` e `fast_street_test`, com usuário e senh
 cd api
 cp .env.example .env            # gere um JWT_SECRET (comando no próprio arquivo)
 npm install
-npm run db:migrate              # cria as tabelas e as cidades do MVP (PR)
+npm run db:migrate              # cria o banco (se faltar), as tabelas e as cidades do MVP (PR)
 npm run dev                     # http://localhost:3333
 ```
 
