@@ -87,7 +87,7 @@ export default function PrimeiroVeiculo() {
   if (!form.categoriaId) faltando.push('categoria');
   const pronto = faltando.length === 0 && !fotos.busy;
 
-  const goFeed = (aviso: string) => router.replace({ pathname: '/inicio', params: { aviso } });
+  const goFeed = (aviso: string) => router.replace({ pathname: '/feed', params: { aviso } });
 
   async function save() {
     if (!pronto) return;

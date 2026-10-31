@@ -44,7 +44,7 @@ export default function RootLayout() {
         >
           <Stack.Screen name="index" options={{ animation: 'fade' }} />
           <Stack.Screen name="onboarding" options={{ animation: 'fade' }} />
-          <Stack.Screen name="inicio" options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="(tabs)" options={{ animation: 'fade', gestureEnabled: false }} />
         </Stack>
       </AuthProvider>
     </SafeAreaProvider>

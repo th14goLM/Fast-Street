@@ -7,6 +7,7 @@ import { authRoutes } from './modules/auth/auth.routes.js';
 import { AuthService } from './modules/auth/auth.service.js';
 import { catalogoRoutes } from './modules/catalogo/catalogo.routes.js';
 import { cidadesRoutes } from './modules/cidades/cidades.routes.js';
+import { eventosRoutes } from './modules/eventos/eventos.routes.js';
 import { uploadsRoutes } from './modules/uploads/uploads.routes.js';
 import { usuariosRoutes } from './modules/usuarios/usuarios.routes.js';
 import { veiculosRoutes } from './modules/veiculos/veiculos.routes.js';
@@ -33,6 +34,7 @@ export function createApp({ mailer = createMailer(env) }: { mailer?: Mailer } = 
   app.use('/usuarios', usuariosRoutes());
   app.use('/uploads', uploadsRoutes());
   app.use('/veiculos', veiculosRoutes());
+  app.use('/eventos', eventosRoutes());
   // Imagens enviadas. Nomes são UUIDs (não adivinháveis); sem listagem de diretório.
   app.use(MEDIA_PREFIX, express.static(UPLOAD_ROOT, { index: false, dotfiles: 'deny', maxAge: '7d', immutable: true }));
 
