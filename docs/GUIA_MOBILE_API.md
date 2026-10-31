@@ -59,6 +59,8 @@ npx expo start                  # leia o QR code com o Expo Go
 ```
 Em desenvolvimento, o app chama a API no IP da máquina que roda o Metro (porta 3333). Assim, o celular físico funciona sem configuração, desde que esteja na mesma rede Wi-Fi. Para apontar para outro endereço, crie `mobile/.env.local` a partir do `.env.example`.
 
+> Algo não funcionou? Rode `npm run doctor` dentro de `api/`. Ele aponta os erros de configuração e a correção de cada um.
+
 ### Verificação de e-mail em desenvolvimento
 Ainda não há envio de e-mail real. O link de confirmação aparece **no terminal da API** (`✉️ [e-mail simulado]`). Abra o link no navegador, de preferência o do celular, para confirmar a conta. Em produção, implemente a interface `Mailer` (`api/src/shared/mailer.ts`) com SMTP, SES, Resend etc.
 
@@ -66,6 +68,7 @@ Ainda não há envio de e-mail real. O link de confirmação aparece **no termin
 
 | Comando | O que faz |
 |---|---|
+| `cd api && npm run doctor` | **Diagnóstico do ambiente:** confere `api/.env`, conexão com o MySQL, banco, migrations, IP para o celular e portas, e diz o que corrigir |
 | `cd api && npm test` | 29 testes (unitários + integração com MySQL real no banco `fast_street_test`) |
 | `cd api && npm run typecheck` | Checagem de tipos da API |
 | `cd mobile && npx tsc --noEmit` | Checagem de tipos do app |
