@@ -11,6 +11,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import mysql from 'mysql2/promise';
+import { SmtpMailer } from '../shared/mailer.js';
 
 type Level = 'ok' | 'warn' | 'fail';
 const ICON: Record<Level, string> = { ok: '✔', warn: '⚠', fail: '✖' };
@@ -170,6 +171,33 @@ async function main() {
     else report('warn', `Banco de testes "${dbName}_test" não existe (só necessário para npm test)`, `No Workbench: CREATE DATABASE ${dbName}_test;`);
   } finally {
     await conn.end();
+  }
+
+  section('E-mail (verificação de conta)');
+  const smtpHost = env.SMTP_HOST?.trim();
+  if (!smtpHost) {
+    report('warn', 'E-mail simulado: o link de verificação aparece no terminal da API', 'Para receber os e-mails no Mailtrap, preencha SMTP_HOST, SMTP_PORT, SMTP_USER e SMTP_PASS no .env (veja .env.example).');
+  } else {
+    const smtpPort = Number(env.SMTP_PORT?.trim() || 587);
+    const mailer = new SmtpMailer({
+      host: smtpHost,
+      port: smtpPort,
+      secure: env.SMTP_SECURE?.trim() ? env.SMTP_SECURE.trim() === 'true' : smtpPort === 465,
+      user: env.SMTP_USER?.trim() || undefined,
+      pass: env.SMTP_PASS || undefined,
+      from: env.MAIL_FROM || 'Fast Street <nao-responda@faststreet.dev>',
+    });
+    try {
+      await mailer.verify();
+      report('ok', `SMTP ${smtpHost}:${smtpPort}: conexão e credenciais OK`);
+    } catch (err) {
+      const e = err as { code?: string; responseCode?: number; message: string };
+      if (e.code === 'EAUTH' || e.responseCode === 535)
+        report('fail', `SMTP recusou usuário/senha (${smtpHost})`, 'Copie de novo Username e Password da sua inbox no Mailtrap (Integration → SMTP).');
+      else if (e.code === 'ETIMEDOUT' || e.code === 'ECONNREFUSED' || e.code === 'ESOCKET')
+        report('fail', `Sem conexão com ${smtpHost}:${smtpPort} (${e.code})`, 'Confira host e porta. Se a rede bloquear a porta, tente 2525 ou 587.');
+      else report('fail', `Falha no SMTP: ${e.message}`, 'Confira SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER e SMTP_PASS.');
+    }
   }
 
   section('Fotos (uploads)');

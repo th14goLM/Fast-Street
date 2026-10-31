@@ -6,7 +6,7 @@ import { pool } from '../src/db/pool.js';
 import type { Mailer } from '../src/shared/mailer.js';
 import { resetDb } from './helpers.js';
 
-const silentMailer: Mailer = { send: async () => {} };
+const silentMailer: Mailer = { description: 'silencioso', send: async () => {} };
 const app = createApp({ mailer: silentMailer });
 
 // Arquivos mínimos com a assinatura correta (o servidor checa os bytes, não a extensão).

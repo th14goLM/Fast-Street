@@ -3,6 +3,7 @@ import { env } from '../../config/env.js';
 import { pool, withTransaction } from '../../db/pool.js';
 import { AppError, Errors } from '../../shared/errors.js';
 import type { Mailer } from '../../shared/mailer.js';
+import { verificationEmail } from './emails.js';
 import { documentoTipo } from '../../shared/validators/documento.js';
 import { mediaUrl } from '../../shared/storage.js';
 import * as repo from './auth.repository.js';
@@ -188,12 +189,17 @@ export class AuthService {
     };
   }
 
+  /**
+   * Falha no provedor de e-mail não pode desfazer o cadastro (a conta já foi gravada) nem
+   * revelar nada no reenvio: registra no log e o usuário usa "Reenviar e-mail de verificação".
+   */
   private async sendVerificationEmail(email: string, nome: string, token: string): Promise<void> {
-    const link = `${env.PUBLIC_API_URL}/auth/verify-email?token=${encodeURIComponent(token)}`;
-    await this.mailer.send({
-      to: email,
-      subject: 'Confirme seu e-mail · Fast Street',
-      text: `Olá, ${nome.split(' ')[0]}!\nConfirme seu e-mail para entrar no Fast Street:\n${link}\nO link vale por 24 horas.`,
-    });
+    const link = `${env.PUBLIC_API_URL.replace(/\/$/, '')}/auth/verify-email?token=${encodeURIComponent(token)}`;
+    try {
+      await this.mailer.send({ to: email, ...verificationEmail(nome, link, VERIFICATION_TTL_MINUTES / 60) });
+    } catch (err) {
+      console.error(`✖ Falha ao enviar o e-mail de verificação para ${email}: ${(err as Error).message}`);
+      console.error('  Confira SMTP_HOST, SMTP_PORT, SMTP_USER e SMTP_PASS no api/.env.');
+    }
   }
 }
