@@ -48,6 +48,32 @@ export function isValidCnpj(v: string): boolean {
   return calc(12) === Number(d[12]) && calc(13) === Number(d[13]);
 }
 
+/** Máscara de exibição: 000.000.000-00 (até 11 dígitos) ou 00.000.000/0000-00. */
+export function formatDocumento(v: string): string {
+  const d = onlyDigits(v).slice(0, 14);
+  if (d.length <= 11) {
+    return d
+      .replace(/^(\d{3})(\d)/, '$1.$2')
+      .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d{1,2})$/, '.$1-$2');
+  }
+  return d
+    .replace(/^(\d{2})(\d)/, '$1.$2')
+    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1/$2')
+    .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+}
+
+/** Valida um campo isolado (ao sair dele), com as mesmas regras do envio. */
+export function validateField(field: SignupField, f: SignupForm): string | undefined {
+  return validateSignup(f)[field];
+}
+
+/** Há algo digitado que se perderia ao sair da tela? */
+export function isSignupDirty(f: SignupForm): boolean {
+  return !!(f.email || f.senha || f.nomeCompleto || f.cidadeId || f.orgNome || f.orgDocumento || f.orgTelefone);
+}
+
 export function validateSignup(f: SignupForm): SignupErrors {
   const e: SignupErrors = {};
   if (!isValidEmail(f.email)) e.email = 'Informe um e-mail válido.';

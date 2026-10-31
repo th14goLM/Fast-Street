@@ -32,6 +32,26 @@
           "image": "./assets/splash-icon.png",
           "imageWidth": 120
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O Fast Street usa suas fotos para a foto de perfil e as fotos dos seus veículos.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Para mostrar eventos e parceiros perto de você. Sua posição nunca aparece para outros usuários."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#E95D2C"
+        }
       ]
     ],
     "scheme": "faststreet",

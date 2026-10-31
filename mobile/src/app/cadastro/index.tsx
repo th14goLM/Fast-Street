@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, StyleSheet, Text, View, type ScrollViewInstance } from 'react-native';
-import { router } from 'expo-router';
-import { ClipboardText, SealCheck, SteeringWheel, UsersThree } from 'phosphor-react-native';
-import { AuthScreen } from '../components/AuthScreen';
+import { StyleSheet, Text, View, type ScrollViewInstance, type TextInputInstance } from 'react-native';
+import { router, usePreventRemove } from 'expo-router';
+import { ClipboardText, Info, SealCheck, SteeringWheel, UsersThree } from 'phosphor-react-native';
+import { AuthScreen } from '../../components/AuthScreen';
 import {
   BackButton,
   Button,
   Checkbox,
+  ConfirmDialog,
   ErrorAlert,
   PasswordField,
   PasswordStrength,
@@ -17,22 +18,25 @@ import {
   TextField,
   TextLink,
   type Option,
-} from '../components/ui';
-import { useAuth } from '../context/AuthContext';
-import { authApi } from '../features/auth/api';
+} from '../../components/ui';
+import { useAuth } from '../../context/AuthContext';
+import { authApi } from '../../features/auth/api';
 import {
   errorSummary,
+  formatDocumento,
   formatPhone,
+  isSignupDirty,
   mapServerFields,
   onlyDigits,
+  validateField,
   validateSignup,
   type Perfil,
   type SignupErrors,
   type SignupField,
   type SignupForm,
-} from '../features/auth/validation';
-import { ApiError } from '../lib/http';
-import { colors, radius, type } from '../theme';
+} from '../../features/auth/validation';
+import { ApiError } from '../../lib/http';
+import { colors, radius, type } from '../../theme';
 
 const INITIAL: SignupForm = {
   email: '',
@@ -60,9 +64,23 @@ export default function Cadastro() {
   const [emailTaken, setEmailTaken] = useState(false);
   const [summary, setSummary] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [leaving, setLeaving] = useState<null | (() => void)>(null);
   const [cidades, setCidades] = useState<Option<number>[]>([]);
   const [cidadesState, setCidadesState] = useState<'loading' | 'ok' | 'error'>('loading');
   const scroll = useRef<ScrollViewInstance>(null);
+  const senhaRef = useRef<TextInputInstance>(null);
+  const nomeRef = useRef<TextInputInstance>(null);
+  const docRef = useRef<TextInputInstance>(null);
+
+  // Saída intencional (conta criada, "Entrar com este e-mail"): a navegação só roda depois que a
+  // proteção abaixo for desligada num render já aplicado; navegar no mesmo tick ainda seria bloqueado.
+  const [exit, setExit] = useState<null | (() => void)>(null);
+  // Pede confirmação antes de descartar um cadastro já começado (botão voltar, gesto ou back do Android).
+  usePreventRemove(isSignupDirty(form) && !loading && !exit, ({ repeat }) => setLeaving(() => repeat));
+  useEffect(() => {
+    exit?.();
+  }, [exit]);
+  const leaveTo = (go: () => void) => setExit(() => go);
 
   const fetchCidades = () =>
     authApi
@@ -86,6 +104,14 @@ export default function Cadastro() {
     if (key === 'email') setEmailTaken(false);
   }
 
+  /** Valida ao sair do campo, mas só se algo foi digitado (não acusa campo vazio antes do envio). */
+  const blur = (key: SignupField) => () => {
+    const value = form[key];
+    if (typeof value === 'string' && !value.trim()) return;
+    const message = validateField(key, form);
+    if (message) setErrors((e) => ({ ...e, [key]: message }));
+  };
+
   function fail(errs: SignupErrors, message?: string) {
     setErrors(errs);
     setSummary(message ?? errorSummary(Object.values(errs).filter(Boolean).length));
@@ -100,7 +126,7 @@ export default function Cadastro() {
     setLoading(true);
     setSummary(null);
     try {
-      await signUp({
+      const usuario = await signUp({
         email: form.email.trim(),
         senha: form.senha,
         perfil: form.perfil,
@@ -111,8 +137,11 @@ export default function Cadastro() {
           ? { organizacao: { nome: form.orgNome.trim(), documento: onlyDigits(form.orgDocumento), telefone: onlyDigits(form.orgTelefone) } }
           : {}),
       });
-      if (router.canDismiss()) router.dismissAll();
-      router.replace({ pathname: '/inicio', params: { novo: '1' } });
+      leaveTo(() => {
+        if (router.canDismiss()) router.dismissAll();
+        router.replace({ pathname: '/cadastro/perfil', params: { perfil: usuario.perfil } });
+      });
+      return; // continua "carregando" até a troca de tela
     } catch (err) {
       if (err instanceof ApiError && err.code === 'EMAIL_TAKEN') {
         setEmailTaken(true);
@@ -122,13 +151,11 @@ export default function Cadastro() {
       } else {
         fail({}, err instanceof Error ? err.message : 'Erro inesperado. Tente novamente.');
       }
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   }
 
   const isOrg = form.perfil !== 'piloto';
-  const legal = (doc: string) => Alert.alert(doc, 'Aqui será inserida a documentação de LGPD.');
 
   return (
     <AuthScreen
@@ -151,12 +178,16 @@ export default function Cadastro() {
         label="E-mail"
         value={form.email}
         onChangeText={(v) => set('email', v)}
+        onBlur={blur('email')}
         placeholder="voce@email.com"
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
         autoComplete="email"
         textContentType="emailAddress"
+        returnKeyType="next"
+        submitBehavior="submit"
+        onSubmitEditing={() => senhaRef.current?.focus()}
         error={errors.email}
         invalid={emailTaken}
         helper={
@@ -166,7 +197,7 @@ export default function Cadastro() {
               <TextLink
                 label="Entrar com este e-mail"
                 style={type.caption}
-                onPress={() => router.replace({ pathname: '/login', params: { email: form.email.trim() } })}
+                onPress={() => leaveTo(() => router.replace({ pathname: '/login', params: { email: form.email.trim() } }))}
               />
             </View>
           ) : null
@@ -175,12 +206,17 @@ export default function Cadastro() {
 
       <View style={{ gap: 6 }}>
         <PasswordField
+          ref={senhaRef}
           label="Senha"
           value={form.senha}
           onChangeText={(v) => set('senha', v)}
+          onBlur={blur('senha')}
           placeholder="Mínimo 8 caracteres"
           autoComplete="new-password"
           textContentType="newPassword"
+          returnKeyType="next"
+          submitBehavior="submit"
+          onSubmitEditing={() => nomeRef.current?.focus()}
           invalid={!!errors.senha}
         />
         <PasswordStrength password={form.senha} error={errors.senha} />
@@ -201,6 +237,7 @@ export default function Cadastro() {
       </View>
 
       <TextField
+        ref={nomeRef}
         label="Nome completo"
         value={form.nomeCompleto}
         onChangeText={(v) => set('nomeCompleto', v)}
@@ -208,6 +245,7 @@ export default function Cadastro() {
         autoCapitalize="words"
         autoComplete="name"
         textContentType="name"
+        returnKeyType="done"
         error={errors.nomeCompleto}
       />
 
@@ -232,12 +270,17 @@ export default function Cadastro() {
             value={form.orgNome}
             onChangeText={(v) => set('orgNome', v)}
             placeholder="Ex.: Oeste Track Club"
+            returnKeyType="next"
+            submitBehavior="submit"
+            onSubmitEditing={() => docRef.current?.focus()}
             error={errors.orgNome}
           />
           <TextField
+            ref={docRef}
             label="CPF ou CNPJ"
-            value={form.orgDocumento}
+            value={formatDocumento(form.orgDocumento)}
             onChangeText={(v) => set('orgDocumento', onlyDigits(v).slice(0, 14))}
+            onBlur={blur('orgDocumento')}
             placeholder="Somente números"
             keyboardType="number-pad"
             error={errors.orgDocumento}
@@ -246,12 +289,19 @@ export default function Cadastro() {
             label="Telefone"
             value={formatPhone(form.orgTelefone)}
             onChangeText={(v) => set('orgTelefone', onlyDigits(v).slice(0, 11))}
+            onBlur={blur('orgTelefone')}
             placeholder="(45) 99999-0000"
             keyboardType="phone-pad"
             autoComplete="tel"
             textContentType="telephoneNumber"
             error={errors.orgTelefone}
           />
+          <View style={styles.orgNote}>
+            <Info size={16} color={colors.textSecondary} />
+            <Text style={[type.caption, { color: colors.textSecondary, flex: 1 }]}>
+              Você já pode usar o app. O selo “Organizador verificado” aparece depois que a equipe confere os dados.
+            </Text>
+          </View>
         </View>
       )}
 
@@ -264,11 +314,11 @@ export default function Cadastro() {
         >
           <Text style={[type.body, { color: colors.text }]}>
             Li e aceito os{' '}
-            <Text style={styles.link} onPress={() => legal('Termos de Uso')} accessibilityRole="link">
+            <Text style={styles.link} onPress={() => router.push('/legal/termos')} accessibilityRole="link">
               Termos de Uso
             </Text>{' '}
             e a{' '}
-            <Text style={styles.link} onPress={() => legal('Política de Privacidade')} accessibilityRole="link">
+            <Text style={styles.link} onPress={() => router.push('/legal/privacidade')} accessibilityRole="link">
               Política de Privacidade
             </Text>{' '}
             (LGPD).
@@ -278,6 +328,21 @@ export default function Cadastro() {
           <Text style={[type.caption, { color: colors.dangerText, paddingLeft: 34 }]}>{errors.termosAceitos}</Text>
         ) : null}
       </View>
+
+      <ConfirmDialog
+        visible={!!leaving}
+        title="Descartar cadastro?"
+        message="Os dados que você preencheu nesta tela serão perdidos."
+        cancelLabel="Continuar"
+        confirmLabel="Descartar"
+        destructive
+        onCancel={() => setLeaving(null)}
+        onConfirm={() => {
+          const go = leaving;
+          setLeaving(null);
+          go?.();
+        }}
+      />
     </AuthScreen>
   );
 }
@@ -294,5 +359,6 @@ const styles = StyleSheet.create({
     borderColor: colors.surfaceElevated,
   },
   orgTitle: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  orgNote: { flexDirection: 'row', gap: 8, alignItems: 'flex-start' },
   link: { color: colors.primaryText },
 });

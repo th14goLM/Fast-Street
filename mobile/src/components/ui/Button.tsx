@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { colors, radius, touch, type } from '../../theme';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'warning';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'warning' | 'danger';
 
 const VARIANTS: Record<Variant, { border: string; text: string; pressed: string; height: number }> = {
   // Primário em contorno (Nocturne): nunca preenchido.
@@ -10,6 +10,8 @@ const VARIANTS: Record<Variant, { border: string; text: string; pressed: string;
   secondary: { border: colors.line, text: colors.text, pressed: colors.neutralPressed, height: touch.input },
   ghost: { border: 'transparent', text: colors.text, pressed: colors.ghostPressed, height: touch.input },
   warning: { border: colors.warning, text: colors.warningText, pressed: colors.warningPressed, height: touch.min },
+  // Destrutivo: contorno vermelho (Remover, Excluir, Descartar).
+  danger: { border: colors.danger, text: colors.dangerText, pressed: colors.dangerTint, height: touch.input },
 };
 
 interface Props {

@@ -20,4 +20,9 @@ export const secureStorage = {
   },
 };
 
-export const KEYS = { session: 'fs.session', onboardingSeen: 'fs.onboardingSeen' } as const;
+export const KEYS = {
+  session: 'fs.session',
+  onboardingSeen: 'fs.onboardingSeen',
+  /** 'gps' ou 'manual' (usa a cidade do cadastro). */
+  locationMode: 'fs.locationMode',
+} as const;
