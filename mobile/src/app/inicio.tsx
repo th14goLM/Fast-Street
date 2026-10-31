@@ -2,20 +2,30 @@ import { useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Check, CheckCircle, EnvelopeSimpleOpen, SignOut } from 'phosphor-react-native';
+import { Check, CheckCircle, EnvelopeSimpleOpen, Info, SignOut } from 'phosphor-react-native';
 import { BrandMark, Button, ScreenTitle, WarningCard } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../features/auth/api';
 import { useCooldown } from '../features/auth/useCooldown';
 import { colors, radius, space, type } from '../theme';
 
+/** Avisos de chegada vindos do fim do onboarding (mesmos textos do protótipo). */
+function avisoDe(aviso: string | undefined): { kind: 'ok' | 'info'; text: string } | null {
+  if (!aviso) return null;
+  if (aviso === 'org') return { kind: 'ok', text: 'Conta criada · bem-vindo à Central do Organizador' };
+  if (aviso === 'sem-veiculo') return { kind: 'info', text: 'Cadastre um veículo na Garagem para se inscrever em eventos.' };
+  if (aviso.startsWith('veiculo:')) return { kind: 'ok', text: `Garagem pronta · ${aviso.slice(8)} é seu veículo principal` };
+  return null;
+}
+
 /**
- * Destino provisório após login/cadastro. As próximas etapas substituem esta tela
- * por UC-16 (dados opcionais) → permissões → UC-01 (primeiro veículo) → Feed.
+ * Destino provisório após login e fim do cadastro, no lugar do Feed (UC-03),
+ * que é a próxima tela a ser implementada.
  */
 export default function Inicio() {
   const { usuario, signOut } = useAuth();
-  const { novo } = useLocalSearchParams<{ novo?: string }>();
+  const { aviso: avisoParam } = useLocalSearchParams<{ aviso?: string }>();
+  const aviso = avisoDe(avisoParam);
   const insets = useSafeAreaInsets();
   const cooldown = useCooldown();
   const [sending, setSending] = useState(false);
@@ -44,12 +54,12 @@ export default function Inicio() {
     <View style={[styles.root, { paddingTop: insets.top + 16, paddingBottom: Math.max(insets.bottom, 12) + 22 }]}>
       <View style={styles.body}>
         <BrandMark size={44} />
-        <ScreenTitle kicker={novo ? 'Conta criada' : 'Bem-vindo de volta'} title={`Olá, ${firstName}`} />
+        <ScreenTitle kicker={aviso ? 'Cadastro concluído' : 'Bem-vindo de volta'} title={`Olá, ${firstName}`} />
 
-        {novo && (
+        {aviso && (
           <View style={styles.toast} accessibilityRole="alert">
-            <CheckCircle size={20} weight="fill" color={colors.success} />
-            <Text style={[type.body, { color: colors.text, flex: 1 }]}>Cadastro concluído · passo 1 de 4</Text>
+            {aviso.kind === 'ok' ? <CheckCircle size={20} weight="fill" color={colors.success} /> : <Info size={20} weight="fill" color={colors.gulf} />}
+            <Text style={[type.body, { color: colors.text, flex: 1 }]}>{aviso.text}</Text>
           </View>
         )}
 
@@ -72,7 +82,7 @@ export default function Inicio() {
         <View style={styles.card}>
           <Text style={[type.overline, { color: colors.textSecondary }]}>Próxima etapa</Text>
           <Text style={[type.body, { color: colors.textMuted }]}>
-            Dados opcionais do perfil, permissões de localização e notificações, primeiro veículo e Feed.
+            Feed de eventos perto de você, Mapa e Garagem.
           </Text>
           <Text style={[type.caption, { color: colors.textTertiary }]}>
             {usuario.cidade.nome}, {usuario.cidade.uf} · perfil {usuario.perfil === 'ambos' ? 'Piloto e Organizador' : usuario.perfil === 'org' ? 'Organizador' : 'Piloto'}

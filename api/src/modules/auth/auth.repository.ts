@@ -16,15 +16,21 @@ export interface UsuarioRow {
   cidade_uf: string;
   org_nome: string | null;
   org_verificado: number | null;
+  bio: string | null;
+  instagram: string | null;
+  youtube_url: string | null;
+  foto_caminho: string | null;
 }
 
 const USUARIO_SELECT = `
   SELECT u.id, u.email, u.senha_hash, u.nome_completo, u.perfil, u.status, u.email_verificado_em,
          c.id AS cidade_id, c.nome AS cidade_nome, c.uf AS cidade_uf,
-         o.nome_organizacao AS org_nome, o.verificado AS org_verificado
+         o.nome_organizacao AS org_nome, o.verificado AS org_verificado,
+         u.bio, u.instagram, u.youtube_url, f.caminho AS foto_caminho
     FROM usuario u
     JOIN cidade c ON c.id = u.cidade_id
-    LEFT JOIN organizador o ON o.usuario_id = u.id`;
+    LEFT JOIN organizador o ON o.usuario_id = u.id
+    LEFT JOIN upload f ON f.id = u.foto_upload_id`;
 
 export async function findUsuarioByEmail(db: Db, email: string): Promise<UsuarioRow | null> {
   const [rows] = await db.query<(UsuarioRow & RowDataPacket)[]>(`${USUARIO_SELECT} WHERE u.email = ?`, [email]);

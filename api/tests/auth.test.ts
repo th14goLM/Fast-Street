@@ -4,6 +4,7 @@ import { createApp } from '../src/app.js';
 import { pool } from '../src/db/pool.js';
 import { migrate } from '../src/db/migrate.js';
 import type { MailMessage, Mailer } from '../src/shared/mailer.js';
+import { resetDb } from './helpers.js';
 
 class FakeMailer implements Mailer {
   sent: MailMessage[] = [];
@@ -39,7 +40,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   mailer.sent = [];
-  for (const t of ['sessao', 'token_autenticacao', 'organizador', 'usuario']) await pool.query(`DELETE FROM ${t}`);
+  await resetDb();
 });
 
 afterAll(async () => {

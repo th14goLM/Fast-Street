@@ -17,7 +17,7 @@ export class ApiError extends Error {
 export const NETWORK_ERROR = 'NETWORK_ERROR';
 
 interface RequestOptions {
-  method?: 'GET' | 'POST';
+  method?: 'GET' | 'POST' | 'PATCH';
   body?: unknown;
   token?: string;
   timeoutMs?: number;

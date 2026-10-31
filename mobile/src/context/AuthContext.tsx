@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { authApi, type AuthResponse, type RegisterPayload, type SessionTokens, type Usuario } from '../features/auth/api';
 import { ApiError } from '../lib/http';
 import { KEYS, secureStorage } from '../lib/storage';
@@ -11,19 +11,56 @@ interface AuthContextValue {
   signIn: (email: string, senha: string) => Promise<Usuario>;
   signUp: (payload: RegisterPayload) => Promise<Usuario>;
   signOut: () => Promise<void>;
+  /** Executa uma chamada autenticada, renovando o access token quando vence (15 min) ou volta 401. */
+  withToken: <T>(call: (accessToken: string) => Promise<T>) => Promise<T>;
+  /** Atualiza o usuário em memória depois de editar o perfil. */
+  setUsuario: (u: Usuario) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-async function persist(tokens: SessionTokens | null) {
-  if (tokens) await secureStorage.set(KEYS.session, JSON.stringify(tokens));
+/** Tokens + instante (ms) em que o access token vence. */
+type Session = SessionTokens & { expiresAt: number };
+
+const withExpiry = (t: SessionTokens): Session => ({ ...t, expiresAt: Date.now() + t.accessTokenExpiresIn * 1000 });
+const RENEW_MARGIN_MS = 30_000;
+
+async function persist(session: Session | null) {
+  if (session) await secureStorage.set(KEYS.session, JSON.stringify(session));
   else await secureStorage.remove(KEYS.session);
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<Status>('loading');
   const [usuario, setUsuario] = useState<Usuario | null>(null);
-  const [tokens, setTokens] = useState<SessionTokens | null>(null);
+  // Ref (e não state): as chamadas em andamento precisam ver o token mais novo na hora.
+  const session = useRef<Session | null>(null);
+  const refreshing = useRef<Promise<Session> | null>(null);
+
+  const clear = useCallback(async () => {
+    session.current = null;
+    await persist(null);
+    setUsuario(null);
+    setStatus('signedOut');
+  }, []);
+
+  /** Rotaciona o refresh token. Chamadas simultâneas compartilham a mesma renovação. */
+  const refresh = useCallback(async (): Promise<Session> => {
+    const current = session.current;
+    if (!current) throw new ApiError(401, 'UNAUTHORIZED', 'Sessão encerrada.');
+    refreshing.current ??= authApi
+      .refresh(current.refreshToken)
+      .then(async (t) => {
+        const next = withExpiry(t);
+        session.current = next;
+        await persist(next);
+        return next;
+      })
+      .finally(() => {
+        refreshing.current = null;
+      });
+    return refreshing.current;
+  }, []);
 
   // Restaura a sessão salva: rotaciona o refresh token e busca o usuário.
   useEffect(() => {
@@ -31,24 +68,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const raw = await secureStorage.get(KEYS.session);
         if (!raw) return setStatus('signedOut');
-        const saved = JSON.parse(raw) as SessionTokens;
-        const fresh = await authApi.refresh(saved.refreshToken);
+        session.current = JSON.parse(raw) as Session;
+        const fresh = await refresh();
         const { usuario: u } = await authApi.me(fresh.accessToken);
-        await persist(fresh);
-        setTokens(fresh);
         setUsuario(u);
         setStatus('signedIn');
       } catch (err) {
         // Sem rede: mantém os tokens para tentar de novo depois; sessão inválida: limpa.
-        if (!(err instanceof ApiError && err.status === 0)) await persist(null);
-        setStatus('signedOut');
+        if (err instanceof ApiError && err.status === 0) {
+          session.current = null;
+          setStatus('signedOut');
+        } else await clear();
       }
     })();
-  }, []);
+  }, [refresh, clear]);
+
+  const withToken = useCallback(
+    async <T,>(call: (accessToken: string) => Promise<T>): Promise<T> => {
+      let s = session.current;
+      if (!s) throw new ApiError(401, 'UNAUTHORIZED', 'Sessão encerrada. Entre de novo.');
+      try {
+        if (s.expiresAt - RENEW_MARGIN_MS < Date.now()) s = await refresh();
+        return await call(s.accessToken);
+      } catch (err) {
+        if (!(err instanceof ApiError) || err.status !== 401) throw err;
+        // Token recusado: tenta uma renovação; se ela falhar, a sessão acabou.
+        try {
+          s = await refresh();
+        } catch {
+          await clear();
+          throw new ApiError(401, 'UNAUTHORIZED', 'Sua sessão expirou. Entre de novo.');
+        }
+        return call(s.accessToken);
+      }
+    },
+    [refresh, clear],
+  );
 
   const start = useCallback(async ({ usuario: u, tokens: t }: AuthResponse) => {
-    await persist(t);
-    setTokens(t);
+    session.current = withExpiry(t);
+    await persist(session.current);
     setUsuario(u);
     setStatus('signedIn');
     return u;
@@ -58,15 +117,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = useCallback(async (payload: RegisterPayload) => start(await authApi.register(payload)), [start]);
 
   const signOut = useCallback(async () => {
-    const t = tokens;
-    await persist(null);
-    setTokens(null);
-    setUsuario(null);
-    setStatus('signedOut');
-    if (t) await authApi.logout(t.refreshToken).catch(() => undefined);
-  }, [tokens]);
+    const refreshToken = session.current?.refreshToken;
+    await clear();
+    if (refreshToken) await authApi.logout(refreshToken).catch(() => undefined);
+  }, [clear]);
 
-  const value = useMemo(() => ({ status, usuario, signIn, signUp, signOut }), [status, usuario, signIn, signUp, signOut]);
+  const value = useMemo(
+    () => ({ status, usuario, signIn, signUp, signOut, withToken, setUsuario }),
+    [status, usuario, signIn, signUp, signOut, withToken],
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

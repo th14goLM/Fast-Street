@@ -11,7 +11,28 @@ import { env } from '../config/env.js';
 
 const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'migrations');
 
+/**
+ * Cria o banco do DATABASE_URL se ainda não existir (comum em máquina nova).
+ * Conecta sem banco selecionado; o usuário precisa de permissão CREATE.
+ */
+async function ensureDatabase(databaseUrl: string, log: (msg: string) => void): Promise<void> {
+  const url = new URL(databaseUrl);
+  const name = decodeURIComponent(url.pathname.replace(/^\//, ''));
+  if (!/^[A-Za-z0-9_]+$/.test(name)) throw new Error(`Nome de banco inválido no DATABASE_URL: "${name}"`);
+  url.pathname = '/';
+  const conn = await mysql.createConnection({ uri: url.toString() });
+  try {
+    const [rows] = await conn.query<mysql.RowDataPacket[]>('SHOW DATABASES LIKE ?', [name]);
+    if (rows.length) return;
+    await conn.query(`CREATE DATABASE \`${name}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci`);
+    log(`→ banco ${name} criado`);
+  } finally {
+    await conn.end();
+  }
+}
+
 export async function migrate(databaseUrl = env.DATABASE_URL, log = console.log): Promise<void> {
+  await ensureDatabase(databaseUrl, log);
   const conn = await mysql.createConnection({ uri: databaseUrl, multipleStatements: true });
   try {
     await conn.query(`CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -28,7 +49,12 @@ export async function migrate(databaseUrl = env.DATABASE_URL, log = console.log)
       log(`→ aplicando ${file}`);
       // DDL no MySQL faz commit implícito; cada arquivo deve ser idempotente o bastante
       // para ser reaplicado manualmente em caso de falha no meio.
-      await conn.query(sql);
+      try {
+        await conn.query(sql);
+      } catch (err) {
+        const e = err as { code?: string; sqlMessage?: string };
+        throw new Error(`Falha em ${file}: ${e.sqlMessage ?? String(err)} (${e.code ?? 'sem código'})`, { cause: err });
+      }
       await conn.query('INSERT INTO schema_migrations (nome) VALUES (?)', [file]);
     }
     log('Migrations em dia.');
@@ -38,8 +64,8 @@ export async function migrate(databaseUrl = env.DATABASE_URL, log = console.log)
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
-  migrate().catch((err) => {
-    console.error(err);
+  migrate().catch((err: Error) => {
+    console.error(err.message);
     process.exit(1);
   });
 }

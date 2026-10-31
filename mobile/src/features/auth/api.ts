@@ -9,6 +9,10 @@ export interface Usuario {
   emailVerificado: boolean;
   cidade: { id: number; nome: string; uf: string };
   organizador: { nomeOrganizacao: string; verificado: boolean } | null;
+  bio: string | null;
+  instagram: string | null;
+  youtubeUrl: string | null;
+  fotoUrl: string | null;
 }
 
 export interface SessionTokens {
