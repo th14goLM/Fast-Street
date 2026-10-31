@@ -90,6 +90,7 @@ export default function Login() {
           <Text style={[type.label, { color: colors.textMuted, lineHeight: 20 }]}>
             Sua conta ainda não foi verificada. Abra o link que enviamos para {banner.email} (confira também o spam).
           </Text>
+          <Button label="Já confirmei, entrar" variant="secondary" compact loading={loading} onPress={submit} />
           {cooldown.left > 0 ? (
             <View style={styles.resent}>
               <Check size={14} weight="bold" color={colors.successText} />

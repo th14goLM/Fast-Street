@@ -7,6 +7,7 @@ import { BrandMark, Button, ScreenTitle, WarningCard } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../features/auth/api';
 import { useCooldown } from '../features/auth/useCooldown';
+import { useEmailVerification } from '../features/auth/useEmailVerification';
 import { colors, radius, space, type } from '../theme';
 
 /** Avisos de chegada vindos do fim do onboarding (mesmos textos do protótipo). */
@@ -29,6 +30,7 @@ export default function Inicio() {
   const insets = useSafeAreaInsets();
   const cooldown = useCooldown();
   const [sending, setSending] = useState(false);
+  const verificacao = useEmailVerification();
 
   if (!usuario) return null;
   const firstName = usuario.nomeCompleto.split(' ')[0];
@@ -63,11 +65,22 @@ export default function Inicio() {
           </View>
         )}
 
-        {!usuario.emailVerificado && (
+        {verificacao.justVerified && (
+          <View style={styles.toast} accessibilityRole="alert">
+            <CheckCircle size={20} weight="fill" color={colors.success} />
+            <Text style={[type.body, { color: colors.text, flex: 1 }]}>E-mail confirmado · sua conta está ativa</Text>
+          </View>
+        )}
+
+        {verificacao.pending && (
           <WarningCard icon={<EnvelopeSimpleOpen size={20} color={colors.warningText} />} title="Confirme seu e-mail">
             <Text style={[type.label, { color: colors.textMuted, lineHeight: 20 }]}>
-              Enviamos um link para {usuario.email}. Você precisa confirmar para entrar de novo depois de sair.
+              Enviamos um link para {usuario.email}. Abra o e-mail e toque em “Confirmar e-mail” (confira também o spam).
             </Text>
+            {verificacao.notYet && (
+              <Text style={[type.label, { color: colors.warningText }]}>Ainda não recebemos a confirmação. Abra o link do e-mail e tente de novo.</Text>
+            )}
+            <Button label="Já confirmei" variant="secondary" compact loading={verificacao.checking} onPress={verificacao.checkNow} />
             {cooldown.left > 0 ? (
               <View style={styles.row}>
                 <Check size={14} weight="bold" color={colors.successText} />
