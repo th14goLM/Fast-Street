@@ -6,7 +6,14 @@ import { z } from 'zod';
 const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(3333),
-  DATABASE_URL: z.string().startsWith('mysql://', 'DATABASE_URL deve começar com mysql://'),
+  DATABASE_URL: z
+    .string()
+    .startsWith('mysql://', 'DATABASE_URL deve começar com mysql://')
+    .refine((v) => URL.canParse(v), 'DATABASE_URL inválida. Formato: mysql://usuario:senha@127.0.0.1:3306/fast_street')
+    .refine(
+      (v) => !URL.canParse(v) || /^\/[A-Za-z0-9_]+$/.test(new URL(v).pathname),
+      'Falta o nome do banco no fim da DATABASE_URL (ex.: mysql://root:senha@127.0.0.1:3306/fast_street)',
+    ),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET precisa de pelo menos 32 caracteres'),
   PUBLIC_API_URL: z.url().default('http://localhost:3333'),
   // Pasta das fotos enviadas (perfil e veículos). Relativa à pasta api/.
