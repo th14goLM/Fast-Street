@@ -17,6 +17,11 @@ const EnvSchema = z.object({
       (v) => !URL.canParse(v) || /^\/[A-Za-z0-9_]+$/.test(new URL(v).pathname),
       'Falta o nome do banco no fim da DATABASE_URL (ex.: mysql://root:senha@127.0.0.1:3306/fast_street)',
     ),
+  // Segundos que o migrate/seed esperam por um bloqueio (lock) antes de desistir com a explicação.
+  DB_LOCK_WAIT_TIMEOUT: z.preprocess(
+    blank,
+    z.coerce.number({ error: 'DB_LOCK_WAIT_TIMEOUT deve ser um número de segundos.' }).int().min(1).max(31_536_000).default(30),
+  ),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET precisa de pelo menos 32 caracteres'),
   PUBLIC_API_URL: z.url().default('http://localhost:3333'),
   // Pasta das fotos enviadas (perfil e veículos). Relativa à pasta api/.
