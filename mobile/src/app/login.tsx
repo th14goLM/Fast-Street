@@ -40,7 +40,7 @@ export default function Login() {
     try {
       await signIn(email.trim(), senha);
       if (router.canDismiss()) router.dismissAll();
-      router.replace('/inicio');
+      router.replace('/feed');
     } catch (err) {
       if (err instanceof ApiError && err.code === 'EMAIL_NOT_VERIFIED') {
         setBanner({ kind: 'unverified', email: String(err.details.email ?? email.trim().toLowerCase()) });

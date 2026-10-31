@@ -13,7 +13,7 @@ export default function PermissaoNotificacoes() {
   const [asking, setAsking] = useState(false);
 
   const next = () => {
-    if (usuario?.perfil === 'org') router.replace({ pathname: '/inicio', params: { aviso: 'org' } });
+    if (usuario?.perfil === 'org') router.replace({ pathname: '/feed', params: { aviso: 'org' } });
     else router.replace('/cadastro/veiculo');
   };
 

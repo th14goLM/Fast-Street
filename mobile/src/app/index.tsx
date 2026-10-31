@@ -25,7 +25,7 @@ export default function Splash() {
     if (!timeUp || status === 'loading' || navigated.current) return;
     navigated.current = true;
     (async () => {
-      if (status === 'signedIn') return router.replace('/inicio');
+      if (status === 'signedIn') return router.replace('/feed');
       const seen = await secureStorage.get(KEYS.onboardingSeen);
       router.replace(seen ? '/login' : '/onboarding');
     })();
