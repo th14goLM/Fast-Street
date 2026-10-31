@@ -49,7 +49,12 @@ export async function migrate(databaseUrl = env.DATABASE_URL, log = console.log)
       log(`→ aplicando ${file}`);
       // DDL no MySQL faz commit implícito; cada arquivo deve ser idempotente o bastante
       // para ser reaplicado manualmente em caso de falha no meio.
-      await conn.query(sql);
+      try {
+        await conn.query(sql);
+      } catch (err) {
+        const e = err as { code?: string; sqlMessage?: string };
+        throw new Error(`Falha em ${file}: ${e.sqlMessage ?? String(err)} (${e.code ?? 'sem código'})`, { cause: err });
+      }
       await conn.query('INSERT INTO schema_migrations (nome) VALUES (?)', [file]);
     }
     log('Migrations em dia.');
@@ -59,8 +64,8 @@ export async function migrate(databaseUrl = env.DATABASE_URL, log = console.log)
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
-  migrate().catch((err) => {
-    console.error(err);
+  migrate().catch((err: Error) => {
+    console.error(err.message);
     process.exit(1);
   });
 }

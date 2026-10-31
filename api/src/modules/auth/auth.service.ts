@@ -4,6 +4,7 @@ import { pool, withTransaction } from '../../db/pool.js';
 import { AppError, Errors } from '../../shared/errors.js';
 import type { Mailer } from '../../shared/mailer.js';
 import { documentoTipo } from '../../shared/validators/documento.js';
+import { mediaUrl } from '../../shared/storage.js';
 import * as repo from './auth.repository.js';
 import type { LoginInput, RegisterInput } from './auth.schemas.js';
 import { DUMMY_HASH, hashPassword, newOpaqueToken, sha256, verifyPassword } from './crypto.js';
@@ -22,6 +23,10 @@ export interface UsuarioDTO {
   emailVerificado: boolean;
   cidade: { id: number; nome: string; uf: string };
   organizador: { nomeOrganizacao: string; verificado: boolean } | null;
+  bio: string | null;
+  instagram: string | null;
+  youtubeUrl: string | null;
+  fotoUrl: string | null;
 }
 
 export interface SessionTokens {
@@ -38,6 +43,10 @@ export const toDTO = (u: repo.UsuarioRow): UsuarioDTO => ({
   emailVerificado: u.email_verificado_em !== null,
   cidade: { id: u.cidade_id, nome: u.cidade_nome, uf: u.cidade_uf },
   organizador: u.org_nome ? { nomeOrganizacao: u.org_nome, verificado: u.org_verificado === 1 } : null,
+  bio: u.bio,
+  instagram: u.instagram,
+  youtubeUrl: u.youtube_url,
+  fotoUrl: u.foto_caminho ? mediaUrl(u.foto_caminho) : null,
 });
 
 const isDuplicateEntry = (err: unknown): boolean =>

@@ -9,6 +9,8 @@ const EnvSchema = z.object({
   DATABASE_URL: z.string().startsWith('mysql://', 'DATABASE_URL deve começar com mysql://'),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET precisa de pelo menos 32 caracteres'),
   PUBLIC_API_URL: z.url().default('http://localhost:3333'),
+  // Pasta das fotos enviadas (perfil e veículos). Relativa à pasta api/.
+  UPLOAD_DIR: z.string().default('uploads'),
   CORS_ORIGINS: z
     .string()
     .default('')
