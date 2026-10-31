@@ -1,0 +1,9 @@
+# Segredos locais (senhas do MySQL do Docker). Copie .env.example para .env.
+.env
+.env.*.local
+
+# Sistema operacional / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

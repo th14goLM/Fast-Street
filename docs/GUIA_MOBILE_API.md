@@ -17,13 +17,30 @@ docker-compose.yml  MySQL 8.4 para desenvolvimento
 
 ## Como rodar
 
-**Pré-requisitos:** Node.js ≥ 20.19, Docker (ou um MySQL 8 local) e o app **Expo Go** no celular (ou um emulador).
+**Pré-requisitos:** Node.js ≥ 20.19, um MySQL 8 (instalado no computador **ou** via Docker) e o app **Expo Go** no celular (ou um emulador).
 
-### 1. Banco de dados
+### 1. Banco de dados (escolha uma opção)
+
+**A. MySQL já instalado (ex.: Workbench).** Não precisa de Docker. Use no `api/.env`:
+`DATABASE_URL=mysql://root:SUA_SENHA@127.0.0.1:3306/fast_street`. O `npm run db:migrate` cria o banco se ele não existir.
+
+**B. MySQL no Docker.** As senhas ficam num `.env` na **raiz** (fora do git):
 ```bash
-docker compose up -d            # na raiz do repositório
+cp .env.example .env            # Windows: copy .env.example .env  →  troque as senhas
+docker compose up -d
+docker compose ps               # espere o STATUS "healthy"
 ```
-O compose cria os bancos `fast_street` e `fast_street_test`, com usuário e senha `fast_street`.
+O compose cria `fast_street` e `fast_street_test` na porta **3307**, para não conflitar com um MySQL local na 3306. No `api/.env`, use o mesmo usuário, senha e porta do `.env` da raiz:
+`DATABASE_URL=mysql://fast_street:SUA_SENHA@127.0.0.1:3307/fast_street`.
+
+> As senhas do `.env` da raiz só valem quando o banco é criado pela primeira vez. Para trocá-las depois:
+> `docker compose down -v` (**apaga os dados do banco do Docker**) e `docker compose up -d`.
+
+| Arquivo | Para quê | Vai para o git? |
+|---|---|---|
+| `.env` (raiz) | Senhas e porta do MySQL do Docker | Não (só o `.env.example`) |
+| `api/.env` | Configuração da API (`DATABASE_URL`, `JWT_SECRET`…) | Não (só o `.env.example`) |
+| `mobile/.env.local` | Opcional: `EXPO_PUBLIC_API_URL` | Não. Nunca coloque segredos aqui: variáveis `EXPO_PUBLIC_*` vão dentro do app instalado |
 
 ### 2. API
 ```bash

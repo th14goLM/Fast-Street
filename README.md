@@ -7,7 +7,7 @@ App de eventos automotivos legalizados em locais autorizados (track days, arranc
 - [`design/`](design/): handoff do Claude Design (protótipos `.dc.html`, design system e transcrição do chat) usado como referência visual.
 
 ```bash
-docker compose up -d                           # MySQL 8
+# MySQL 8: use o seu MySQL local OU o Docker (cp .env.example .env && docker compose up -d)
 cd api && cp .env.example .env && npm install && npm run db:migrate && npm run dev
 cd mobile && npm install && npx expo start     # app React Native
 ```
