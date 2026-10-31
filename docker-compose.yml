@@ -1,23 +1,25 @@
 # MySQL 8 para desenvolvimento local da Fast Street API.
-# Uso: docker compose up -d
+# Uso: copie .env.example para .env (na raiz), troque as senhas e rode: docker compose up -d
+# Opcional: quem já tem MySQL instalado (ex.: Workbench) pode ignorar este arquivo.
 services:
   mysql:
     image: mysql:8.4
     container_name: fast-street-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: fast_street
-      MYSQL_USER: fast_street
-      MYSQL_PASSWORD: fast_street
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Defina MYSQL_ROOT_PASSWORD no .env da raiz (copie de .env.example)}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-fast_street}
+      MYSQL_USER: ${MYSQL_USER:-fast_street}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Defina MYSQL_PASSWORD no .env da raiz (copie de .env.example)}
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT:-3307}:3306"
     command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci"]
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./api/docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./api/docker/init-test-db.sh:/docker-entrypoint-initdb.d/init-test-db.sh:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      # $$ = variável lida dentro do contêiner (não é substituída pelo compose).
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
       interval: 5s
       retries: 20
 
