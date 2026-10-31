@@ -63,6 +63,8 @@ Em desenvolvimento, o app chama a API no IP da máquina que roda o Metro (porta 
 
 > Algo não funcionou? Rode `npm run doctor` dentro de `api/`. Ele aponta os erros de configuração e a correção de cada um.
 
+> **`db:migrate` ou `db:seed` parado?** Quase sempre é outra conexão segurando as tabelas: uma aba do Workbench/IntelliJ com transação aberta (auto-commit desligado). Os dois comandos esperam no máximo `DB_LOCK_WAIT_TIMEOUT` segundos (padrão 30) e então param com a explicação: quais conexões seguram o banco e o `KILL <id>;` pronto (a lista exige a permissão `PROCESS`, que o root tem). Para liberar: `COMMIT;` ou `ROLLBACK;` na aba do Workbench e **Query → Auto-Commit Transactions** ligado. Rodar o migrate de novo é seguro: as migrations são reaplicáveis.
+
 ### E-mail de verificação de conta
 Ao terminar o cadastro, a API envia o e-mail "Confirme seu e-mail", com botão e link válido por 24 horas. Há dois modos:
 
@@ -114,7 +116,7 @@ Enquanto a criação de eventos pelo organizador (UC-06) não existe, o seed pop
 | Comando | O que faz |
 |---|---|
 | `cd api && npm run doctor` | **Diagnóstico do ambiente:** confere `api/.env`, conexão com o MySQL, banco, migrations, envio de e-mail (SMTP), IP para o celular e portas, e diz o que corrigir |
-| `cd api && npm test` | 44 testes (unitários + integração com MySQL real no banco `fast_street_test`) |
+| `cd api && npm test` | 45 testes (unitários + integração com MySQL real no banco `fast_street_test`) |
 | `cd api && npm run typecheck` | Checagem de tipos da API |
 | `cd mobile && npx tsc --noEmit` | Checagem de tipos do app |
 | `cd mobile && npx expo lint` | ESLint (inclui as regras do React Compiler) |

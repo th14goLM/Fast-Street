@@ -10,6 +10,7 @@ import { createHash } from 'node:crypto';
 import mysql from 'mysql2/promise';
 import { env } from '../config/env.js';
 import { TIME_ZONE } from '../shared/time.js';
+import { applyLockTimeout, explainLockTimeout, isLockTimeout } from './lock.js';
 
 const SEED_DOMAIN = '@seed.faststreet.dev';
 
@@ -103,6 +104,7 @@ async function main() {
   }
   const db = await mysql.createConnection({ uri: env.DATABASE_URL });
   try {
+    await applyLockTimeout(db, env.DB_LOCK_WAIT_TIMEOUT);
     const [[{ n }]] = (await db.query("SELECT COUNT(*) AS n FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'evento'")) as unknown as [[{ n: number }]];
     if (!Number(n)) throw new Error('Tabelas de eventos não encontradas. Rode antes: npm run db:migrate');
 
@@ -200,7 +202,9 @@ async function main() {
     console.log(`${EVENTOS.length} eventos (${visiveis} abertos no Feed) e ${inscricoes} inscrições. Datas relativas a hoje.`);
   } catch (err) {
     await db.rollback().catch(() => undefined);
-    throw err;
+    if (!isLockTimeout(err)) throw err;
+    const schema = new URL(env.DATABASE_URL).pathname.slice(1);
+    throw new Error(await explainLockTimeout(db, schema, env.DB_LOCK_WAIT_TIMEOUT), { cause: err });
   } finally {
     await db.end();
   }
