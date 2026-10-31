@@ -15,6 +15,8 @@ interface AuthContextValue {
   withToken: <T>(call: (accessToken: string) => Promise<T>) => Promise<T>;
   /** Atualiza o usuário em memória depois de editar o perfil. */
   setUsuario: (u: Usuario) => void;
+  /** Busca o usuário de novo na API (ex.: para saber se o e-mail já foi confirmado). */
+  refreshUsuario: () => Promise<Usuario>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -113,6 +115,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return u;
   }, []);
 
+  const refreshUsuario = useCallback(async () => {
+    const { usuario: u } = await withToken((token) => authApi.me(token));
+    setUsuario(u);
+    return u;
+  }, [withToken]);
+
   const signIn = useCallback(async (email: string, senha: string) => start(await authApi.login(email, senha)), [start]);
   const signUp = useCallback(async (payload: RegisterPayload) => start(await authApi.register(payload)), [start]);
 
@@ -123,8 +131,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [clear]);
 
   const value = useMemo(
-    () => ({ status, usuario, signIn, signUp, signOut, withToken, setUsuario }),
-    [status, usuario, signIn, signUp, signOut, withToken],
+    () => ({ status, usuario, signIn, signUp, signOut, withToken, setUsuario, refreshUsuario }),
+    [status, usuario, signIn, signUp, signOut, withToken, refreshUsuario],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

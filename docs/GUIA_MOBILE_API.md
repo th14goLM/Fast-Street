@@ -61,15 +61,41 @@ Em desenvolvimento, o app chama a API no IP da máquina que roda o Metro (porta 
 
 > Algo não funcionou? Rode `npm run doctor` dentro de `api/`. Ele aponta os erros de configuração e a correção de cada um.
 
-### Verificação de e-mail em desenvolvimento
-Ainda não há envio de e-mail real. O link de confirmação aparece **no terminal da API** (`✉️ [e-mail simulado]`). Abra o link no navegador, de preferência o do celular, para confirmar a conta. Em produção, implemente a interface `Mailer` (`api/src/shared/mailer.ts`) com SMTP, SES, Resend etc.
+### E-mail de verificação de conta
+Ao terminar o cadastro, a API envia o e-mail "Confirme seu e-mail", com botão e link válido por 24 horas. Há dois modos:
+
+**Simulado (padrão, sem configurar nada):** o e-mail não é enviado e o link aparece **no terminal da API** (`✉️ [e-mail simulado]`). Abra o link no navegador para confirmar.
+
+**Mailtrap (recomendado em desenvolvimento):** os e-mails chegam numa caixa de teste no site do Mailtrap, com o visual real do e-mail, sem risco de enviar para pessoas de verdade.
+1. Crie uma conta grátis em **mailtrap.io**.
+2. No menu, abra **Email Testing → Inboxes** e entre na inbox padrão ("My Inbox").
+3. Na aba **Integration**, escolha **SMTP** e copie Host, Port, Username e Password.
+4. No `api/.env`:
+   ```
+   SMTP_HOST=sandbox.smtp.mailtrap.io
+   SMTP_PORT=2525
+   SMTP_USER=<Username copiado>
+   SMTP_PASS=<Password copiado>
+   SMTP_SECURE=
+   MAIL_FROM="Fast Street <nao-responda@faststreet.dev>"
+   ```
+5. Reinicie a API. O terminal deve mostrar `E-mail: conexão SMTP OK`. Se mostrar falha, rode `npm run doctor`: ele diz se o problema é a senha, o host ou a porta.
+6. Crie uma conta no app. O e-mail aparece na inbox do Mailtrap; abra-o e toque em **Confirmar e-mail**.
+
+No app, depois de confirmar:
+- **Tela inicial:** toque em **Já confirmei**. O app também confere sozinho quando você volta para ele, por exemplo depois de abrir o link no app de e-mail.
+- **Login de conta não confirmada:** toque em **Já confirmei, entrar**.
+
+> O link usa a `PUBLIC_API_URL`. Para abrir o link no celular, ela precisa ter o IP do computador na rede (ex.: `http://192.168.100.129:3333`), não `localhost`.
+
+**Produção:** use as mesmas variáveis com um provedor de entrega real (Resend, Amazon SES, Brevo) e um remetente do seu domínio. Não é preciso mudar o código.
 
 ## Verificações
 
 | Comando | O que faz |
 |---|---|
-| `cd api && npm run doctor` | **Diagnóstico do ambiente:** confere `api/.env`, conexão com o MySQL, banco, migrations, IP para o celular e portas, e diz o que corrigir |
-| `cd api && npm test` | 29 testes (unitários + integração com MySQL real no banco `fast_street_test`) |
+| `cd api && npm run doctor` | **Diagnóstico do ambiente:** confere `api/.env`, conexão com o MySQL, banco, migrations, envio de e-mail (SMTP), IP para o celular e portas, e diz o que corrigir |
+| `cd api && npm test` | 35 testes (unitários + integração com MySQL real no banco `fast_street_test`) |
 | `cd api && npm run typecheck` | Checagem de tipos da API |
 | `cd mobile && npx tsc --noEmit` | Checagem de tipos do app |
 | `cd mobile && npx expo lint` | ESLint (inclui as regras do React Compiler) |

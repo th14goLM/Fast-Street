@@ -11,10 +11,10 @@ import { uploadsRoutes } from './modules/uploads/uploads.routes.js';
 import { usuariosRoutes } from './modules/usuarios/usuarios.routes.js';
 import { veiculosRoutes } from './modules/veiculos/veiculos.routes.js';
 import { errorHandler } from './shared/http/error-handler.js';
-import { ConsoleMailer, type Mailer } from './shared/mailer.js';
+import { createMailer, type Mailer } from './shared/mailer.js';
 import { MEDIA_PREFIX, UPLOAD_ROOT } from './shared/storage.js';
 
-export function createApp({ mailer = new ConsoleMailer() }: { mailer?: Mailer } = {}): Express {
+export function createApp({ mailer = createMailer(env) }: { mailer?: Mailer } = {}): Express {
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', 1);

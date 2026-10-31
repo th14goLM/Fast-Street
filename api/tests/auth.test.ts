@@ -7,6 +7,7 @@ import type { MailMessage, Mailer } from '../src/shared/mailer.js';
 import { resetDb } from './helpers.js';
 
 class FakeMailer implements Mailer {
+  readonly description = 'fake';
   sent: MailMessage[] = [];
   async send(m: MailMessage) {
     this.sent.push(m);
