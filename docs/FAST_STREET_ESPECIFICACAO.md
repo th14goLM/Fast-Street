@@ -37,7 +37,7 @@ Cole o arquivo inteiro (ou as seções relevantes) no prompt e acrescente a inst
 > Com base na seção 11 (e nas regras da seção 9) da especificação Fast Street anexada, gere o DER em notação Crow's Foot. Inclua PK/FK, cardinalidades, enums e constraints. Resolva as decisões marcadas [?] na seção 13 com a opção recomendada e justifique.
 
 **Script físico:**
-> Usando a seção 11, gere o DDL PostgreSQL 16 (com PostGIS para geolocalização), índices, constraints CHECK e UNIQUE parciais, e as migrations em ordem.
+> Usando a seção 11 (com as adaptações da 11.6), gere o DDL MySQL 8 (InnoDB, utf8mb4), índices, constraints CHECK, unicidade condicional por coluna gerada e as migrations em ordem.
 
 **API:**
 > Usando as seções 7, 9 e 10, gere o contrato OpenAPI 3.1 dos recursos Eventos, Inscrições, Veículos, Resultados e Ranking. Cada caso de uso deve ser um endpoint com seus códigos de erro.
@@ -633,7 +633,9 @@ stateDiagram-v2
 
 ### 11.1 Entidades e atributos
 
-> Convenções sugeridas: `id` UUID (PK); `created_at` e `updated_at` timestamptz em todas as tabelas; nomes em snake_case e em português, para manter a linguagem ubíqua do produto.
+> Convenções sugeridas: `id` UUID (PK); `created_at` e `updated_at` em todas as tabelas; nomes em snake_case e em português, para manter a linguagem ubíqua do produto.
+>
+> Os tipos abaixo (`citext`, `timestamptz`, `point`/`geography`, UNIQUE parcial) foram escritos em notação PostgreSQL. **O banco implementado é o MySQL 8**: a correspondência de cada um está na seção 11.6.
 
 **USUARIO**: `id`, `email` (UNIQUE, citext), `senha_hash` (nullable se só login social), `nome_completo`, `cidade_id` (FK), `bio` (≤ 160), `instagram`, `youtube_url`, `foto_url`, `email_verificado_em`, `perfil` (enum piloto/org/ambos, ou ver 11.4-A), `termos_versao`, `termos_aceitos_em`, `localizacao_modo` (gps/manual), `status` (ativo, exclusao_agendada, anonimizado), `exclusao_solicitada_em`. **[P/I]**
 
@@ -906,7 +908,7 @@ erDiagram
 |---|---|---|
 | B1. Calcular na hora (`SUM(pontos) GROUP BY` período/categoria) | Sempre consistente, zero redundância | Custo por leitura; a variação ↑↓ precisa de uma 2ª consulta "antes do último evento" |
 | **B2. `RANKING_SNAPSHOT` gerado a cada publicação de resultados** (recomendada) | Leitura O(1), variação trivial (comparar snapshots), auditável | Redundância; exige job transacional na publicação e reprocessamento na anonimização |
-| B3. Materialized view + refresh na publicação | Meio-termo, nativo do PostgreSQL | Não guarda histórico de posições; a variação continua difícil |
+| B3. Materialized view + refresh na publicação | Meio-termo, nativo do PostgreSQL | Não existe no MySQL 8; não guarda histórico de posições; a variação continua difícil |
 
 **C. Vagas**
 
@@ -943,16 +945,31 @@ erDiagram
 
 | Opção | Prós | Contras |
 |---|---|---|
-| **H1. PostGIS `geography(Point,4326)` + índice GiST** (recomendada) | `ST_DWithin` para o raio de 5–200 km; clustering no servidor possível | Extensão a mais no banco |
+| H1. PostGIS `geography(Point,4326)` + índice GiST | `ST_DWithin` para o raio de 5–200 km; clustering no servidor possível | Exige PostgreSQL + extensão |
 | H2. `lat`/`lng` numeric + Haversine | Portável | Lento sem bounding box; sem índice espacial |
+| **H3. `latitude`/`longitude` DECIMAL(9,6) + índice composto + bounding box + `ST_Distance_Sphere`** (adotada, MySQL 8) | A caixa de busca usa o índice; a distância exata é calculada só para os candidatos | Sem clustering no banco; precisão esférica (suficiente para 5–200 km) |
 
 ### 11.5 Constraints e índices sugeridos **[I]**
-- `UNIQUE (usuario_id) WHERE principal AND excluido_em IS NULL` em VEICULO.
-- `UNIQUE (evento_id, piloto_id) WHERE status IN ('pend','conf')` em INSCRICAO.
+- `UNIQUE (usuario_id) WHERE principal AND excluido_em IS NULL` em VEICULO (no MySQL: coluna gerada `principal_de` + UNIQUE; ver 11.6).
+- `UNIQUE (evento_id, piloto_id) WHERE status IN ('pend','conf')` em INSCRICAO (no MySQL: coluna gerada `ativa_de` + UNIQUE).
 - `UNIQUE (evento_id, categoria_id, posicao)` em RESULTADO.
-- `CHECK (vagas_total > 0)`, `CHECK (ano BETWEEN 1900 AND extract(year from now())+1)`, `CHECK (char_length(bio) <= 160)`, `CHECK (tamanho_bytes <= 1048576)`, `CHECK (mime IN ('image/png','image/jpeg'))`.
+- `CHECK (vagas_total > 0)`, `CHECK (ano BETWEEN 1900 AND extract(year from now())+1)` (no MySQL, CHECK não aceita `NOW()`: o limite superior do ano é validado na aplicação), `CHECK (char_length(bio) <= 160)`, `CHECK (tamanho_bytes <= 1048576)`, `CHECK (mime IN ('image/png','image/jpeg'))`.
 - **Lotação** (RN-INS-06 / RN-GIN-01): `SELECT … FOR UPDATE` no EVENTO ao confirmar ou aprovar, ou um contador `vagas_confirmadas` com CHECK `<= vagas_total`.
-- Índices: GiST em `local.geo`; `(status, inicio_em)` em EVENTO; `(usuario_id, lida_em)` em NOTIFICACAO; `(evento_id, status)` em INSCRICAO.
+- Índices: `(latitude, longitude)` em LOCAL (GiST em `local.geo` no PostgreSQL); `(status, inicio_em)` em EVENTO; `(usuario_id, lida_em)` em NOTIFICACAO; `(evento_id, status)` em INSCRICAO.
+
+### 11.6 Implementação em MySQL 8 **[I]**
+O modelo acima foi escrito em notação PostgreSQL. A API usa **MySQL 8** (InnoDB, `utf8mb4_0900_ai_ci`), com as migrations em `api/src/db/migrations`. Correspondência adotada:
+
+| Notação do modelo | MySQL 8 (implementado) | Observação |
+|---|---|---|
+| `id` UUID | `CHAR(36)`, gerado pela aplicação | |
+| `timestamptz` | `DATETIME(3)` sempre em **UTC** | A conversão para America/Sao_Paulo é feita na API e no app |
+| `citext` (e-mail) | `VARCHAR` com collation `_ai_ci` | Comparação sem diferenciar maiúsculas e acentos; o e-mail também é normalizado na API |
+| `geo` (point/geography) | `latitude` e `longitude` `DECIMAL(9,6)` + índice composto | Distância com `ST_Distance_Sphere` após filtrar por bounding box (opção H3) |
+| UNIQUE parcial (`… WHERE …`) | Coluna gerada `STORED` + `UNIQUE` | Ex.: `ativa_de = IF(status IN ('pend','conf'), CONCAT(evento_id, ':', piloto_id), NULL)`; o MySQL permite vários NULL em UNIQUE |
+| `ON DELETE CASCADE` em coluna base de coluna gerada | `RESTRICT` (limitação do MySQL) | A exclusão em cascata é feita pela aplicação |
+| CHECK com `NOW()` | Validação na aplicação | CHECK no MySQL só aceita expressões determinísticas |
+| Materialized view (opção B3) | Não disponível | Para o ranking, segue recomendada a opção B2 (snapshot) |
 
 ---
 
