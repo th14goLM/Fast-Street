@@ -1,6 +1,18 @@
 # Segredos locais (senhas do MySQL do Docker). Copie .env.example para .env.
 .env
-.env.*.local
+.env.*
+!.env.example
+!.env.*.example
+
+# Chaves, cofres de senha e dumps do banco: nunca no repositório
+*.pem
+*.ppk
+*.key
+*.kdbx
+/*.sql
+/*.sql.gz
+/*.tar.gz
+Dump*.sql
 
 # Sistema operacional / editores
 .DS_Store

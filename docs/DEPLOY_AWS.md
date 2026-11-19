@@ -42,7 +42,7 @@ No console da AWS, região **São Paulo (sa-east-1)**:
    - Nome: `fast-street`
    - AMI: **Ubuntu Server 24.04 LTS**
    - Tipo: **t3.small** (2 GB de RAM, recomendado). A `t3.micro` (1 GB) funciona com o swap criado pelo script, mas fica no limite para MySQL + API + build
-   - Par de chaves: crie um (`fast-street.pem`) e guarde-o bem: é o seu acesso ao servidor
+   - Par de chaves: crie um (`fast-street.pem`) e guarde-o bem: é o seu acesso ao servidor. Mova-o para **fora da pasta do projeto** (ex.: `C:\Users\<você>\.ssh\`) e anexe uma cópia no gerenciador de senhas. O `.gitignore` bloqueia `*.pem`, mas não conte só com isso
    - Armazenamento: **20 GB gp3**
 2. **Grupo de segurança** (firewall):
 
@@ -87,6 +87,7 @@ nano .env               # senhas do MySQL: gere com  openssl rand -hex 24  (só 
 
 cp api/.env.production.example api/.env
 nano api/.env           # JWT_SECRET novo (openssl rand -base64 48) e PUBLIC_API_URL=http://SEU-IP
+chmod 600 .env api/.env # só o usuário ubuntu lê os segredos
 
 docker compose -f docker-compose.prod.yml up -d --build
 docker compose -f docker-compose.prod.yml ps        # api e mysql "healthy"
@@ -94,7 +95,9 @@ curl http://localhost/health                         # {"status":"ok"}
 ```
 No seu computador, abra `http://SEU-IP/health` no navegador para confirmar o acesso externo.
 
-> **Segredos novos:** use em produção senhas e `JWT_SECRET` **diferentes** das do seu computador (as locais já foram expostas em capturas de tela). Os arquivos `.env` e `api/.env` ficam só no servidor e nunca vão para o git.
+> **Segredos novos:** use em produção senhas e `JWT_SECRET` **diferentes** das do seu computador (as locais já foram expostas em capturas de tela). Os arquivos `.env` e `api/.env` ficam só no servidor e nunca vão para o git. Se o `api/.env` for copiado sem editar, a API **não sobe**: em produção ela recusa o `JWT_SECRET` e o `PUBLIC_API_URL` de exemplo.
+>
+> **Senhas do MySQL:** só valem na criação do volume. Trocar no `.env` depois **não** muda o banco; para rotacionar, rode `ALTER USER` no MySQL e só então atualize o `.env` e faça `up -d`.
 
 ## 5. Apontar o app para a AWS
 
@@ -120,7 +123,8 @@ A produção pode começar vazia (recomendado: os dados locais são de teste). P
    ssh -i fast-street.pem ubuntu@SEU-IP
    cd ~/fast-street && bash deploy/importar-banco.sh dump.sql fotos.tar.gz
    ```
-   O script faz um backup antes, importa, restaura as fotos e reinicia a API (que aplica migrations faltantes).
+   O script confere se os arquivos existem e estão íntegros, pede confirmação, faz um backup, importa, restaura as fotos e reinicia a API (que aplica migrations faltantes).
+4. **Apague as cópias** do dump e das fotos (têm e-mails e hashes de senha): no servidor, `rm ~/fast-street/dump.sql ~/fast-street/fotos.tar.gz`; no seu computador, os arquivos exportados.
 
 Depois da importação, os usuários precisam entrar de novo: o `JWT_SECRET` de produção é outro, então as sessões antigas não valem. As URLs das fotos são montadas com o `PUBLIC_API_URL` de produção.
 
@@ -141,6 +145,8 @@ O script faz backup, `git pull`, reconstrói a API, espera ela ficar saudável e
 | Backup manual | `bash deploy/backup.sh` |
 | Saúde da API (pelo proxy) | `curl http://localhost/health` |
 | Console do MySQL | `docker compose -f docker-compose.prod.yml exec mysql sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"'` |
+
+> **Cuidado com `docker compose down`.** No servidor existem dois arquivos Compose. O `COMPOSE_FILE` do `.env` (veja `deploy/env.prod.example`) faz o `docker compose` sem `-f` usar o de produção, e o `docker-compose.yml` de desenvolvimento tem nome de projeto próprio (`fast-street-dev`). Mesmo assim, `down` **para a produção**; e `down -v` **apaga o banco**. Para reiniciar, prefira `restart` ou `up -d`.
 
 **Backups:** ficam em `~/fast-street/backups` por 7 dias. Se a instância for perdida, eles vão junto. Para guardar fora do servidor, crie um bucket S3 e sincronize (`aws s3 sync backups/ s3://seu-bucket/fast-street/`). Também vale ativar *snapshots* automáticos do volume EBS no console (Data Lifecycle Manager).
 
