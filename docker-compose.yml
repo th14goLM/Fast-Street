@@ -1,6 +1,14 @@
 # MySQL 8 para desenvolvimento local da Fast Street API.
 # Uso: copie .env.example para .env (na raiz), troque as senhas e rode: docker compose up -d
 # Opcional: quem já tem MySQL instalado (ex.: Workbench) pode ignorar este arquivo.
+#
+# Nome de projeto próprio: sem ele, o Compose usa o nome da pasta ("fast-street"), o mesmo da
+# produção, e um "docker compose down" no servidor derrubava os contêineres de produção.
+# No seu computador, quem já usava este arquivo antes desta mudança começa com um banco vazio;
+# os dados antigos continuam no volume "fast-street_mysql-data" (veja com: docker volume ls).
+# No servidor, esse é o nome do volume de PRODUÇÃO: nunca o use com este arquivo.
+name: fast-street-dev
+
 services:
   mysql:
     image: mysql:8.4

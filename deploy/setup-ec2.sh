@@ -38,8 +38,14 @@ fi
 echo "→ Agendando o backup diário (03:00, horário do servidor)"
 mkdir -p "$PROJETO/backups"
 chown "$USUARIO":"$USUARIO" "$PROJETO/backups"
+chmod 700 "$PROJETO/backups"
 CRON="0 3 * * * cd $PROJETO && bash deploy/backup.sh >> backups/backup.log 2>&1"
-( crontab -u "$USUARIO" -l 2>/dev/null | grep -v 'deploy/backup.sh'; echo "$CRON" ) | crontab -u "$USUARIO" -
+# "|| true": na primeira execução o usuário não tem crontab, o "crontab -l" falha e, com
+# set -e + pipefail, o script abortava aqui sem agendar nada.
+ATUAL=$(crontab -u "$USUARIO" -l 2>/dev/null | grep -v 'deploy/backup.sh' || true)
+printf '%s\n%s\n' "$ATUAL" "$CRON" | sed '/^$/d' | crontab -u "$USUARIO" -
+crontab -u "$USUARIO" -l | grep -q 'deploy/backup.sh' \
+  || { echo "Falha ao agendar o backup no crontab de $USUARIO" >&2; exit 1; }
 
 echo
 echo "Pronto. Saia e entre de novo no SSH (para o grupo docker valer) e siga o docs/DEPLOY_AWS.md."
