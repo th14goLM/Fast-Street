@@ -1,14 +1,14 @@
 # Fast Street: app mobile e API (onboarding, cadastro e Feed)
 
-Implementação da primeira tela do protótipo (`design/project/Fast Street · Login e Tela Inicial.dc.html`):
-**splash → carrossel de 3 slides → Login (UC-10) / Cadastro em 4 passos**, com API e MySQL:
+Guia do app mobile e da API implementados até agora, a partir do protótipo (`design/project/`):
+**splash → carrossel de 3 slides → Login (UC-10) / Cadastro em 4 passos → área logada com o Feed**, com API e MySQL:
 
 1. **Criar conta (UC-00):** e-mail, senha com medidor de força, perfil, nome, cidade e dados do organizador (CPF/CNPJ com máscara e dígitos verificadores).
 2. **Dados opcionais (UC-16):** foto de perfil, bio, Instagram e YouTube.
 3. **Pré-permissões:** localização e notificações, explicadas antes do pedido do sistema.
 4. **Primeiro veículo (UC-01):** 3 a 6 fotos com envio individual e progresso, marca, modelo, ano, cor, categoria e especificações opcionais. Conta só Organizador pula este passo.
 5. **Feed de eventos (UC-03 + filtros UC-22):** área logada com barra inferior de 5 abas; o Feed lista eventos abertos perto do usuário, com filtros, troca de local, modo offline e estados de vazio/erro/sem permissão.
-As regras seguem `docs/FAST_STREET_ESPECIFICACAO.md`.
+As regras seguem `docs/FAST_STREET_ESPECIFICACAO.md` (o modelo de dados está escrito em notação PostgreSQL; a correspondência com o MySQL implementado está na seção 11.6).
 
 ```
 api/         Node.js 22 + TypeScript + Express 5 + MySQL 8 (mysql2, SQL puro)
@@ -87,7 +87,7 @@ Ao terminar o cadastro, a API envia o e-mail "Confirme seu e-mail", com botão e
 6. Crie uma conta no app. O e-mail aparece na inbox do Mailtrap; abra-o e toque em **Confirmar e-mail**.
 
 No app, depois de confirmar:
-- **Tela inicial:** toque em **Já confirmei**. O app também confere sozinho quando você volta para ele, por exemplo depois de abrir o link no app de e-mail.
+- **Aba Perfil:** toque em **Já confirmei**. Enquanto o e-mail não for confirmado, o Feed mostra o aviso "Confirme seu e-mail para se inscrever em eventos", que leva ao Perfil. O app também confere sozinho quando você volta para ele, por exemplo depois de abrir o link no app de e-mail.
 - **Login de conta não confirmada:** toque em **Já confirmei, entrar**.
 
 > O link usa a `PUBLIC_API_URL`. Para abrir o link no celular, ela precisa ter o IP do computador na rede (ex.: `http://192.168.100.129:3333`), não `localhost`.
@@ -125,6 +125,7 @@ Enquanto a criação de eventos pelo organizador (UC-06) não existe, o seed pop
 
 | Método | Rota | Uso |
 |---|---|---|
+| GET | `/health` | Verifica se a API está no ar e conectada ao banco (`{ "status": "ok" }`) |
 | GET | `/cidades` | Cidades ativas para o select do cadastro |
 | POST | `/auth/register` | UC-00: cria a conta (+ organizador), envia a verificação e abre a sessão |
 | POST | `/auth/login` | UC-10: `401 INVALID_CREDENTIALS` genérico; `403 EMAIL_NOT_VERIFIED` só com a senha correta |
