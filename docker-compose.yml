@@ -23,5 +23,27 @@ services:
       interval: 5s
       retries: 20
 
+  # Opcional: a API na mesma imagem usada na AWS, para testar o contêiner antes do deploy.
+  #   docker compose --profile api up -d --build      →  http://localhost:3333/health
+  # No dia a dia, continue usando "npm run dev" (recarrega ao salvar).
+  api:
+    profiles: ["api"]
+    build: ./api
+    init: true
+    env_file:
+      - path: ./api/.env
+        required: false
+    environment:
+      DATABASE_URL: mysql://${MYSQL_USER:-fast_street}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE:-fast_street}
+      UPLOAD_DIR: uploads
+    ports:
+      - "3333:3333"
+    volumes:
+      - uploads-dev:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+
 volumes:
   mysql-data:
+  uploads-dev:

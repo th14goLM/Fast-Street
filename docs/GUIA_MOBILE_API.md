@@ -157,7 +157,7 @@ Formato de erro: `{ "error": { "code", "message", "fields"? } }`. Os campos inv�
 - **Feed, itens do protótipo adiados:** "Destaques do ranking" e "Novidades" dependem de resultados (UC-07/08) e chegam junto com eles.
 - **Telas provisórias:** Mapa (UC-04), Garagem, Ranking, Notificações e Detalhe do evento/Inscrição (UC-05).
 - **Cache offline por filtro:** hoje o Feed guarda só a última resposta; sem rede, ela aparece mesmo se os filtros mudaram (o banner avisa que são dados salvos).
-- **Fotos em produção:** hoje ficam no disco da API (`UPLOAD_DIR`). Para S3/Cloudinary, troque `api/src/shared/storage.ts`. Uploads não usados (formulário abandonado) devem ser limpos por uma tarefa periódica.
+- **Fotos em produção:** hoje ficam no disco da API (`UPLOAD_DIR`; na AWS, no volume `uploads`, ver [DEPLOY_AWS.md](DEPLOY_AWS.md)). Para S3/Cloudinary, troque `api/src/shared/storage.ts`. Uploads não usados (formulário abandonado) devem ser limpos por uma tarefa periódica.
 - **Token de push:** o app pede a permissão de notificações, mas ainda não registra o token (exige o `projectId` do EAS).
 - **Barra de acessibilidade** (Libras, alto contraste, A+).
 - **Textos definitivos de Termos e LGPD:** a tela já existe (`/legal/termos`, `/legal/privacidade`) com uma minuta; falta o texto revisado pelo jurídico.
