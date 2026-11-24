@@ -1,0 +1,16 @@
+# /etc/systemd/system/fast-street-backup.timer
+# Agenda o backup diário (substitui o cron). "Persistent=true": se a instância estava
+# parada às 03:00, o backup roda assim que ela voltar.
+#   sudo systemctl enable --now fast-street-backup.timer
+#   systemctl list-timers fast-street-backup.timer
+
+[Unit]
+Description=Backup diário da Fast Street
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 UTC
+RandomizedDelaySec=10min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

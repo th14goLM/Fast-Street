@@ -1,0 +1,18 @@
+# /etc/systemd/system/duckdns.service
+# Atualiza o registro A do subdomínio DuckDNS com o IP público atual da instância.
+# Com IP elástico o endereço não muda, mas o timer garante o DNS correto mesmo após stop/start
+# sem IP fixo (ver enunciado, item 8.5). O token fica em /etc/fast-street/duckdns.env (600, root).
+
+[Unit]
+Description=Atualização do DNS (DuckDNS)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/fast-street/duckdns.env
+# Resposta "OK" = registro atualizado; "KO" = token ou domínio inválido. "ip=" vazio: o DuckDNS usa o IP de origem.
+# A URL (com o token) vai para o curl pelo stdin ("-K -"), e não pela linha de comando, que fica visível no "ps".
+ExecStart=/bin/sh -c 'r=$(printf "url = \\"https://www.duckdns.org/update?domains=%%s&token=%%s&ip=\\"\\n" "$DUCKDNS_DOMINIO" "$DUCKDNS_TOKEN" | curl -fsS --max-time 15 -K -); echo "DuckDNS: $r"; [ "$r" = OK ]'
+DynamicUser=true
+NoNewPrivileges=true

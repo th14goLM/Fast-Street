@@ -4,8 +4,8 @@ import { pool } from './db/pool.js';
 import { createMailer, SmtpMailer } from './shared/mailer.js';
 
 const mailer = createMailer(env);
-const server = createApp({ mailer }).listen(env.PORT, '0.0.0.0', () => {
-  console.log(`Fast Street API ouvindo em http://0.0.0.0:${env.PORT} (${env.NODE_ENV})`);
+const server = createApp({ mailer }).listen(env.PORT, env.HOST, () => {
+  console.log(`Fast Street API ouvindo em http://${env.HOST}:${env.PORT} (${env.NODE_ENV})`);
   console.log(`E-mail: ${mailer.description}`);
   // Confere as credenciais SMTP já na inicialização, para o erro não aparecer só no primeiro cadastro.
   if (mailer instanceof SmtpMailer) {
