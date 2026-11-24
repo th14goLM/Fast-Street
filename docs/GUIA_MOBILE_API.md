@@ -152,6 +152,7 @@ Formato de erro: `{ "error": { "code", "message", "fields"? } }`. Os campos inv�
 - CPF/CNPJ validados com **dígitos verificadores**, no app e na API.
 
 ## O que ficou para as próximas etapas
+- **Próxima atualização · Deploy automático:** CI nos PRs e publicação automática da API e do app web após o merge. Plano em [PLANO_DEPLOY_AUTOMATICO.md](PLANO_DEPLOY_AUTOMATICO.md).
 - **UC-11 Recuperar senha:** o link "Esqueci minha senha" mostra um aviso. A tabela `token_autenticacao` já suporta o tipo `redefinicao_senha`.
 - **Login com Google e Apple:** os botões mostram um aviso. Exige `expo-auth-session`/`expo-apple-authentication` e a tabela `identidade_externa` (spec 11.1).
 - **Feed, itens do protótipo adiados:** "Destaques do ranking" e "Novidades" dependem de resultados (UC-07/08) e chegam junto com eles.
