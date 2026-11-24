@@ -11,6 +11,7 @@ segurança, monitoramento e recuperação da Fast Street API numa EC2 Ubuntu com
 | [03-operacao.md](03-operacao.md) | Logs, métricas, incidente controlado, backup/restauração, concorrência, reboot |
 | [guia-estudo.md](guia-estudo.md) | Conceitos e respostas às perguntas técnicas da apresentação (item 15) |
 | [roteiro-apresentacao.md](roteiro-apresentacao.md) | Sequência da demonstração ao vivo (item 14.2) com os comandos |
+| [relatorio/](relatorio/) | **Relatório técnico em PDF** (item 13.2) e o gerador `gerar_relatorio.py` (reportlab) |
 | [evidencias/](evidencias/) | Saídas sanitizadas dos comandos (base para os prints do relatório) |
 
 Arquivos de configuração implantados (versionados, sem segredos): [`infra/`](../../infra/).

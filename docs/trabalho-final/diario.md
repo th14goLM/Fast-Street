@@ -343,3 +343,51 @@ processo travado ou firewall).
 - **Limites da versão web:** notificações push e algumas permissões nativas se comportam diferente no
   navegador; o token de login fica no `localStorage` (no app nativo, no armazenamento seguro do
   sistema). Para o trabalho, o app nativo (Expo Go) e o web usam a mesma API.
+
+### 04:07 · Validação pelo 4G (R01)
+- iPhone sem Wi-Fi, Safari em `https://faststreet.duckdns.org`; acompanhado no CloudWatch (Live Tail).
+- Origem `177.51.x.x` (operadora): `GET /app/feed` 200 com `upstream=-` (arquivo estático entregue pelo
+  Nginx); `POST /auth/refresh` 200; `GET /eventos/feed` 200 (880 B, 5 ms); `GET /auth/me` **304**
+  (perfil sem mudança, cache do navegador); `GET /cidades` 200.
+- No mesmo intervalo, um IP desconhecido (`119.119.x.x`, Windows/Chrome) acessou `/` → 301 → 302 →
+  `/app/`: varredura comum de IPs públicos. Só alcançou a página pública — reforça o SSH restrito, a API
+  e o MySQL no loopback e o fail2ban.
+
+## 24/11/2026 (noite) · Atualizações de segurança e incidente de acesso
+
+### 22:56 · Instância religada pelo console (start)
+- `https://…/health` → 200 sem nenhuma ação manual: Nginx, MySQL e API sobem no boot.
+
+### 23:20 · Incidente real: SSH sem resposta (item 12 do enunciado)
+- **Sintoma:** site respondendo 200, mas `ssh` com *Connection timed out*.
+- **Diagnóstico:** o IP público da internet de casa mudou (`186.227.x.220` → `186.227.x.202`,
+  troca feita pela operadora); o Security Group só liberava o antigo `/32`. *Timeout* (e não *refused*)
+  é a assinatura de filtro de rede.
+- **Correção (Mr. Thiago, no console):** regra SSH "SSH casa" → origem *Meu IP*. Acesso restabelecido
+  sem abrir a porta 22 para o mundo.
+
+### 23:27 · Atualizações de segurança (R09)
+- O `unattended-upgrades` já havia aplicado sozinho as correções de segurança às 06:52
+  (`libssh-4`, `linux-aws`/`linux-image-aws`, `python3-jwt`, `python3-oauthlib`, `tzdata`), e o kernel
+  novo **7.0.0-1018-aws** passou a valer com o start da instância.
+- Restavam 12 pacotes (pilha do systemd 255.4-1ubuntu8.19, `udev`, `libsqlite3-0`): aplicados com
+  `sudo apt-get -y upgrade` (configurações locais preservadas). Resultado: **0 pendentes**, sem
+  `reboot-required`; serviços ativos durante todo o processo; `/cidades` → 200.
+
+### 23:28 · Reboot de verificação (R08/R09)
+- `systemctl reboot` às 23:28:03; site fora às 23:28:18 e **de volta (200) às 23:28:37** (~30 s).
+- Boot em 11,7 s; kernel 7.0.0-1018-aws; systemd 255.4-1ubuntu8.19; os 9 serviços/timers
+  `enabled/active`; API “ouvindo em http://127.0.0.1:3333”; certificado válido até 22/02/2027.
+- Evidência: `evidencias/20261124-232856-pos-atualizacao.txt`.
+- **No CloudWatch** (grupo `/fast-street/nginx/access`): durante o boot, `/cidades` → **502** às
+  23:28:28 e 23:28:31 e **200** às 23:28:36. O Nginx sobe em <1 s; a API leva ~1 s a mais (migrations no
+  `ExecStartPre`) e depende do MySQL (3,6 s). Nesses segundos, o Nginx responde, mas o upstream ainda
+  não escuta — o mesmo 502 do incidente controlado, agora visto “de graça” num reboot real.
+- No mesmo log aparecem varreduras automáticas de terceiros (`GET /` com User-Agents de scanners,
+  ex.: “Hello from Palo Alto Networks”, “CMS-Checker”): todas pararam no redirecionamento para `/app/`.
+
+## 24/11/2026 · Relatório técnico (R14)
+- `docs/trabalho-final/relatorio/gerar_relatorio.py` (reportlab) gera
+  `Relatorio-FastStreet-ProjetoFinal.pdf`: capa, sumário, seções 1–10 do item 13.2 (12 páginas),
+  9 testes no padrão do item 13.3, referências e anexos (Nginx, systemd, backup) lidos do repositório.
+- Prints do console recortados e sanitizados (ID da conta, nome, IPs e token ocultados).
