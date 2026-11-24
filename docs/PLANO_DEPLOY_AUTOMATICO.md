@@ -46,6 +46,18 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
   mantendo as últimas 3 versões e com opção `--rollback`.
 - Se o health check falhar depois do restart, o script volta o symlink sozinho e reinicia.
 - `WorkingDirectory` da unidade systemd continua `/opt/fast-street/api` (agora um link).
+- **O script não pode se atualizar no meio da própria execução.** No deploy de 24/11/2026 (`e6223f7 → 33ab40a`),
+  o `git pull` trouxe uma versão nova do `deploy-api.sh`, mas o bash continuou executando a **antiga**
+  (o arquivo aberto é o de antes do pull). O teste final antigo (`http://localhost/health`, porta 80)
+  recebeu o `301` de redirecionamento para HTTPS e o script mostrou "✔ Deploy" com o HTML do 301.
+  Correção: separar "buscar o código" de "instalar" (ex.: depois do `git pull`, `exec` do script já
+  atualizado com uma flag como `--instalar`), ou deixar o `git pull` para o workflow.
+- Silenciar as tentativas do *health check* que falham enquanto a API sobe (o `curl: (7) Failed to
+  connect` da primeira tentativa é esperado: as migrations rodam no `ExecStartPre`).
+- **Configuração do Nginx fica fora do deploy:** o script copia `infra/` para `/opt/fast-street/infra`,
+  mas não aplica `infra/nginx/*.conf` em `/etc/nginx`. Decidir se o deploy passa a aplicar
+  (`nginx -t` antes do `reload`, com rollback se falhar) ou se continua manual, com uma conferência
+  (`diff`) que avisa quando o arquivo do repositório e o do servidor divergem.
 - **Aceite:** `deploy-api.sh --rollback` volta para a versão anterior em segundos; um deploy com
   health check falho termina na versão anterior, no ar.
 
