@@ -68,7 +68,7 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 | Onde | O quê |
 |---|---|
 | IAM | *Identity provider* OIDC `token.actions.githubusercontent.com` (audience `sts.amazonaws.com`) |
-| IAM | Papel `fast-street-github-deploy`, confiando só em `repo:th14goLM/Fast-Street-:environment:production`; permissões mínimas: `ssm:SendCommand` (só nesta instância e no documento `AWS-RunShellScript`), `ssm:GetCommandInvocation`, `s3:PutObject` no prefixo dos pacotes |
+| IAM | Papel `fast-street-github-deploy`, confiando só em `repo:th14goLM/Fast-Street:environment:production`; permissões mínimas: `ssm:SendCommand` (só nesta instância e no documento `AWS-RunShellScript`), `ssm:GetCommandInvocation`, `s3:PutObject` no prefixo dos pacotes |
 | IAM | No papel da instância `fast-street-ec2`: acrescentar `AmazonSSMManagedInstanceCore` e leitura no prefixo dos pacotes no S3 |
 | EC2 | Conferir o SSM Agent ativo (`snap services amazon-ssm-agent`) e a instância em *Fleet Manager* |
 | S3 | Prefixo (ou bucket) separado para os pacotes de deploy, com expiração automática (ex.: 30 dias) |
