@@ -12,6 +12,7 @@ App de eventos automotivos legalizados em locais autorizados (track days, arranc
 
 ## Documentação
 - [`docs/GUIA_MOBILE_API.md`](docs/GUIA_MOBILE_API.md): como rodar, configurar o e-mail, endpoints, decisões de segurança e o que falta.
+- [`docs/PLANO_DEPLOY_AUTOMATICO.md`](docs/PLANO_DEPLOY_AUTOMATICO.md): **próxima atualização**: CI nos PRs, deploy automático da API e do app web após o merge (GitHub Actions + AWS SSM) e e-mail real em produção pelo Amazon SES.
 - [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md): Docker (imagem da API, perfil `api` no Compose) e publicação na AWS EC2, com migração dos dados locais, backups e HTTPS.
 - [`docs/FAST_STREET_ESPECIFICACAO.md`](docs/FAST_STREET_ESPECIFICACAO.md): especificação funcional, de interface e de dados (casos de uso, regras de negócio e modelo de dados, com a implementação em MySQL na seção 11.6).
 - [`design/`](design/): handoff do Claude Design (protótipos `.dc.html`, design system e transcrição do chat), usado como referência visual.
