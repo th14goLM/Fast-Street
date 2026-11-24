@@ -256,3 +256,90 @@ processo travado ou firewall).
 ### 02:47 · Evidências consolidadas
 - `coletar-evidencias.sh pos-migracao` → `evidencias/20261124-024736-pos-migracao.txt` (IP
   administrativo mascarado; sem segredos).
+
+### 03:07 · Código definitivo pelo Git (R06)
+- PR #13 (`feat/infra-trabalho-final`) mesclado no `main` pelo Mr. Thiago → commit `e6223f7`.
+- No servidor, conta `ubuntu` (dona da *deploy key* somente leitura): `git pull --ff-only` em
+  `~/fast-street` → `e6223f7`; `bash infra/scripts/deploy-api.sh` → build, instalação em
+  `/opt/fast-street` e reinício; `/opt/fast-street/VERSION` = `e6223f7`.
+- Conferência: o site do Nginx em produção é idêntico a `infra/nginx/fast-street.https.conf` e as
+  5 unidades systemd são idênticas às de `infra/systemd/` (`diff -q`). A cópia temporária
+  `~/fast-street-trabalho` foi removida. Do PC: `https://…/cidades` → 200.
+- **Achado:** a última linha do `deploy-api.sh` testava `http://localhost/health`, que agora recebe
+  o redirecionamento 301 (HTML) em vez do JSON. Corrigido para testar pelo HTTPS
+  (`curl --resolve faststreet.duckdns.org:443:127.0.0.1`).
+
+### 03:08 · Evidências finais
+- `coletar-evidencias.sh final` → `evidencias/20261124-030847-final.txt`: versão `e6223f7`; `nginx`,
+  `mysql`, `fast-street-api`, `fast-street-backup.timer`, `duckdns.timer`, `amazon-cloudwatch-agent`,
+  `ufw` e `fail2ban` todos `enabled/active`.
+- Resíduos da arquitetura antiga ainda no disco (aguardando confirmação para remover): Docker
+  (`/var/lib/docker`, 200 MB, com os volumes do MySQL/fotos antigos), `~/fast-street/.env` e
+  `~/fast-street/api/.env` (segredos da implantação Docker), `~/fast-street/backups` (13 backups
+  antigos) e `~/migracao` (dump da migração e logs).
+
+### 03:12 · Limpeza da arquitetura antiga — autorizada pelo Mr. Thiago
+- **Segredos duplicados:** `~/fast-street/.env` e `~/fast-street/api/.env` destruídos com `shred -u`
+  (sobrescreve o conteúdo antes de apagar). Os valores em uso ficam só em `/etc/fast-street/api.env`.
+- **Dados antigos:** `~/fast-street/backups` (13 backups do esquema Docker) e `~/migracao` (dump e
+  fotos com `shred`; logs) removidos — o dump da migração continua no PC e há backups novos no S3.
+- **Docker:** `apt-get purge` de `docker-ce`, `docker-ce-cli`, `containerd.io` e plugins; removidos
+  `/var/lib/docker`, `/var/lib/containerd`, `/etc/docker`, o repositório apt da Docker e o grupo
+  `docker`. `dpkg -l`: 0 pacotes; comando `docker` ausente.
+- **Resultado:** disco de 46% (8,4 GB) para 34% (6,1 GB); serviços ativos; do PC `https://…/cidades` →
+  200. No home do `ubuntu` não resta nenhum `.env` nem dump.
+- **Interpretação:** menos software instalado = menos pacotes a atualizar e menos superfície de
+  ataque; segredos só num lugar, com permissão controlada.
+
+### 03:20 · Primeiro uso pelo app no celular (R01)
+- App (Expo Go, iPhone) apontando para `https://faststreet.duckdns.org`. No `access.log`, User-Agent
+  `Expo/… Darwin`: `GET /cidades` 200; `POST /auth/register` **409** (e-mail já cadastrado);
+  `POST /auth/login` **403** (e-mail ainda não confirmado); `POST /auth/verify-email/resend` 202.
+- Sem SMTP em produção, o link de confirmação foi lido no `journalctl -u fast-street-api` e aberto
+  no celular; depois disso, login 200 (2 sessões ativas).
+- **Interpretação:** 409 e 403 são regras da aplicação, não falhas de infraestrutura — o Nginx
+  encaminhou (`ustatus` igual ao `status`) e a API respondeu em 12–360 ms (o login é mais lento de
+  propósito: o hash bcrypt da senha custa CPU).
+
+### 03:36 · Dados fictícios de demonstração (item 5.1: "criar dados fictícios de teste")
+- **Contexto:** migrations 001–004 aplicadas e dados idênticos aos do PC (1 usuário, 8 cidades), mas
+  **0 eventos** — o feed do app vinha vazio. O script `db:seed` cria dados de demonstração e se recusa a
+  rodar com `NODE_ENV=production` (trava de segurança).
+- **1ª tentativa (falhou sem alterar nada):** `env $(cat api.env | xargs) … node dist/db/seed.js` →
+  `env: 'Street': No such file or directory` — o `xargs` quebrou `MAIL_FROM="Fast Street <…>"` nos
+  espaços. A forma também exporia segredos na linha de comando (visíveis no `ps`).
+- **Execução (Mr. Thiago):** backup antes (`20261124-033649`, local + S3); depois
+  `sudo systemd-run --wait --pipe -p User=faststreet -p EnvironmentFile=/etc/fast-street/api.env
+  -E NODE_ENV=development … node dist/db/seed.js` — o systemd lê o arquivo de ambiente como o serviço
+  lê (aspas corretas) e roda com o usuário sem privilégios; `NODE_ENV=development` vale só para esse
+  processo.
+- **Resultado:** 11 eventos, 7 organizadores, 7 locais, 133 inscrições, 47 contas fictícias
+  (`@seed.faststreet.dev`, sem senha — ninguém consegue entrar com elas) e a **1 conta real intacta**.
+  No log: `GET /eventos/feed?raioKm=50…` passou de 137 bytes (lista vazia) para 879 bytes (eventos).
+
+### 03:57 · App web servido pelo Nginx (frontend estático + proxy reverso)
+- **Objetivo:** abrir o app pelo navegador do celular (Safari) sem depender do PC/Metro, servido pela
+  própria EC2. Passa a usar os dois papéis do Nginx do enunciado: arquivos estáticos (cenário A) e
+  proxy reverso para o backend (cenário B), no mesmo domínio.
+- **Adaptação no app** (`mobile/app.json`): `web.output = "single"` (SPA: um `index.html`; as rotas são
+  resolvidas no navegador pelo Expo Router) e `experiments.baseUrl = "/app"` (o app vive em `/app/`,
+  e a API continua nas demais rotas). O código já tratava o navegador (`localStorage` no lugar do
+  `SecureStore`, upload por `File`), então não precisou de outras mudanças.
+- **Build:** `npx expo export --platform web` no PC → `dist/` com 47 arquivos (8,4 MB);
+  `EXPO_PUBLIC_API_URL=https://faststreet.duckdns.org` embutido no bundle no momento do build.
+  O build roda no PC porque o Metro usa ~1 GB de RAM.
+- **Publicação** (`infra/scripts/publicar-web.ps1` → `instalar-web.sh`): pacote `.tgz` por SCP;
+  no servidor, versão nova em `/var/www/fast-street-web/releases/20261124-035737` e troca **atômica** do
+  link `/var/www/fast-street-web/app` (o Nginx nunca vê uma versão pela metade); mantém as 3 últimas
+  para rollback (`instalar-web.sh --rollback`). Arquivos de root, 644.
+- **Nginx:** `location = /` → 302 para `/app/`; `location /app/` com `try_files $uri $uri/ /app/index.html`
+  (fallback de SPA); `/app/_expo/` com `Cache-Control: immutable` de 1 ano (nomes com hash);
+  `X-Frame-Options`, `nosniff`, `Referrer-Policy`. `nginx -t` OK antes do `reload`.
+- **Testes (PC):** `/` → 302 `/app/`; `/app` → 301 `/app/`; `/app/`, `/app/feed`, `/app/login`,
+  `/app/eventos/123` → 200 (index.html); `/cidades` e `/health` → 200 JSON (API intacta);
+  `/app/_expo/nao-existe.js` → 404; bundle de 1,1 MB entregue com `gzip`.
+- **Navegador (viewport de celular 375×812):** tela de login renderizada em `/app/login`, sem erros no
+  console; `fetch('/cidades')` a partir da página → 200 com 8 cidades, **mesma origem** (sem CORS).
+- **Limites da versão web:** notificações push e algumas permissões nativas se comportam diferente no
+  navegador; o token de login fica no `localStorage` (no app nativo, no armazenamento seguro do
+  sistema). Para o trabalho, o app nativo (Expo Go) e o web usam a mesma API.

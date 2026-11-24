@@ -52,6 +52,7 @@ Passo a passo de `GET https://faststreet.duckdns.org/cidades`:
 | Nginx | EC2 | 0.0.0.0:80, 0.0.0.0:443 | systemd (`nginx.service`) | root (master), www-data (workers) |
 | Fast Street API | `/opt/fast-street/api` | **127.0.0.1:3333** | systemd (`fast-street-api.service`) | `faststreet` (sistema, sem shell) |
 | MySQL 8.0 | `/var/lib/mysql` | **127.0.0.1:3306** | systemd (`mysql.service`) | `mysql` |
+| App web (Expo, SPA) | `/var/www/fast-street-web/app` → `releases/<versão>` | servido pelo Nginx em `/app/` | — | root (644) |
 | Fotos (uploads) | `/var/lib/fast-street/uploads` | — | — | `faststreet` (750) |
 | Backup | `/var/backups/fast-street` → S3 | — | systemd timer | root (700) |
 | DNS dinâmico | DuckDNS | — | systemd timer (`duckdns.timer`) | usuário dinâmico |

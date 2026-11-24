@@ -43,4 +43,6 @@ for _ in $(seq 1 20); do
   sleep 1
 done
 systemctl is-active --quiet fast-street-api || { sudo journalctl -u fast-street-api -n 40 --no-pager; exit 1; }
-echo "✔ Deploy $COMMIT: $(curl -fsS http://localhost/health -H 'Host: localhost')"
+# Teste pelo mesmo caminho do usuário (Nginx + TLS), resolvendo o nome para o próprio servidor.
+# (Na porta 80 o Nginx só redireciona para HTTPS, por isso não serve para este teste.)
+echo "✔ Deploy $COMMIT: $(curl -fsS --resolve faststreet.duckdns.org:443:127.0.0.1 https://faststreet.duckdns.org/health)"

@@ -16,6 +16,13 @@ URL de demonstração: **https://faststreet.duckdns.org** (ex.: `/health`, `/cid
 | Confirmação de e-mail | `GET /auth/verify-email?token=…` | sem SMTP em produção, o link aparece em `journalctl -u fast-street-api` |
 | Feed de eventos por distância | `GET /eventos/feed` (autenticado) | app, após login |
 
+**App web:** `https://faststreet.duckdns.org` abre o app no navegador (Safari/Chrome do celular),
+servido pelo Nginx em `/app/`. Publicar uma nova versão (no PC):
+```powershell
+powershell -File infra\scripts\publicar-web.ps1
+```
+Voltar para a versão anterior (no servidor): `sudo bash /opt/fast-street/infra/scripts/instalar-web.sh --rollback`.
+
 ## §2 Logs e métricas (R10)
 
 ```bash
