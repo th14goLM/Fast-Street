@@ -55,6 +55,10 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 - Autenticação por **OIDC** (`aws-actions/configure-aws-credentials`): nenhuma chave da AWS guardada no GitHub.
 - Execução na EC2 por `aws ssm send-command` (documento `AWS-RunShellScript`) + espera pelo resultado
   com `get-command-invocation`: **a porta 22 continua fechada para a Internet**.
+- O canal SSM já funciona na instância (ver seção 4). Os comandos do SSM rodam como **root**, sem a home
+  de um usuário: o workflow precisa chamar o script com caminho absoluto e o usuário dono do clone,
+  ex.: `sudo -iu ubuntu bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh` (um `~` seria
+  expandido para a home de quem chama, não do `ubuntu`).
 - **Aceite:** merge no `main` → API nova no ar em poucos minutos; `/opt/fast-street/VERSION` com o commit;
   log do deploy visível na aba Actions.
 
@@ -99,8 +103,9 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 |---|---|
 | IAM | *Identity provider* OIDC `token.actions.githubusercontent.com` (audience `sts.amazonaws.com`) |
 | IAM | Papel `fast-street-github-deploy`, confiando só em `repo:th14goLM/Fast-Street:environment:production`; permissões mínimas: `ssm:SendCommand` (só nesta instância e no documento `AWS-RunShellScript`), `ssm:GetCommandInvocation`, `s3:PutObject` no prefixo dos pacotes |
-| IAM | No papel da instância `fast-street-ec2`: acrescentar `AmazonSSMManagedInstanceCore` e leitura no prefixo dos pacotes no S3 |
-| EC2 | Conferir o SSM Agent ativo (`snap services amazon-ssm-agent`) e a instância em *Fleet Manager* |
+| IAM | ✅ **Pronto (24/11/2026):** o papel da instância `fast-street-ec2` já permite o SSM; confirmado por uma sessão do Session Manager aberta pelo console na `i-019cd349ad6ada4ea` |
+| IAM | ⬜ No papel `fast-street-ec2`: acrescentar leitura no prefixo dos pacotes de deploy no S3 |
+| EC2 | ✅ **Pronto (24/11/2026):** SSM Agent ativo e instância gerenciada pelo Systems Manager (mesma confirmação acima) |
 | S3 | Prefixo (ou bucket) separado para os pacotes de deploy, com expiração automática (ex.: 30 dias) |
 | GitHub | *Environment* `production` com as variáveis (não secretas) `AWS_ROLE_ARN`, `AWS_REGION=us-east-2`, `EC2_INSTANCE_ID`, `DEPLOY_BUCKET` |
 | GitHub | Proteção do `main`: CI obrigatório e merge só por PR |
