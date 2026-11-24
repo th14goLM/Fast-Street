@@ -17,6 +17,9 @@ export const EnvSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     PORT: z.coerce.number().int().positive().default(3333),
+    // Interface de escuta. Em produção (systemd + Nginx) use 127.0.0.1: só o Nginx alcança a API.
+    // 0.0.0.0 (padrão) atende o desenvolvimento no celular e o contêiner Docker.
+    HOST: z.union([z.ipv4(), z.ipv6(), z.literal('localhost')]).default('0.0.0.0'),
     DATABASE_URL: z
       .string()
       .startsWith('mysql://', 'DATABASE_URL deve começar com mysql://')

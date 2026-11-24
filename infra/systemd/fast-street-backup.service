@@ -1,0 +1,16 @@
+# /etc/systemd/system/fast-street-backup.service
+# Backup do banco, das fotos e das configurações (executado pelo timer de mesmo nome).
+#   sudo systemctl start fast-street-backup      # backup manual agora
+#   sudo journalctl -u fast-street-backup -n 30 --no-pager
+
+[Unit]
+Description=Backup da Fast Street (MySQL, fotos e configurações)
+After=mysql.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# root: o mysqldump autentica pelo socket (auth_socket do root local), sem senha em arquivo.
+ExecStart=/opt/fast-street/infra/scripts/backup.sh
+Nice=10
+IOSchedulingClass=idle

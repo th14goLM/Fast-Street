@@ -39,6 +39,13 @@ describe('variáveis de ambiente em produção', () => {
     ).toEqual(['JWT_SECRET', 'PUBLIC_API_URL']);
   });
 
+  it('escuta em 0.0.0.0 por padrão e aceita 127.0.0.1 (produção atrás do Nginx)', () => {
+    const padrao = EnvSchema.parse({ ...base });
+    expect(padrao.HOST).toBe('0.0.0.0');
+    expect(EnvSchema.parse({ ...base, NODE_ENV: 'production', HOST: '127.0.0.1' }).HOST).toBe('127.0.0.1');
+    expect(EnvSchema.safeParse({ ...base, HOST: 'servidor qualquer' }).success).toBe(false);
+  });
+
   it('não bloqueia os valores de exemplo fora de produção', () => {
     for (const NODE_ENV of ['development', 'test']) {
       expect(

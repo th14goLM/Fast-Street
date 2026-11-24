@@ -1,0 +1,10 @@
+# /etc/systemd/system/duckdns.timer — roda no boot e a cada 30 min.
+[Unit]
+Description=Atualização periódica do DNS (DuckDNS)
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=30min
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,58 @@
+# /etc/systemd/system/fast-street-api.service
+# Backend do PROEX (Fast Street API, Node.js) gerenciado pelo systemd.
+#
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now fast-street-api     # inicia agora e em todo boot
+#   sudo systemctl status fast-street-api
+#   sudo journalctl -u fast-street-api -n 50 --no-pager
+
+[Unit]
+Description=Fast Street API (backend do PROEX)
+Documentation=https://github.com/th14goLM/Fast-Street
+# Sobe depois da rede e do MySQL. "Wants" (e não "Requires"): se o MySQL cair, a API continua
+# viva e responde 500 no /health, o que facilita o diagnóstico.
+After=network-online.target mysql.service
+Wants=network-online.target mysql.service
+# Até 5 reinícios em 60 s; depois disso o systemd desiste e marca "failed" (evita loop infinito).
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=faststreet
+Group=faststreet
+WorkingDirectory=/opt/fast-street/api
+
+# Segredos (JWT_SECRET, DATABASE_URL, SMTP_*) fora do repositório, legíveis só por root e pelo grupo do serviço.
+EnvironmentFile=/etc/fast-street/api.env
+# Valores fixos de produção. HOST=127.0.0.1: a porta 3333 não é alcançável pela Internet, só pelo Nginx.
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=3333
+Environment=UPLOAD_DIR=/var/lib/fast-street/uploads
+
+# Aplica migrations pendentes antes de subir (idempotente).
+ExecStartPre=/usr/bin/node dist/db/migrate.js
+ExecStart=/usr/bin/node dist/server.js
+
+Restart=on-failure
+RestartSec=5
+# SIGTERM → a API fecha o servidor HTTP e o pool do MySQL (server.ts).
+KillSignal=SIGTERM
+TimeoutStopSec=15
+
+# Endurecimento: o processo não ganha privilégios, vê o sistema como somente leitura
+# e só escreve na pasta de fotos.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+ReadWritePaths=/var/lib/fast-street/uploads
+
+[Install]
+WantedBy=multi-user.target
