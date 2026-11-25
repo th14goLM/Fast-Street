@@ -55,7 +55,7 @@ sudo chown root:faststreet /etc/fast-street/api.env && sudo chmod 640 /etc/fast-
 ## 5. Publicação da API
 
 ```bash
-bash ~/fast-street/infra/scripts/deploy-api.sh
+bash ~/fast-street/infra/scripts/deploy-api.sh      # release nova em /opt/fast-street/releases + link api
 sudo systemctl enable fast-street-api
 curl -i http://127.0.0.1:3333/health     # direto na API (só de dentro da EC2)
 curl -i http://localhost/health          # passando pelo Nginx

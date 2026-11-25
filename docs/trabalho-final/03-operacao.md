@@ -23,6 +23,16 @@ powershell -File infra\scripts\publicar-web.ps1
 ```
 Voltar para a versão anterior (no servidor): `sudo bash /opt/fast-street/infra/scripts/instalar-web.sh --rollback`.
 
+**API:** cada deploy é uma release em `/opt/fast-street/releases/<data>-<commit>`, com o link
+`/opt/fast-street/api` apontando para a que está no ar (o commit fica em `/opt/fast-street/VERSION`).
+Se a release nova não responder ao `/health` em 30 s, o próprio deploy volta para a anterior.
+```bash
+sudo -iu ubuntu bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh              # publica o main
+sudo -iu ubuntu bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh --listar     # releases (* = no ar)
+sudo -iu ubuntu bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh --rollback   # volta para a anterior
+```
+O rollback troca só o código: as migrations já aplicadas continuam (regra *expand/contract*).
+
 ## §2 Logs e métricas (R10)
 
 ```bash
