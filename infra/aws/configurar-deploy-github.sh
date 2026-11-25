@@ -15,12 +15,18 @@
 #      (git pull) ANTES de chamar o infra/scripts/deploy-api.sh, para rodar sempre a versão mais nova do
 #      script; tudo como o usuário ubuntu. Sem shell livre como root.
 #   3. Papel IAM "fast-street-github-deploy": só o environment "production" deste repositório
-#      pode assumi-lo, e ele só pode enviar esse documento para esta instância.
+#      (identificado pelos IDs imutáveis do dono e do repositório) pode assumi-lo, e ele só pode
+#      enviar esse documento para esta instância.
 set -euo pipefail
 
 REGIAO=${REGIAO:-us-east-2}
 INSTANCIA=${INSTANCIA:-i-019cd349ad6ada4ea}
-REPOSITORIO=${REPOSITORIO:-th14goLM/Fast-Street}   # nome ATUAL do repositório no GitHub
+REPOSITORIO=${REPOSITORIO:-th14goLM/Fast-Street}   # nome atual do repositório (só para as mensagens)
+# O "sub" do token OIDC deste repositório vem com os IDs IMUTÁVEIS do dono e do repositório
+# (dono@id/repositório@id), como registrado no CloudTrail em 25/11/2026. É mais seguro que só o nome:
+# renomear o repositório, ou alguém recriar um com o mesmo nome, não muda nem reaproveita o ID.
+# Para conferir o formato: CloudTrail → AssumeRoleWithWebIdentity → userIdentity.userName.
+SUB_REPOSITORIO=${SUB_REPOSITORIO:-th14goLM@88167274/Fast-Street@1385999706}
 AMBIENTE=${AMBIENTE:-production}                   # environment do GitHub que pode fazer deploy
 PAPEL=fast-street-github-deploy
 DOCUMENTO=FastStreet-Deploy
@@ -117,7 +123,7 @@ CONFIANCA=$(cat <<JSON
       "Condition": {
         "StringEquals": {
           "$OIDC_HOST:aud": "sts.amazonaws.com",
-          "$OIDC_HOST:sub": "repo:$REPOSITORIO:environment:$AMBIENTE"
+          "$OIDC_HOST:sub": "repo:$SUB_REPOSITORIO:environment:$AMBIENTE"
         }
       }
     }

@@ -102,6 +102,12 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 - **Só o commit aprovado:** o workflow passa o SHA que o CI testou (`--commit`). Se o `main` do servidor
   estiver nesse commit, publica; se já avançou (outro merge logo depois), não faz nada e avisa
   (`DEPLOY-PULADO`), porque o deploy do commit mais novo publica tudo; se o commit não estiver no `main`, falha.
+- **Formato do `sub` (lição do primeiro deploy, 25/11/2026):** o token OIDC deste repositório identifica
+  dono e repositório pelos **IDs imutáveis** (`repo:th14goLM@88167274/Fast-Street@1385999706:environment:production`),
+  e não só pelo nome. A primeira versão da role exigia o formato só com nomes, e a AWS recusou
+  (`Not authorized to perform sts:AssumeRoleWithWebIdentity`). O `sub` real foi lido no CloudTrail
+  (evento `AssumeRoleWithWebIdentity`, campo `userIdentity.userName`). O formato com IDs também é mais
+  seguro: renomear o repositório não quebra a confiança, e um repositório recriado com o mesmo nome não a herda.
 - **Acompanhamento:** espera o comando terminar (até 15 min), mostra a saída do `deploy-api.sh` no log e
   um resumo na página da execução, e confere `https://faststreet.duckdns.org/health` pela Internet.
   Falha no deploy deixa a execução vermelha, e o próprio script já voltou para a release anterior.
@@ -152,7 +158,7 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 
 | Onde | O quê |
 |---|---|
-| IAM + SSM (fase 3) | ⬜ Rodar `infra/aws/configurar-deploy-github.sh` no AWS CloudShell. Ele cria o provedor OIDC `token.actions.githubusercontent.com`, o documento SSM `FastStreet-Deploy` e o papel `fast-street-github-deploy` (confia só em `repo:th14goLM/Fast-Street:environment:production`; pode só `ssm:SendCommand` desse documento nesta instância, mais `ssm:GetCommandInvocation`) |
+| IAM + SSM (fase 3) | ⬜ Rodar `infra/aws/configurar-deploy-github.sh` no AWS CloudShell. Ele cria o provedor OIDC `token.actions.githubusercontent.com`, o documento SSM `FastStreet-Deploy` e o papel `fast-street-github-deploy` (confia só em `repo:th14goLM@88167274/Fast-Street@1385999706:environment:production`; pode só `ssm:SendCommand` desse documento nesta instância, mais `ssm:GetCommandInvocation`) |
 | IAM (fase 4) | ⬜ No papel `fast-street-github-deploy`: `s3:PutObject` no prefixo dos pacotes do app web |
 | IAM | ✅ **Pronto (24/11/2026):** o papel da instância `fast-street-ec2` já permite o SSM; confirmado por uma sessão do Session Manager aberta pelo console na `i-019cd349ad6ada4ea` |
 | IAM | ⬜ No papel `fast-street-ec2`: acrescentar leitura no prefixo dos pacotes de deploy no S3 |
