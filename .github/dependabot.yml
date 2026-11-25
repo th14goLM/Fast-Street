@@ -26,6 +26,12 @@ updates:
       time: "09:00"
       timezone: America/Sao_Paulo
     open-pull-requests-limit: 5
+    ignore:
+      # Os tipos do Node acompanham o Node da PRODUÇÃO (22, ver "engines" e a EC2). Uma major nova dos
+      # tipos deixaria compilar código com APIs que o servidor não tem. Ela muda junto com a migração
+      # planejada do Node (ex.: 22 → 24), não por PR automático.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       api-menores:
         update-types: [minor, patch]
