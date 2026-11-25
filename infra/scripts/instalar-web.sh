@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Instala no servidor uma versão do app web (gerada por "npx expo export --platform web").
-# Chamado pelo infra/scripts/publicar-web.ps1; também pode ser usado à mão:
+# Chamado pelo documento SSM FastStreet-WebDeploy (workflow Deploy) e pelo publicar-web.ps1; à mão:
 #   sudo bash instalar-web.sh /caminho/app-web.tgz        # publica
 #   sudo bash instalar-web.sh --rollback                    # volta para a versão anterior
 #
@@ -12,10 +12,18 @@ set -euo pipefail
 BASE=/var/www/fast-street-web
 MANTER=3
 
+# Versões instaladas, da mais antiga para a mais nova (nomes AAAAMMDD-HHMMSS: ordem alfabética = cronológica).
+versoes() {
+  local d
+  for d in "$BASE"/releases/*/; do if [[ -d $d ]]; then basename "$d"; fi; done | sort
+}
+
 if [[ ${1:-} == --rollback ]]; then
-  atual=$(readlink "$BASE/app" | xargs basename)
-  anterior=$(ls -1 "$BASE/releases" | grep -v "^$atual$" | sort | tail -1)
-  [[ -n $anterior ]] || { echo "Não há versão anterior." >&2; exit 1; }
+  atual=$(basename "$(readlink "$BASE/app")")
+  # A anterior é a mais nova entre as MAIS ANTIGAS que a atual: rollbacks seguidos recuam uma versão
+  # por vez (antes, o segundo rollback voltava para a mais nova, alternando entre as duas últimas).
+  anterior=$(versoes | awk -v a="$atual" '$0 < a' | tail -1)
+  [[ -n $anterior ]] || { echo "Não há versão anterior a $atual." >&2; exit 1; }
   ln -sfn "releases/$anterior" "$BASE/app.tmp" && mv -T "$BASE/app.tmp" "$BASE/app"
   echo "✔ Rollback: $atual → $anterior"
   exit 0
@@ -36,7 +44,7 @@ find "$DESTINO" -type d -exec chmod 755 {} + ; find "$DESTINO" -type f -exec chm
 # Troca atômica: o Nginx nunca enxerga uma versão pela metade.
 ln -sfn "releases/$VERSAO" "$BASE/app.tmp" && mv -T "$BASE/app.tmp" "$BASE/app"
 
-# Mantém só as últimas versões (para rollback).
-ls -1 "$BASE/releases" | sort | head -n -"$MANTER" | while read -r v; do rm -rf "$BASE/releases/$v"; done
+# Mantém só as últimas versões (para rollback), sem nunca apagar a que acabou de ser publicada.
+versoes | head -n -"$MANTER" | while read -r v; do [[ $v == "$VERSAO" ]] || rm -rf -- "${BASE:?}/releases/$v"; done
 
 echo "✔ App web publicado: $VERSAO ($(du -sh "$DESTINO" | cut -f1), $(find "$DESTINO" -type f | wc -l) arquivos)"
