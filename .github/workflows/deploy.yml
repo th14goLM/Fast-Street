@@ -1,13 +1,19 @@
-# Deploy automático da API na EC2 (Fase 3 do docs/PLANO_DEPLOY_AUTOMATICO.md).
+# Deploy automático da API e do app web na EC2 (Fases 3 e 4 do docs/PLANO_DEPLOY_AUTOMATICO.md).
 #
 # Quando roda:
 #   - sozinho, quando o CI termina VERDE num push para o main (ou seja, depois de cada merge);
 #   - à mão (Actions → Deploy → Run workflow), para republicar o main ou fazer rollback.
 #
-# Como chega à EC2: o job troca o token OIDC do GitHub por uma credencial temporária da AWS (papel
-# fast-street-github-deploy) e manda pelo SSM o documento FastStreet-Deploy, que só sabe rodar o
-# infra/scripts/deploy-api.sh (deploy de um commit ou rollback). Sem SSH, sem porta 22, sem chave guardada.
-# Pré-requisitos e configuração: infra/aws/configurar-deploy-github.sh e o plano (seção 4).
+# Ordem (regra do plano: API primeiro, clientes depois):
+#   API (EC2) ──────────────┐
+#                           ├─▶ App web (EC2)
+#   App web (build) ────────┘
+# O build do app web roda em paralelo com a API e SEM credencial da AWS (o npm não vê nenhum segredo).
+# Só depois que a API está no ar o pacote vai para o S3 e a EC2 o instala (troca atômica).
+#
+# Como chega à EC2: troca do token OIDC do GitHub por credencial temporária da AWS (papel
+# fast-street-github-deploy) e documentos SSM restritos (FastStreet-Deploy e FastStreet-WebDeploy).
+# Sem SSH, sem porta 22, sem chave guardada. Configuração: infra/aws/configurar-deploy-github.sh.
 name: Deploy
 
 on:
@@ -18,9 +24,9 @@ on:
   workflow_dispatch:
     inputs:
       acao:
-        description: "deploy = publica o main atual · rollback = volta para a release anterior"
+        description: "deploy = publica API e app web do main · rollback = volta a API · rollback-web = volta o app web"
         type: choice
-        options: [deploy, rollback]
+        options: [deploy, rollback, rollback-web]
         default: deploy
 
 # Nunca dois deploys ao mesmo tempo; um novo espera o anterior terminar (não cancela no meio).
@@ -30,12 +36,17 @@ concurrency:
 
 permissions: {}
 
+env:
+  ACAO: ${{ inputs.acao || 'deploy' }}
+  # Commit aprovado pelo CI (workflow_run) ou o main atual (disparo manual). SHA completo.
+  COMMIT: ${{ github.event.workflow_run.head_sha || github.sha }}
+
 jobs:
-  deploy:
-    name: Produção (EC2)
+  api:
+    name: API (EC2)
     # Só a partir do main: CI verde de um push (merge) ou disparo manual.
     if: >-
-      github.ref == 'refs/heads/main' && (
+      github.ref == 'refs/heads/main' && (inputs.acao || 'deploy') != 'rollback-web' && (
         github.event_name == 'workflow_dispatch' || (
           github.event.workflow_run.conclusion == 'success' &&
           github.event.workflow_run.event == 'push' &&
@@ -44,79 +55,150 @@ jobs:
     timeout-minutes: 20
     environment:
       name: production
-      url: https://faststreet.duckdns.org/app/
+      url: https://faststreet.duckdns.org/health
     permissions:
       id-token: write   # token OIDC para a AWS
+      contents: read    # scripts de infra/ (checkout do main)
+    outputs:
+      pulado: ${{ steps.ssm.outputs.pulado }}
     env:
-      ACAO: ${{ inputs.acao || 'deploy' }}
-      # Commit aprovado pelo CI (workflow_run) ou o main atual (disparo manual).
-      COMMIT: ${{ github.event.workflow_run.head_sha || github.sha }}
       AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
       AWS_REGION: ${{ vars.AWS_REGION }}
       EC2_INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Conferir a configuração do environment
-        run: |
-          faltando=()
-          for v in AWS_ROLE_ARN AWS_REGION EC2_INSTANCE_ID; do [[ -n ${!v} ]] || faltando+=("$v"); done
-          if ((${#faltando[@]})); then
-            echo "::error::Variáveis ausentes no environment production: ${faltando[*]} (rode infra/aws/configurar-deploy-github.sh e cadastre-as em Settings → Environments → production)."
-            exit 1
-          fi
-          echo "Ação: $ACAO · commit: ${COMMIT:0:7} · instância: $EC2_INSTANCE_ID ($AWS_REGION)"
-
+        run: bash infra/scripts/conferir-variaveis.sh AWS_ROLE_ARN AWS_REGION EC2_INSTANCE_ID
       - name: Credenciais temporárias da AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
-          role-session-name: fast-street-deploy-${{ github.run_id }}
-
+          role-session-name: fast-street-api-${{ github.run_id }}
       - name: Executar na EC2 (SSM → deploy-api.sh)
+        id: ssm
         run: |
-          set -euo pipefail
-          id=$(aws ssm send-command \
-            --instance-ids "$EC2_INSTANCE_ID" \
-            --document-name FastStreet-Deploy \
-            --parameters "acao=$ACAO,commit=$COMMIT" \
-            --comment "GitHub Actions ${GITHUB_RUN_ID}: $ACAO ${COMMIT:0:7}" \
-            --timeout-seconds 60 \
-            --query Command.CommandId --output text)
-          echo "Comando SSM: $id"
-
-          # Espera até 15 min (o build na t3.small leva ~1 min).
-          status=Pending
-          for _ in $(seq 1 180); do
-            sleep 5
-            status=$(aws ssm get-command-invocation --command-id "$id" --instance-id "$EC2_INSTANCE_ID" \
-              --query Status --output text 2>/dev/null || echo Pending)
-            case $status in Pending | InProgress | Delayed) ;; *) break ;; esac
-          done
-
-          saida=$(aws ssm get-command-invocation --command-id "$id" --instance-id "$EC2_INSTANCE_ID" \
-            --query StandardOutputContent --output text 2>/dev/null || true)
-          erros=$(aws ssm get-command-invocation --command-id "$id" --instance-id "$EC2_INSTANCE_ID" \
-            --query StandardErrorContent --output text 2>/dev/null || true)
-          echo "::group::Saída do deploy-api.sh"; printf '%s\n' "$saida"; echo "::endgroup::"
-          # O git e o npm escrevem progresso no stderr: não é erro (o resultado é o status abaixo).
-          if [[ -n $erros && $erros != None ]]; then echo "::group::Saída de diagnóstico (stderr: git, npm)"; printf '%s\n' "$erros"; echo "::endgroup::"; fi
-
-          {
-            echo "### Deploy da API: $ACAO ${COMMIT:0:7} → $status"
-            echo '```'
-            printf '%s\n' "$saida" | grep -E '^(→|✔|✖|⚠|DEPLOY-PULADO|  removida)' || true
-            echo '```'
-          } >>"$GITHUB_STEP_SUMMARY"
-
-          if grep -q '^DEPLOY-PULADO' <<<"$saida"; then
-            echo "::notice::O main já avançou; o deploy do commit mais novo publica esta versão."
-          fi
-          if [[ $status != Success ]]; then
-            echo "::error::Deploy terminou com status $status. Se a release nova não subiu, o script já voltou para a anterior (veja a saída)."
-            exit 1
-          fi
-
+          bash infra/scripts/ssm-executar.sh FastStreet-Deploy "acao=$ACAO,commit=$COMMIT" "API: $ACAO ${COMMIT:0:7}"
       - name: Conferir pela Internet
         run: |
           curl -fsS --retry 5 --retry-delay 3 --retry-all-errors --max-time 10 https://faststreet.duckdns.org/health
           echo
+
+  web-build:
+    name: App web (build)
+    if: >-
+      github.ref == 'refs/heads/main' && (inputs.acao || 'deploy') == 'deploy' && (
+        github.event_name == 'workflow_dispatch' || (
+          github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.event == 'push' &&
+          github.event.workflow_run.head_branch == 'main'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      sha256: ${{ steps.pacote.outputs.sha256 }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.COMMIT }}   # exatamente o commit aprovado pelo CI
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci --no-audit --no-fund
+        working-directory: mobile
+      - name: Exportar e conferir (URL da API no bundle, prefixo /app/)
+        id: pacote
+        run: |
+          bash infra/scripts/empacotar-web.sh "$RUNNER_TEMP/app-web.tgz" https://faststreet.duckdns.org
+          echo "sha256=$(sha256sum "$RUNNER_TEMP/app-web.tgz" | cut -d' ' -f1)" >>"$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: app-web
+          path: ${{ runner.temp }}/app-web.tgz
+          if-no-files-found: error
+          retention-days: 7
+
+  web:
+    name: App web (EC2)
+    needs: [api, web-build]
+    # Se o deploy da API foi pulado (o main já avançou), o do commit mais novo publica o app web também.
+    if: needs.api.outputs.pulado != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: production
+      url: https://faststreet.duckdns.org/app/
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      EC2_INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
+      DEPLOY_BUCKET: ${{ vars.DEPLOY_BUCKET }}
+      SHA256: ${{ needs.web-build.outputs.sha256 }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Conferir a configuração do environment
+        run: bash infra/scripts/conferir-variaveis.sh AWS_ROLE_ARN AWS_REGION EC2_INSTANCE_ID DEPLOY_BUCKET
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: app-web
+          path: ${{ runner.temp }}/pacote
+      - name: Conferir o sha256 do pacote
+        run: echo "$SHA256  $RUNNER_TEMP/pacote/app-web.tgz" | sha256sum -c -
+      - name: Credenciais temporárias da AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: fast-street-web-${{ github.run_id }}
+      - name: Enviar o pacote ao S3
+        run: aws s3 cp "$RUNNER_TEMP/pacote/app-web.tgz" "s3://$DEPLOY_BUCKET/web/$COMMIT.tgz" --only-show-errors
+      - name: Instalar na EC2 (SSM → instalar-web.sh)
+        run: |
+          bash infra/scripts/ssm-executar.sh FastStreet-WebDeploy "acao=publicar,commit=$COMMIT,sha256=$SHA256" "App web: ${COMMIT:0:7}"
+      - name: Conferir pela Internet
+        run: |
+          html=$(curl -fsS --retry 5 --retry-delay 3 --retry-all-errors --max-time 10 https://faststreet.duckdns.org/app/)
+          grep -qF '/app/_expo/' <<<"$html" || { echo "::error::/app/ não serviu o index.html do app."; exit 1; }
+          echo "✔ https://faststreet.duckdns.org/app/ servindo o app"
+
+  web-rollback:
+    name: App web (rollback)
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.acao == 'rollback-web'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: production
+      url: https://faststreet.duckdns.org/app/
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      EC2_INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Conferir a configuração do environment
+        run: bash infra/scripts/conferir-variaveis.sh AWS_ROLE_ARN AWS_REGION EC2_INSTANCE_ID
+      - name: Credenciais temporárias da AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: fast-street-web-rollback-${{ github.run_id }}
+      - name: Rollback na EC2 (SSM → instalar-web.sh --rollback)
+        run: |
+          bash infra/scripts/ssm-executar.sh FastStreet-WebDeploy "acao=rollback,commit=$COMMIT" "App web: rollback"
