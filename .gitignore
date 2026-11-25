@@ -20,5 +20,3 @@ Thumbs.db
 .idea/
 .vscode/
 
-# Backups gerados no servidor (deploy/backup.sh)
-/backups/

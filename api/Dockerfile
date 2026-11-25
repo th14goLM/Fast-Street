@@ -1,4 +1,5 @@
-# Imagem de produção da Fast Street API.
+# Imagem da Fast Street API em contêiner (perfil "api" do docker-compose.yml, para testar localmente um
+# build de produção). A produção na EC2 roda sem Docker: infra/scripts/deploy-api.sh + systemd.
 # Build:  docker build -t fast-street-api ./api
 # Ao iniciar, aplica as migrations pendentes e sobe a API na porta 3333.
 

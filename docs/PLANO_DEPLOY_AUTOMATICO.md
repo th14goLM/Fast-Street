@@ -1,6 +1,7 @@
 # Próxima atualização · Deploy automático (CI/CD) e e-mail real (Amazon SES)
 
-> **Status:** planejado em 24/11/2026 · **Prioridade:** é a próxima atualização do projeto.
+> **Status (25/11/2026):** fases 1–4 concluídas (CI, releases com rollback, deploy automático da API e do
+> app web). **Próximo passo: fase 5 (e-mail real com Amazon SES)**, a validar em 26/11/2026.
 > **Objetivos:**
 > 1. depois do merge no `main`, a API e o app web chegarem à produção sozinhos, testados e com
 >    rollback rápido, sem SSH manual nem build no PC (fases 1–4);
@@ -120,10 +121,11 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
   log do deploy visível na aba Actions.
 
 ### Fase 4 · App web no mesmo pipeline
-> **Status (25/11/2026):** implementada (jobs `web-build`, `web` e `web-rollback` no `deploy.yml`,
-> `infra/scripts/empacotar-web.sh`, `infra/scripts/ssm-executar.sh` e o documento SSM `FastStreet-WebDeploy`
-> no `configurar-deploy-github.sh`). Falta rodar o script de novo no CloudShell, cadastrar `DEPLOY_BUCKET`
-> no environment e o primeiro deploy real (👤, seção 4).
+> **Status: ✅ concluída (25/11/2026).** Primeiro deploy pelo merge do PR #21 (*Deploy #4*, `456e929`): API e
+> build web em paralelo, depois o app web: sha256 conferido no GitHub e na EC2, pacote no S3 e instalado em 7 s
+> (`20261125-023611`), `/app/` conferido pela Internet. Do fim do CI ao app web no ar: ~1 min 20 s.
+> Limitação conhecida (anterior a esta fase): o `instalar-web.sh --rollback` volta para a versão mais nova que
+> não está no ar, então dois `rollback-web` seguidos alternam entre as duas últimas versões.
 
 ```
 API (EC2) ───────────────┐
@@ -185,11 +187,11 @@ App web (build) ─────────┘   (só depois da API no ar: regra
 | Onde | O quê |
 |---|---|
 | IAM + SSM (fase 3) | ✅ **Pronto (25/11/2026).** Rodar `infra/aws/configurar-deploy-github.sh` no AWS CloudShell. Ele cria o provedor OIDC `token.actions.githubusercontent.com`, o documento SSM `FastStreet-Deploy` e o papel `fast-street-github-deploy` (confia só em `repo:th14goLM@88167274/Fast-Street@1385999706:environment:production`; pode só `ssm:SendCommand` desse documento nesta instância, mais `ssm:GetCommandInvocation`) |
-| IAM + S3 + SSM (fase 4) | ⬜ Rodar **de novo** o `infra/aws/configurar-deploy-github.sh` no CloudShell. Ele acrescenta o bucket `fast-street-deploy-<conta>`, o documento `FastStreet-WebDeploy`, `s3:PutObject` em `web/` no papel `fast-street-github-deploy` e `s3:GetObject` em `web/` no papel da instância. O que já existe fica igual |
+| IAM + S3 + SSM (fase 4) | ✅ **Pronto (25/11/2026).** Rodar **de novo** o `infra/aws/configurar-deploy-github.sh` no CloudShell. Ele acrescenta o bucket `fast-street-deploy-<conta>`, o documento `FastStreet-WebDeploy`, `s3:PutObject` em `web/` no papel `fast-street-github-deploy` e `s3:GetObject` em `web/` no papel da instância. O que já existe fica igual |
 | IAM | ✅ **Pronto (24/11/2026):** o papel da instância `fast-street-ec2` já permite o SSM; confirmado por uma sessão do Session Manager aberta pelo console na `i-019cd349ad6ada4ea` |
 | EC2 | ✅ **Pronto (24/11/2026):** SSM Agent ativo e instância gerenciada pelo Systems Manager (mesma confirmação acima) |
 | GitHub (fase 3) | ✅ **Pronto (25/11/2026):** *environment* `production` com **Deployment branches = só `main`** e as variáveis (não secretas) `AWS_ROLE_ARN`, `AWS_REGION=us-east-2` e `EC2_INSTANCE_ID` |
-| GitHub (fase 4) | ⬜ No *environment* `production`, a variável `DEPLOY_BUCKET` (valor impresso pelo script) |
+| GitHub (fase 4) | ✅ **Pronto (25/11/2026):** variável `DEPLOY_BUCKET` no *environment* `production` |
 | GitHub | ✅ **Pronto (25/11/2026):** proteção do `main` com PR obrigatório e as verificações **API** e **Mobile** |
 | Domínio (fase 5) | Registrar um domínio (Route 53 ou outro registrador) e ter acesso ao DNS dele |
 | SES (fase 5) | Identidade do domínio verificada em `us-east-2` (DKIM, SPF, DMARC, MAIL FROM); pedido de acesso de produção aprovado |
@@ -239,7 +241,8 @@ App web (build) ─────────┘   (só depois da API no ar: regra
 
 ## 7. Documentação a atualizar ao concluir
 - `docs/trabalho-final/02-implantacao.md` e `03-operacao.md`: fluxo de deploy e rollback.
-- `docs/DEPLOY_AWS.md`: marcar o modelo Caddy + Docker (`deploy/`, `docker-compose.prod.yml`) como legado.
+- ✅ (25/11/2026) Modelo antigo de produção com Docker + Caddy **removido** do repositório (`deploy/`,
+  `docker-compose.prod.yml`, `api/.env.production.example` e `docs/DEPLOY_AWS.md`); continua no histórico do git.
 - `README.md`: seção "Como contribuir" com o CI obrigatório.
-- `infra/config/api.env.example` e `api/.env.production.example`: configuração do SES no lugar do SMTP vazio.
+- `infra/config/api.env.example`: configuração do SES no lugar do SMTP vazio.
 - `docs/GUIA_MOBILE_API.md`: seção de e-mail (Mailtrap continua no desenvolvimento; SES em produção).

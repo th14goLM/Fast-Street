@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { EnvSchema } from '../src/config/env.schema.js';
 
-// Valores do api/.env.production.example (copiado sem editar foi o incidente da migração para a AWS).
+// Valores de exemplo que já foram copiados sem editar (incidente da migração para a AWS, 19/11/2026).
 const JWT_EXEMPLO = 'troque-por-um-segredo-novo-com-pelo-menos-32-caracteres';
 const URL_EXEMPLO = 'http://SEU-IP-ELASTICO';
 

@@ -18,7 +18,7 @@ docker-compose.yml  MySQL 8.4 para desenvolvimento
 
 ## Como rodar
 
-**Pré-requisitos:** Node.js ≥ 20.19, um MySQL 8 (instalado no computador **ou** via Docker) e o app **Expo Go** no celular (ou um emulador).
+**Pré-requisitos:** Node.js ≥ 22, um MySQL 8 (instalado no computador **ou** via Docker) e o app **Expo Go** no celular (ou um emulador).
 
 ### 1. Banco de dados (escolha uma opção)
 
@@ -116,10 +116,10 @@ Enquanto a criação de eventos pelo organizador (UC-06) não existe, o seed pop
 | Comando | O que faz |
 |---|---|
 | `cd api && npm run doctor` | **Diagnóstico do ambiente:** confere `api/.env`, conexão com o MySQL, banco, migrations, envio de e-mail (SMTP), IP para o celular e portas, e diz o que corrigir |
-| `cd api && npm test` | 45 testes (unitários + integração com MySQL real no banco `fast_street_test`) |
+| `cd api && npm test` | 52 testes (unitários + integração com MySQL real no banco `fast_street_test`); os mesmos rodam no CI em todo PR |
 | `cd api && npm run typecheck` | Checagem de tipos da API |
 | `cd mobile && npx tsc --noEmit` | Checagem de tipos do app |
-| `cd mobile && npx expo lint` | ESLint (inclui as regras do React Compiler) |
+| `cd mobile && npx expo lint --max-warnings 0` | ESLint (inclui as regras do React Compiler); no CI, aviso também reprova |
 
 ## API: endpoints desta etapa
 
@@ -158,7 +158,7 @@ Formato de erro: `{ "error": { "code", "message", "fields"? } }`. Os campos inv�
 - **Feed, itens do protótipo adiados:** "Destaques do ranking" e "Novidades" dependem de resultados (UC-07/08) e chegam junto com eles.
 - **Telas provisórias:** Mapa (UC-04), Garagem, Ranking, Notificações e Detalhe do evento/Inscrição (UC-05).
 - **Cache offline por filtro:** hoje o Feed guarda só a última resposta; sem rede, ela aparece mesmo se os filtros mudaram (o banner avisa que são dados salvos).
-- **Fotos em produção:** hoje ficam no disco da API (`UPLOAD_DIR`; na AWS, no volume `uploads`, ver [DEPLOY_AWS.md](DEPLOY_AWS.md)). Para S3/Cloudinary, troque `api/src/shared/storage.ts`. Uploads não usados (formulário abandonado) devem ser limpos por uma tarefa periódica.
+- **Fotos em produção:** hoje ficam no disco do servidor (`UPLOAD_DIR=/var/lib/fast-street/uploads`, definido na unidade systemd; entram no backup diário). Para S3/Cloudinary, troque `api/src/shared/storage.ts`. Uploads não usados (formulário abandonado) devem ser limpos por uma tarefa periódica.
 - **Token de push:** o app pede a permissão de notificações, mas ainda não registra o token (exige o `projectId` do EAS).
 - **Barra de acessibilidade** (Libras, alto contraste, A+).
 - **Textos definitivos de Termos e LGPD:** a tela já existe (`/legal/termos`, `/legal/privacidade`) com uma minuta; falta o texto revisado pelo jurídico.
