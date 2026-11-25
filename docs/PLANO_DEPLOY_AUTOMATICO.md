@@ -46,10 +46,8 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 - **Aceite:** um PR com teste quebrado fica bloqueado; um PR correto mostra os dois jobs verdes.
 
 ### Fase 2 · Releases + symlink na API (rollback em segundos)
-> **Status (25/11/2026):** implementada em `infra/scripts/deploy-api.sh` e testada num servidor simulado
-> (37 verificações: conversão da pasta antiga, deploy, rollback manual e automático, reexecução do script
-> atualizado, poda, trava, Nginx fora do ar e permissões). **Em produção desde 25/11/2026** (`41fb651`): a pasta
-> antiga virou a release `20261125-014803-69b90f1` e a nova subiu em 12 s; falta só o teste de `--rollback` (👤).
+> **Status: ✅ concluída (25/11/2026).** Em produção desde o deploy de `41fb651`: a pasta antiga virou a
+> primeira release, a nova subiu em 12 s, e o teste de `--rollback` seguido de novo deploy foi feito na EC2.
 
 - Cada deploy vira `/opt/fast-street/releases/AAAAMMDD-HHMMSS-<commit>/` (dono root, só leitura para o
   serviço) e o link `/opt/fast-street/api → releases/<atual>` é trocado de forma atômica (`ln -sfn` + `mv -T`),
@@ -83,8 +81,10 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
   health check falho termina na versão anterior, no ar.
 
 ### Fase 3 · Deploy automático da API (GitHub Actions + AWS SSM com OIDC)
-> **Status (25/11/2026):** implementada (`.github/workflows/deploy.yml`, `infra/aws/configurar-deploy-github.sh`
-> e `deploy-api.sh --commit`). Falta a configuração na AWS e no GitHub (👤, seção 4) e o primeiro deploy real.
+> **Status: ✅ concluída (25/11/2026).** Primeiro deploy pelo GitHub Actions: execução *Deploy #2*
+> (`5599e8e`), credencial OIDC → SSM → release `20261125-021252-5599e8e` no ar em 12 s, poda da release mais
+> antiga, Nginx/systemd conferidos e `/health` verde pela Internet, cerca de 35 s do disparo ao fim. A execução
+> #1 falhou na autenticação por causa do formato do `sub` (ver abaixo); nada chegou à EC2.
 
 - **Gatilho:** `workflow_run` do CI. Quando o CI termina **verde num push para o `main`** (cada merge), o
   deploy roda. Também há disparo manual (*Actions → Deploy → Run workflow*) com `deploy` ou `rollback`.
