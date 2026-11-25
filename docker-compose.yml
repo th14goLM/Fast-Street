@@ -2,11 +2,9 @@
 # Uso: copie .env.example para .env (na raiz), troque as senhas e rode: docker compose up -d
 # Opcional: quem já tem MySQL instalado (ex.: Workbench) pode ignorar este arquivo.
 #
-# Nome de projeto próprio: sem ele, o Compose usa o nome da pasta ("fast-street"), o mesmo da
-# produção, e um "docker compose down" no servidor derrubava os contêineres de produção.
-# No seu computador, quem já usava este arquivo antes desta mudança começa com um banco vazio;
-# os dados antigos continuam no volume "fast-street_mysql-data" (veja com: docker volume ls).
-# No servidor, esse é o nome do volume de PRODUÇÃO: nunca o use com este arquivo.
+# Só para desenvolvimento: a produção roda sem Docker (Nginx + systemd, ver docs/trabalho-final/).
+# Nome de projeto próprio ("fast-street-dev"). Quem usava este arquivo antes dele ter nome próprio tem
+# os dados antigos no volume "fast-street_mysql-data" (veja com: docker volume ls).
 name: fast-street-dev
 
 services:
@@ -31,7 +29,7 @@ services:
       interval: 5s
       retries: 20
 
-  # Opcional: a API na mesma imagem usada na AWS, para testar o contêiner antes do deploy.
+  # Opcional: a API em contêiner (api/Dockerfile), igual a um build de produção.
   #   docker compose --profile api up -d --build      →  http://localhost:3333/health
   # No dia a dia, continue usando "npm run dev" (recarrega ao salvar).
   api:

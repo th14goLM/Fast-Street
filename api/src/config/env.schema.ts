@@ -4,8 +4,9 @@ import { z } from 'zod';
 const blank = (v: unknown) => (typeof v === 'string' && v.trim() === '' ? undefined : v);
 
 /**
- * Trechos dos valores de exemplo (api/.env.production.example). Se aparecerem em produção,
- * o api/.env foi copiado sem ser editado: a API recusa subir em vez de rodar com um segredo público.
+ * Trechos de valores de exemplo (o JWT_SECRET do api/.env.example e o endereço do antigo modelo de
+ * produção com Docker). Se aparecerem em produção, o arquivo foi copiado sem ser editado: a API
+ * recusa subir em vez de rodar com um segredo público.
  */
 export const PLACEHOLDERS_PRODUCAO = {
   JWT_SECRET: /troque/i,

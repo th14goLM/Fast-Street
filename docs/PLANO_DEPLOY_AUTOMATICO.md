@@ -241,7 +241,8 @@ App web (build) ─────────┘   (só depois da API no ar: regra
 
 ## 7. Documentação a atualizar ao concluir
 - `docs/trabalho-final/02-implantacao.md` e `03-operacao.md`: fluxo de deploy e rollback.
-- `docs/DEPLOY_AWS.md`: marcar o modelo Caddy + Docker (`deploy/`, `docker-compose.prod.yml`) como legado.
+- ✅ (25/11/2026) Modelo antigo de produção com Docker + Caddy **removido** do repositório (`deploy/`,
+  `docker-compose.prod.yml`, `api/.env.production.example` e `docs/DEPLOY_AWS.md`); continua no histórico do git.
 - `README.md`: seção "Como contribuir" com o CI obrigatório.
-- `infra/config/api.env.example` e `api/.env.production.example`: configuração do SES no lugar do SMTP vazio.
+- `infra/config/api.env.example`: configuração do SES no lugar do SMTP vazio.
 - `docs/GUIA_MOBILE_API.md`: seção de e-mail (Mailtrap continua no desenvolvimento; SES em produção).
