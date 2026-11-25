@@ -46,10 +46,8 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 - **Aceite:** um PR com teste quebrado fica bloqueado; um PR correto mostra os dois jobs verdes.
 
 ### Fase 2 · Releases + symlink na API (rollback em segundos)
-> **Status (25/11/2026):** implementada em `infra/scripts/deploy-api.sh` e testada num servidor simulado
-> (37 verificações: conversão da pasta antiga, deploy, rollback manual e automático, reexecução do script
-> atualizado, poda, trava, Nginx fora do ar e permissões). **Em produção desde 25/11/2026** (`41fb651`): a pasta
-> antiga virou a release `20261125-014803-69b90f1` e a nova subiu em 12 s; falta só o teste de `--rollback` (👤).
+> **Status: ✅ concluída (25/11/2026).** Em produção desde o deploy de `41fb651`: a pasta antiga virou a
+> primeira release, a nova subiu em 12 s, e o teste de `--rollback` seguido de novo deploy foi feito na EC2.
 
 - Cada deploy vira `/opt/fast-street/releases/AAAAMMDD-HHMMSS-<commit>/` (dono root, só leitura para o
   serviço) e o link `/opt/fast-street/api → releases/<atual>` é trocado de forma atômica (`ln -sfn` + `mv -T`),
@@ -83,8 +81,10 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
   health check falho termina na versão anterior, no ar.
 
 ### Fase 3 · Deploy automático da API (GitHub Actions + AWS SSM com OIDC)
-> **Status (25/11/2026):** implementada (`.github/workflows/deploy.yml`, `infra/aws/configurar-deploy-github.sh`
-> e `deploy-api.sh --commit`). Falta a configuração na AWS e no GitHub (👤, seção 4) e o primeiro deploy real.
+> **Status: ✅ concluída (25/11/2026).** Primeiro deploy pelo GitHub Actions: execução *Deploy #2*
+> (`5599e8e`), credencial OIDC → SSM → release `20261125-021252-5599e8e` no ar em 12 s, poda da release mais
+> antiga, Nginx/systemd conferidos e `/health` verde pela Internet, cerca de 35 s do disparo ao fim. A execução
+> #1 falhou na autenticação por causa do formato do `sub` (ver abaixo); nada chegou à EC2.
 
 - **Gatilho:** `workflow_run` do CI. Quando o CI termina **verde num push para o `main`** (cada merge), o
   deploy roda. Também há disparo manual (*Actions → Deploy → Run workflow*) com `deploy` ou `rollback`.
@@ -102,6 +102,12 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 - **Só o commit aprovado:** o workflow passa o SHA que o CI testou (`--commit`). Se o `main` do servidor
   estiver nesse commit, publica; se já avançou (outro merge logo depois), não faz nada e avisa
   (`DEPLOY-PULADO`), porque o deploy do commit mais novo publica tudo; se o commit não estiver no `main`, falha.
+- **Formato do `sub` (lição do primeiro deploy, 25/11/2026):** o token OIDC deste repositório identifica
+  dono e repositório pelos **IDs imutáveis** (`repo:th14goLM@88167274/Fast-Street@1385999706:environment:production`),
+  e não só pelo nome. A primeira versão da role exigia o formato só com nomes, e a AWS recusou
+  (`Not authorized to perform sts:AssumeRoleWithWebIdentity`). O `sub` real foi lido no CloudTrail
+  (evento `AssumeRoleWithWebIdentity`, campo `userIdentity.userName`). O formato com IDs também é mais
+  seguro: renomear o repositório não quebra a confiança, e um repositório recriado com o mesmo nome não a herda.
 - **Acompanhamento:** espera o comando terminar (até 15 min), mostra a saída do `deploy-api.sh` no log e
   um resumo na página da execução, e confere `https://faststreet.duckdns.org/health` pela Internet.
   Falha no deploy deixa a execução vermelha, e o próprio script já voltou para a release anterior.
@@ -152,7 +158,7 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 
 | Onde | O quê |
 |---|---|
-| IAM + SSM (fase 3) | ⬜ Rodar `infra/aws/configurar-deploy-github.sh` no AWS CloudShell. Ele cria o provedor OIDC `token.actions.githubusercontent.com`, o documento SSM `FastStreet-Deploy` e o papel `fast-street-github-deploy` (confia só em `repo:th14goLM/Fast-Street:environment:production`; pode só `ssm:SendCommand` desse documento nesta instância, mais `ssm:GetCommandInvocation`) |
+| IAM + SSM (fase 3) | ⬜ Rodar `infra/aws/configurar-deploy-github.sh` no AWS CloudShell. Ele cria o provedor OIDC `token.actions.githubusercontent.com`, o documento SSM `FastStreet-Deploy` e o papel `fast-street-github-deploy` (confia só em `repo:th14goLM@88167274/Fast-Street@1385999706:environment:production`; pode só `ssm:SendCommand` desse documento nesta instância, mais `ssm:GetCommandInvocation`) |
 | IAM (fase 4) | ⬜ No papel `fast-street-github-deploy`: `s3:PutObject` no prefixo dos pacotes do app web |
 | IAM | ✅ **Pronto (24/11/2026):** o papel da instância `fast-street-ec2` já permite o SSM; confirmado por uma sessão do Session Manager aberta pelo console na `i-019cd349ad6ada4ea` |
 | IAM | ⬜ No papel `fast-street-ec2`: acrescentar leitura no prefixo dos pacotes de deploy no S3 |

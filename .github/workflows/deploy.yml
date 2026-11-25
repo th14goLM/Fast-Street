@@ -98,7 +98,8 @@ jobs:
           erros=$(aws ssm get-command-invocation --command-id "$id" --instance-id "$EC2_INSTANCE_ID" \
             --query StandardErrorContent --output text 2>/dev/null || true)
           echo "::group::Saída do deploy-api.sh"; printf '%s\n' "$saida"; echo "::endgroup::"
-          if [[ -n $erros && $erros != None ]]; then echo "::group::Erros"; printf '%s\n' "$erros"; echo "::endgroup::"; fi
+          # O git e o npm escrevem progresso no stderr: não é erro (o resultado é o status abaixo).
+          if [[ -n $erros && $erros != None ]]; then echo "::group::Saída de diagnóstico (stderr: git, npm)"; printf '%s\n' "$erros"; echo "::endgroup::"; fi
 
           {
             echo "### Deploy da API: $ACAO ${COMMIT:0:7} → $status"
