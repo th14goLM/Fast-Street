@@ -6,6 +6,8 @@
 #   bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh --rollback   # volta para a release anterior
 #   bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh --listar     # releases instaladas (* = no ar)
 #   bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh --instalar   # publica o checkout atual, sem git pull
+#   bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh --commit SHA # só publica se o main estiver nesse
+#        commit (usado pelo GitHub Actions); se o main já avançou, não faz nada (o deploy do mais novo publica)
 #
 # Estrutura no servidor:
 #   /opt/fast-street/releases/AAAAMMDD-HHMMSS-<commit>/   cada versão publicada (dono root; o serviço só LÊ)
@@ -242,12 +244,28 @@ cmd_instalar() {
 }
 
 cmd_deploy() {
+  local esperado=${1:-}
   cd "$REPO"
   if git rev-parse --git-dir >/dev/null 2>&1; then
     echo "→ Código: $(git rev-parse --abbrev-ref HEAD) em $(git rev-parse --short HEAD)"
     git pull --ff-only
   else
+    [[ -z $esperado ]] || falha "--commit exige um clone git em $REPO."
     echo "→ Código: cópia local sem git"
+  fi
+
+  # Deploy automático (GitHub Actions): publica só o commit que o CI aprovou.
+  if [[ -n $esperado ]]; then
+    local head
+    head=$(git rev-parse HEAD)
+    if [[ $head != "$esperado"* ]]; then
+      if git merge-base --is-ancestor "$esperado" HEAD 2>/dev/null; then
+        # O main já avançou: o deploy do commit mais novo (com o CI dele) publica tudo junto.
+        echo "DEPLOY-PULADO: o main já está em ${head:0:7}, mais novo que ${esperado:0:7}; o deploy dele publica esta versão."
+        exit 0
+      fi
+      falha "O commit ${esperado:0:7} não está no main deste servidor (HEAD ${head:0:7})."
+    fi
   fi
   # O pull pode ter trazido uma versão nova deste script. O bash continuaria executando a antiga
   # (o arquivo aberto é o de antes do pull), então a instalação roda já na versão atualizada.
@@ -264,10 +282,12 @@ main() {
 
   case "${1:-}" in
     "") cmd_deploy ;;
+    --commit) [[ ${2:-} =~ ^[0-9a-f]{7,40}$ ]] || falha "--commit exige um SHA (7 a 40 caracteres hexadecimais)."
+      cmd_deploy "$2" ;;
     --instalar) cmd_instalar ;;
     --rollback) cmd_rollback ;;
     --listar) cmd_listar ;;
-    -h | --help) sed -n '2,22p' "$0" ;;
+    -h | --help) sed -n '2,23p' "$0" ;;
     *) falha "Opção desconhecida: $1 (use --help)" ;;
   esac
 }
