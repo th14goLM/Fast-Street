@@ -120,10 +120,36 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
   log do deploy visível na aba Actions.
 
 ### Fase 4 · App web no mesmo pipeline
-- `expo export --platform web` no runner com `EXPO_PUBLIC_API_URL=https://faststreet.duckdns.org`
-  (mantendo as conferências do `publicar-web.ps1`: URL no bundle e prefixo `/app/_expo/`).
-- Pacote enviado ao S3; na EC2, via SSM, o `instalar-web.sh` baixa e publica (troca atômica já existe).
-- O `publicar-web.ps1` fica como alternativa manual.
+> **Status (25/11/2026):** implementada (jobs `web-build`, `web` e `web-rollback` no `deploy.yml`,
+> `infra/scripts/empacotar-web.sh`, `infra/scripts/ssm-executar.sh` e o documento SSM `FastStreet-WebDeploy`
+> no `configurar-deploy-github.sh`). Falta rodar o script de novo no CloudShell, cadastrar `DEPLOY_BUCKET`
+> no environment e o primeiro deploy real (👤, seção 4).
+
+```
+API (EC2) ───────────────┐
+                         ├─▶ App web (EC2): pacote → S3 → SSM → sha256 → instalar-web.sh
+App web (build) ─────────┘   (só depois da API no ar: regra "API primeiro, clientes depois")
+```
+- **Build no runner, sem credencial:** o job `web-build` faz checkout **do commit aprovado pelo CI**,
+  `npm ci` e `infra/scripts/empacotar-web.sh` (o `expo export --platform web` com
+  `EXPO_PUBLIC_API_URL=https://faststreet.duckdns.org` e as mesmas conferências do `publicar-web.ps1`: URL da
+  API no bundle e prefixo `/app/_expo/`). Ele não tem `id-token` nem environment: nenhum script do npm vê
+  credencial da AWS. O build leva ~30 s e o pacote tem ~2 MB.
+- **Publicação:** o job `web` só roda depois da API no ar (e não roda se o deploy da API foi pulado porque o
+  `main` avançou). Ele confere o sha256 do artefato, envia o pacote para `s3://<bucket>/web/<commit>.tgz` e
+  manda o documento SSM `FastStreet-WebDeploy`, que **baixa, confere o sha256 de novo na EC2** e chama o
+  `instalar-web.sh` (versão nova em `releases/` + troca atômica do link). Por fim, confere pela Internet
+  que `/app/` serve o `index.html` do app.
+- **Rollback:** *Actions → Deploy → Run workflow → `rollback-web`* (o `instalar-web.sh --rollback` pelo SSM).
+- **Bucket próprio** `fast-street-deploy-<conta>`, separado do de backup: privado, só HTTPS, criptografado e
+  com os pacotes apagados em 30 dias. O GitHub só grava em `web/`; a EC2 só lê de `web/`.
+- **Script compartilhado:** o acompanhamento do SSM (espera, saída, resumo, `pulado`) saiu do YAML para
+  `infra/scripts/ssm-executar.sh`, usado pelos jobs da API e do app web.
+- O `publicar-web.ps1` continua como alternativa manual.
+- **Testes:** pacote real gerado pelo `empacotar-web.sh` e instalado num Ubuntu 24.04 limpo, como root, pelos
+  comandos do documento SSM gerado (publicação, troca de versão, **pacote adulterado recusado pelo sha256**,
+  rollback e limpeza dos temporários); `configurar-deploy-github.sh` e `ssm-executar.sh` com AWS CLI simulada;
+  `actionlint` e `shellcheck`.
 - **Aceite:** merge no `main` → `https://faststreet.duckdns.org/app/` servindo a versão nova.
 
 ### Fase 5 · E-mail real com Amazon SES (independente das fases 1–4; pode vir antes)
@@ -158,13 +184,12 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 
 | Onde | O quê |
 |---|---|
-| IAM + SSM (fase 3) | ⬜ Rodar `infra/aws/configurar-deploy-github.sh` no AWS CloudShell. Ele cria o provedor OIDC `token.actions.githubusercontent.com`, o documento SSM `FastStreet-Deploy` e o papel `fast-street-github-deploy` (confia só em `repo:th14goLM@88167274/Fast-Street@1385999706:environment:production`; pode só `ssm:SendCommand` desse documento nesta instância, mais `ssm:GetCommandInvocation`) |
-| IAM (fase 4) | ⬜ No papel `fast-street-github-deploy`: `s3:PutObject` no prefixo dos pacotes do app web |
+| IAM + SSM (fase 3) | ✅ **Pronto (25/11/2026).** Rodar `infra/aws/configurar-deploy-github.sh` no AWS CloudShell. Ele cria o provedor OIDC `token.actions.githubusercontent.com`, o documento SSM `FastStreet-Deploy` e o papel `fast-street-github-deploy` (confia só em `repo:th14goLM@88167274/Fast-Street@1385999706:environment:production`; pode só `ssm:SendCommand` desse documento nesta instância, mais `ssm:GetCommandInvocation`) |
+| IAM + S3 + SSM (fase 4) | ⬜ Rodar **de novo** o `infra/aws/configurar-deploy-github.sh` no CloudShell. Ele acrescenta o bucket `fast-street-deploy-<conta>`, o documento `FastStreet-WebDeploy`, `s3:PutObject` em `web/` no papel `fast-street-github-deploy` e `s3:GetObject` em `web/` no papel da instância. O que já existe fica igual |
 | IAM | ✅ **Pronto (24/11/2026):** o papel da instância `fast-street-ec2` já permite o SSM; confirmado por uma sessão do Session Manager aberta pelo console na `i-019cd349ad6ada4ea` |
-| IAM | ⬜ No papel `fast-street-ec2`: acrescentar leitura no prefixo dos pacotes de deploy no S3 |
 | EC2 | ✅ **Pronto (24/11/2026):** SSM Agent ativo e instância gerenciada pelo Systems Manager (mesma confirmação acima) |
-| S3 | Prefixo (ou bucket) separado para os pacotes de deploy, com expiração automática (ex.: 30 dias) |
-| GitHub (fase 3) | ⬜ *Environment* `production` (Settings → Environments), com **Deployment branches = só `main`** e as variáveis (não secretas) `AWS_ROLE_ARN`, `AWS_REGION=us-east-2`, `EC2_INSTANCE_ID`; na fase 4, também `DEPLOY_BUCKET` |
+| GitHub (fase 3) | ✅ **Pronto (25/11/2026):** *environment* `production` com **Deployment branches = só `main`** e as variáveis (não secretas) `AWS_ROLE_ARN`, `AWS_REGION=us-east-2` e `EC2_INSTANCE_ID` |
+| GitHub (fase 4) | ⬜ No *environment* `production`, a variável `DEPLOY_BUCKET` (valor impresso pelo script) |
 | GitHub | ✅ **Pronto (25/11/2026):** proteção do `main` com PR obrigatório e as verificações **API** e **Mobile** |
 | Domínio (fase 5) | Registrar um domínio (Route 53 ou outro registrador) e ter acesso ao DNS dele |
 | SES (fase 5) | Identidade do domínio verificada em `us-east-2` (DKIM, SPF, DMARC, MAIL FROM); pedido de acesso de produção aprovado |

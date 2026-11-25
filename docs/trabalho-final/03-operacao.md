@@ -17,11 +17,10 @@ URL de demonstração: **https://faststreet.duckdns.org** (ex.: `/health`, `/cid
 | Feed de eventos por distância | `GET /eventos/feed` (autenticado) | app, após login |
 
 **App web:** `https://faststreet.duckdns.org` abre o app no navegador (Safari/Chrome do celular),
-servido pelo Nginx em `/app/`. Publicar uma nova versão (no PC):
-```powershell
-powershell -File infra\scripts\publicar-web.ps1
-```
-Voltar para a versão anterior (no servidor): `sudo bash /opt/fast-street/infra/scripts/instalar-web.sh --rollback`.
+servido pelo Nginx em `/app/`. Cada merge no `main` publica uma versão nova sozinho (workflow *Deploy*,
+depois da API). Voltar para a versão anterior: *Actions → Deploy → Run workflow → `rollback-web`*.
+Alternativas manuais: publicar pelo PC com `powershell -File infra\scripts\publicar-web.ps1` e voltar no
+servidor com `sudo bash /opt/fast-street/infra/scripts/instalar-web.sh --rollback`.
 
 **API:** cada deploy é uma release em `/opt/fast-street/releases/<data>-<commit>`, com o link
 `/opt/fast-street/api` apontando para a que está no ar (o commit fica em `/opt/fast-street/VERSION`).
