@@ -35,7 +35,7 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 ## 3. Escopo, em fases (um PR por fase)
 
 ### Fase 1 · CI nos PRs
-> **Status (25/11/2026):** workflow implementado; falta só a proteção do `main` no GitHub (👤).
+> **Status: ✅ concluída (25/11/2026).** CI verde no PR #17 e no `main`; `main` protegido com as verificações **API** e **Mobile**.
 
 - `.github/workflows/ci.yml`: job **API** (Node 22, `mysql:8.4` como *service*, `npm ci`, `npm run typecheck`,
   `npm test` com `TEST_DATABASE_URL`, `npm run build`) e job **Mobile** (`npm ci`, `npx tsc --noEmit`,
@@ -46,23 +46,38 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 - **Aceite:** um PR com teste quebrado fica bloqueado; um PR correto mostra os dois jobs verdes.
 
 ### Fase 2 · Releases + symlink na API (rollback em segundos)
-- `deploy-api.sh` passa a instalar em `/opt/fast-street/releases/<commit>` e trocar
-  `/opt/fast-street/api → releases/<commit>` de forma atômica (mesmo modelo do `instalar-web.sh`),
-  mantendo as últimas 3 versões e com opção `--rollback`.
-- Se o health check falhar depois do restart, o script volta o symlink sozinho e reinicia.
-- `WorkingDirectory` da unidade systemd continua `/opt/fast-street/api` (agora um link).
-- **O script não pode se atualizar no meio da própria execução.** No deploy de 24/11/2026 (`e6223f7 → 33ab40a`),
-  o `git pull` trouxe uma versão nova do `deploy-api.sh`, mas o bash continuou executando a **antiga**
-  (o arquivo aberto é o de antes do pull). O teste final antigo (`http://localhost/health`, porta 80)
-  recebeu o `301` de redirecionamento para HTTPS e o script mostrou "✔ Deploy" com o HTML do 301.
-  Correção: separar "buscar o código" de "instalar" (ex.: depois do `git pull`, `exec` do script já
-  atualizado com uma flag como `--instalar`), ou deixar o `git pull` para o workflow.
-- Silenciar as tentativas do *health check* que falham enquanto a API sobe (o `curl: (7) Failed to
-  connect` da primeira tentativa é esperado: as migrations rodam no `ExecStartPre`).
-- **Configuração do Nginx fica fora do deploy:** o script copia `infra/` para `/opt/fast-street/infra`,
-  mas não aplica `infra/nginx/*.conf` em `/etc/nginx`. Decidir se o deploy passa a aplicar
-  (`nginx -t` antes do `reload`, com rollback se falhar) ou se continua manual, com uma conferência
-  (`diff`) que avisa quando o arquivo do repositório e o do servidor divergem.
+> **Status (25/11/2026):** implementada em `infra/scripts/deploy-api.sh` e testada num servidor simulado
+> (37 verificações: conversão da pasta antiga, deploy, rollback manual e automático, reexecução do script
+> atualizado, poda, trava, Nginx fora do ar e permissões). Falta o primeiro deploy real na EC2 (👤).
+
+- Cada deploy vira `/opt/fast-street/releases/AAAAMMDD-HHMMSS-<commit>/` (dono root, só leitura para o
+  serviço) e o link `/opt/fast-street/api → releases/<atual>` é trocado de forma atômica (`ln -sfn` + `mv -T`),
+  no mesmo modelo do `instalar-web.sh`. `WorkingDirectory` da unidade systemd continua `/opt/fast-street/api`.
+- **Conversão automática:** no primeiro deploy, a pasta comum `/opt/fast-street/api` vira a release
+  `<data>-<commit do VERSION>` sem parar o serviço; ela é a "anterior" do primeiro rollback.
+- **Rollback automático:** se a API não responder em `127.0.0.1:3333/health` em 30 s depois do restart
+  (inclui migration que falha no `ExecStartPre`), o link volta para a release anterior, o serviço reinicia
+  nela, o `journalctl` é mostrado e o script sai com código 1. A release com falha fica guardada para análise.
+- **Comandos:** `--rollback` (volta para a anterior, com retorno automático se ela não subir), `--listar`
+  (`*` marca a que está no ar) e `--instalar` (publica o checkout atual, sem `git pull`).
+- **Script que se atualiza (lição de 24/11):** depois do `git pull`, o script se executa de novo, já na
+  versão baixada (`exec … --instalar`), e todo o código fica dentro de `main()`.
+- **Build sem reinstalar:** as dependências de produção são montadas numa pasta temporária
+  (`npm ci --omit=dev`); o `node_modules` do clone continua completo para o próximo build.
+- **Poda:** mantém as 3 releases mais novas, nunca apagando a que está no ar nem a anterior.
+- **Trava:** um deploy por vez (`flock` em `/run/lock/fast-street-deploy.lock`).
+- **Health check silencioso:** as tentativas esperadas enquanto a API sobe não aparecem mais.
+- **Teste pelo Nginx/HTTPS:** se a API responde no loopback mas não pelo Nginx, o código novo **fica**
+  (rollback não resolveria) e o script sai com código 2, apontando para `nginx -t`/`journalctl -u nginx`.
+- **Decisão sobre Nginx e systemd:** o deploy **não aplica** essas configurações (mudança de infraestrutura
+  continua manual, com `nginx -t`/`daemon-reload`); ele **avisa** quando o arquivo do servidor difere do
+  repositório e mostra os comandos para conferir e aplicar.
+- **Migrations e rollback:** o rollback troca só o código; o banco fica no schema mais novo. Por isso a
+  regra *expand/contract* (seção 6) é obrigatória.
+- **Primeiro deploy real (👤):** o script que está hoje no servidor é o antigo e não se reexecuta. Antes,
+  atualize o clone e só então rode o script, já na versão nova:
+  `sudo -iu ubuntu git -C /home/ubuntu/fast-street pull --ff-only` e depois
+  `sudo -iu ubuntu bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh`.
 - **Aceite:** `deploy-api.sh --rollback` volta para a versão anterior em segundos; um deploy com
   health check falho termina na versão anterior, no ar.
 
