@@ -33,6 +33,10 @@ sudo -iu ubuntu bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh --roll
 ```
 O rollback troca só o código: as migrations já aplicadas continuam (regra *expand/contract*).
 
+**Deploy automático:** depois de cada merge no `main` com o CI verde, o workflow *Deploy* do GitHub Actions
+executa esse mesmo script na EC2 pelo SSM (documento `FastStreet-Deploy`), sem SSH. Para republicar ou
+voltar a versão sem terminal: *Actions → Deploy → Run workflow* → `deploy` ou `rollback`.
+
 ## §2 Logs e métricas (R10)
 
 ```bash

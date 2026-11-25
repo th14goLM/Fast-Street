@@ -1,0 +1,121 @@
+# Deploy automático da API na EC2 (Fase 3 do docs/PLANO_DEPLOY_AUTOMATICO.md).
+#
+# Quando roda:
+#   - sozinho, quando o CI termina VERDE num push para o main (ou seja, depois de cada merge);
+#   - à mão (Actions → Deploy → Run workflow), para republicar o main ou fazer rollback.
+#
+# Como chega à EC2: o job troca o token OIDC do GitHub por uma credencial temporária da AWS (papel
+# fast-street-github-deploy) e manda pelo SSM o documento FastStreet-Deploy, que só sabe rodar o
+# infra/scripts/deploy-api.sh (deploy de um commit ou rollback). Sem SSH, sem porta 22, sem chave guardada.
+# Pré-requisitos e configuração: infra/aws/configurar-deploy-github.sh e o plano (seção 4).
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      acao:
+        description: "deploy = publica o main atual · rollback = volta para a release anterior"
+        type: choice
+        options: [deploy, rollback]
+        default: deploy
+
+# Nunca dois deploys ao mesmo tempo; um novo espera o anterior terminar (não cancela no meio).
+concurrency:
+  group: deploy-producao
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  deploy:
+    name: Produção (EC2)
+    # Só a partir do main: CI verde de um push (merge) ou disparo manual.
+    if: >-
+      github.ref == 'refs/heads/main' && (
+        github.event_name == 'workflow_dispatch' || (
+          github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.event == 'push' &&
+          github.event.workflow_run.head_branch == 'main'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: https://faststreet.duckdns.org/app/
+    permissions:
+      id-token: write   # token OIDC para a AWS
+    env:
+      ACAO: ${{ inputs.acao || 'deploy' }}
+      # Commit aprovado pelo CI (workflow_run) ou o main atual (disparo manual).
+      COMMIT: ${{ github.event.workflow_run.head_sha || github.sha }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      EC2_INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
+    steps:
+      - name: Conferir a configuração do environment
+        run: |
+          faltando=()
+          for v in AWS_ROLE_ARN AWS_REGION EC2_INSTANCE_ID; do [[ -n ${!v} ]] || faltando+=("$v"); done
+          if ((${#faltando[@]})); then
+            echo "::error::Variáveis ausentes no environment production: ${faltando[*]} (rode infra/aws/configurar-deploy-github.sh e cadastre-as em Settings → Environments → production)."
+            exit 1
+          fi
+          echo "Ação: $ACAO · commit: ${COMMIT:0:7} · instância: $EC2_INSTANCE_ID ($AWS_REGION)"
+
+      - name: Credenciais temporárias da AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: fast-street-deploy-${{ github.run_id }}
+
+      - name: Executar na EC2 (SSM → deploy-api.sh)
+        run: |
+          set -euo pipefail
+          id=$(aws ssm send-command \
+            --instance-ids "$EC2_INSTANCE_ID" \
+            --document-name FastStreet-Deploy \
+            --parameters "acao=$ACAO,commit=$COMMIT" \
+            --comment "GitHub Actions ${GITHUB_RUN_ID}: $ACAO ${COMMIT:0:7}" \
+            --timeout-seconds 60 \
+            --query Command.CommandId --output text)
+          echo "Comando SSM: $id"
+
+          # Espera até 15 min (o build na t3.small leva ~1 min).
+          status=Pending
+          for _ in $(seq 1 180); do
+            sleep 5
+            status=$(aws ssm get-command-invocation --command-id "$id" --instance-id "$EC2_INSTANCE_ID" \
+              --query Status --output text 2>/dev/null || echo Pending)
+            case $status in Pending | InProgress | Delayed) ;; *) break ;; esac
+          done
+
+          saida=$(aws ssm get-command-invocation --command-id "$id" --instance-id "$EC2_INSTANCE_ID" \
+            --query StandardOutputContent --output text 2>/dev/null || true)
+          erros=$(aws ssm get-command-invocation --command-id "$id" --instance-id "$EC2_INSTANCE_ID" \
+            --query StandardErrorContent --output text 2>/dev/null || true)
+          echo "::group::Saída do deploy-api.sh"; printf '%s\n' "$saida"; echo "::endgroup::"
+          if [[ -n $erros && $erros != None ]]; then echo "::group::Erros"; printf '%s\n' "$erros"; echo "::endgroup::"; fi
+
+          {
+            echo "### Deploy da API: $ACAO ${COMMIT:0:7} → $status"
+            echo '```'
+            printf '%s\n' "$saida" | grep -E '^(→|✔|✖|⚠|DEPLOY-PULADO|  removida)' || true
+            echo '```'
+          } >>"$GITHUB_STEP_SUMMARY"
+
+          if grep -q '^DEPLOY-PULADO' <<<"$saida"; then
+            echo "::notice::O main já avançou; o deploy do commit mais novo publica esta versão."
+          fi
+          if [[ $status != Success ]]; then
+            echo "::error::Deploy terminou com status $status. Se a release nova não subiu, o script já voltou para a anterior (veja a saída)."
+            exit 1
+          fi
+
+      - name: Conferir pela Internet
+        run: |
+          curl -fsS --retry 5 --retry-delay 3 --retry-all-errors --max-time 10 https://faststreet.duckdns.org/health
+          echo

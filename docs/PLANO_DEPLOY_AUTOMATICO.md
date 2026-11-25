@@ -48,7 +48,8 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 ### Fase 2 · Releases + symlink na API (rollback em segundos)
 > **Status (25/11/2026):** implementada em `infra/scripts/deploy-api.sh` e testada num servidor simulado
 > (37 verificações: conversão da pasta antiga, deploy, rollback manual e automático, reexecução do script
-> atualizado, poda, trava, Nginx fora do ar e permissões). Falta o primeiro deploy real na EC2 (👤).
+> atualizado, poda, trava, Nginx fora do ar e permissões). **Em produção desde 25/11/2026** (`41fb651`): a pasta
+> antiga virou a release `20261125-014803-69b90f1` e a nova subiu em 12 s; falta só o teste de `--rollback` (👤).
 
 - Cada deploy vira `/opt/fast-street/releases/AAAAMMDD-HHMMSS-<commit>/` (dono root, só leitura para o
   serviço) e o link `/opt/fast-street/api → releases/<atual>` é trocado de forma atômica (`ln -sfn` + `mv -T`),
@@ -82,15 +83,33 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
   health check falho termina na versão anterior, no ar.
 
 ### Fase 3 · Deploy automático da API (GitHub Actions + AWS SSM com OIDC)
-- `.github/workflows/deploy.yml`, disparado no push para o `main` (depois do CI), com
-  `concurrency: deploy-producao` (nunca dois deploys ao mesmo tempo) e o *environment* `production`.
-- Autenticação por **OIDC** (`aws-actions/configure-aws-credentials`): nenhuma chave da AWS guardada no GitHub.
-- Execução na EC2 por `aws ssm send-command` (documento `AWS-RunShellScript`) + espera pelo resultado
-  com `get-command-invocation`: **a porta 22 continua fechada para a Internet**.
-- O canal SSM já funciona na instância (ver seção 4). Os comandos do SSM rodam como **root**, sem a home
-  de um usuário: o workflow precisa chamar o script com caminho absoluto e o usuário dono do clone,
-  ex.: `sudo -iu ubuntu bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh` (um `~` seria
-  expandido para a home de quem chama, não do `ubuntu`).
+> **Status (25/11/2026):** implementada (`.github/workflows/deploy.yml`, `infra/aws/configurar-deploy-github.sh`
+> e `deploy-api.sh --commit`). Falta a configuração na AWS e no GitHub (👤, seção 4) e o primeiro deploy real.
+
+- **Gatilho:** `workflow_run` do CI. Quando o CI termina **verde num push para o `main`** (cada merge), o
+  deploy roda. Também há disparo manual (*Actions → Deploy → Run workflow*) com `deploy` ou `rollback`.
+- `concurrency: deploy-producao` sem cancelamento (um deploy espera o outro) e *environment* `production`.
+- **Credencial:** OIDC (`aws-actions/configure-aws-credentials`, fixada por SHA) troca o token do GitHub por
+  uma credencial temporária do papel `fast-street-github-deploy`. Nenhuma chave da AWS no GitHub.
+- **Comando na EC2:** `aws ssm send-command` com o documento **próprio** `FastStreet-Deploy`, em vez do
+  `AWS-RunShellScript`. Ele só aceita `acao=deploy|rollback` e um SHA validado por padrão (a AWS rejeita
+  qualquer outra coisa). No deploy, ele atualiza o clone (`git pull`) **antes** de chamar
+  `sudo -iu ubuntu bash /home/ubuntu/fast-street/infra/scripts/deploy-api.sh --commit <sha>`, para rodar
+  sempre a versão mais nova do script (inclusive no primeiro deploy, quando o servidor ainda tem o script
+  sem `--commit`).
+  Assim, quem conseguisse usar o papel não teria um shell livre como root na instância. **A porta 22
+  continua fechada para a Internet.**
+- **Só o commit aprovado:** o workflow passa o SHA que o CI testou (`--commit`). Se o `main` do servidor
+  estiver nesse commit, publica; se já avançou (outro merge logo depois), não faz nada e avisa
+  (`DEPLOY-PULADO`), porque o deploy do commit mais novo publica tudo; se o commit não estiver no `main`, falha.
+- **Acompanhamento:** espera o comando terminar (até 15 min), mostra a saída do `deploy-api.sh` no log e
+  um resumo na página da execução, e confere `https://faststreet.duckdns.org/health` pela Internet.
+  Falha no deploy deixa a execução vermelha, e o próprio script já voltou para a release anterior.
+- **Onde compilar (decidido):** continua **na EC2**, reaproveitando o `deploy-api.sh` da Fase 2, que já foi
+  validado em produção (build em ~12 s). Compilar no runner fica para quando a RAM da t3.small apertar.
+- **Testes:** `deploy-api.sh --commit` no servidor simulado (42 verificações no total), o passo do SSM do
+  workflow com AWS CLI simulada (sucesso, falha e deploy pulado), `configurar-deploy-github.sh` com AWS CLI
+  simulada (criação e reexecução idempotente), `actionlint` e `shellcheck`.
 - **Aceite:** merge no `main` → API nova no ar em poucos minutos; `/opt/fast-street/VERSION` com o commit;
   log do deploy visível na aba Actions.
 
@@ -133,14 +152,14 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 
 | Onde | O quê |
 |---|---|
-| IAM | *Identity provider* OIDC `token.actions.githubusercontent.com` (audience `sts.amazonaws.com`) |
-| IAM | Papel `fast-street-github-deploy`, confiando só em `repo:th14goLM/Fast-Street:environment:production`; permissões mínimas: `ssm:SendCommand` (só nesta instância e no documento `AWS-RunShellScript`), `ssm:GetCommandInvocation`, `s3:PutObject` no prefixo dos pacotes |
+| IAM + SSM (fase 3) | ⬜ Rodar `infra/aws/configurar-deploy-github.sh` no AWS CloudShell. Ele cria o provedor OIDC `token.actions.githubusercontent.com`, o documento SSM `FastStreet-Deploy` e o papel `fast-street-github-deploy` (confia só em `repo:th14goLM/Fast-Street:environment:production`; pode só `ssm:SendCommand` desse documento nesta instância, mais `ssm:GetCommandInvocation`) |
+| IAM (fase 4) | ⬜ No papel `fast-street-github-deploy`: `s3:PutObject` no prefixo dos pacotes do app web |
 | IAM | ✅ **Pronto (24/11/2026):** o papel da instância `fast-street-ec2` já permite o SSM; confirmado por uma sessão do Session Manager aberta pelo console na `i-019cd349ad6ada4ea` |
 | IAM | ⬜ No papel `fast-street-ec2`: acrescentar leitura no prefixo dos pacotes de deploy no S3 |
 | EC2 | ✅ **Pronto (24/11/2026):** SSM Agent ativo e instância gerenciada pelo Systems Manager (mesma confirmação acima) |
 | S3 | Prefixo (ou bucket) separado para os pacotes de deploy, com expiração automática (ex.: 30 dias) |
-| GitHub | *Environment* `production` com as variáveis (não secretas) `AWS_ROLE_ARN`, `AWS_REGION=us-east-2`, `EC2_INSTANCE_ID`, `DEPLOY_BUCKET` |
-| GitHub | Proteção do `main`: CI obrigatório e merge só por PR |
+| GitHub (fase 3) | ⬜ *Environment* `production` (Settings → Environments), com **Deployment branches = só `main`** e as variáveis (não secretas) `AWS_ROLE_ARN`, `AWS_REGION=us-east-2`, `EC2_INSTANCE_ID`; na fase 4, também `DEPLOY_BUCKET` |
+| GitHub | ✅ **Pronto (25/11/2026):** proteção do `main` com PR obrigatório e as verificações **API** e **Mobile** |
 | Domínio (fase 5) | Registrar um domínio (Route 53 ou outro registrador) e ter acesso ao DNS dele |
 | SES (fase 5) | Identidade do domínio verificada em `us-east-2` (DKIM, SPF, DMARC, MAIL FROM); pedido de acesso de produção aprovado |
 | IAM (fase 5) | Conforme a decisão de autenticação: `ses:SendRawEmail` no papel `fast-street-ec2`, restrito à identidade do domínio; **ou** usuário IAM só de SMTP com credenciais SMTP do SES, guardadas apenas em `/etc/fast-street/api.env` |
@@ -156,7 +175,7 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 | systemd nativo mantido | Decisão do trabalho final (R08) | Imagem Docker no GHCR/ECR |
 | **Amazon SES** para e-mail (decidido pelo Mr. Thiago em 24/11/2026) | Já está na AWS da EC2 e do backup; custo desprezível no volume do projeto; boa entregabilidade com DKIM | Resend/Brevo (fáceis, mas mais um fornecedor e também exigem domínio); Gmail com senha de app (limite baixo, remetente pessoal) |
 
-**Em aberto (decidir no início da Fase 3):** onde compilar a API.
+**Decidido na Fase 3 (25/11/2026): compilar na EC2** por enquanto (ver Fase 3). Opções avaliadas:
 - **No runner (recomendado):** o artefato testado é exatamente o que vai para a produção; poupa a RAM da EC2.
   Exige empacotar `dist/` + `node_modules` de produção (mesma arquitetura x86-64 e Node 22; as dependências
   atuais são JavaScript puro) e enviar pelo S3.
