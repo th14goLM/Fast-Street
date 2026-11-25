@@ -1,0 +1,43 @@
+# Atualizações automáticas de dependências (PRs semanais, que passam pelo CI como qualquer outro PR).
+# Para ativar também os alertas e os PRs de SEGURANÇA: Settings → Code security → Dependabot alerts e
+# Dependabot security updates.
+version: 2
+updates:
+  # Actions dos workflows: estão fixadas por SHA (segurança), então só o Dependabot as mantém em dia.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Sao_Paulo
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "chore(ci)"
+
+  # API: um PR semanal com as atualizações menores/correções; majors em PRs separados.
+  - package-ecosystem: npm
+    directory: /api
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 5
+    groups:
+      api-menores:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: "chore(api)"
+
+  # Mobile: as versões são ditadas pelo SDK do Expo (npx expo install --fix / upgrade de SDK), então
+  # atualizações de versão ficam desligadas (limite 0). Os PRs de SEGURANÇA continuam valendo.
+  - package-ecosystem: npm
+    directory: /mobile
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "chore(mobile)"

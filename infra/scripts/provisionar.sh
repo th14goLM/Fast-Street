@@ -23,7 +23,7 @@ echo "→ 1. Pacotes do sistema (Nginx, MySQL, firewall, fail2ban)"
 apt-get update -y
 apt-get install -y nginx mysql-server rsync ufw fail2ban curl ca-certificates gnupg unattended-upgrades
 
-echo "→ 2. Node.js 22 LTS (o Ubuntu 24.04 traz o 18; a API exige >= 20.19)"
+echo "→ 2. Node.js 22 LTS (o Ubuntu 24.04 traz o 18; a API exige >= 22)"
 if ! command -v node >/dev/null || (( $(node -p 'process.versions.node.split(".")[0]') < 22 )); then
   curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
   apt-get install -y nodejs
