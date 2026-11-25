@@ -34,5 +34,6 @@ Passo a passo completo (MySQL local ou Docker, e-mail com Mailtrap, celular na m
 
 ## Como contribuir
 - Cada funcionalidade é desenvolvida em uma branch própria (`feat/…`, `fix/…`, `docs/…`) e entra no `main` por Pull Request com **merge commit**.
-- Antes de abrir o PR: `cd api && npm test && npm run typecheck` e `cd mobile && npx tsc --noEmit && npx expo lint`.
+- Todo PR roda o **CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): job **API** (typecheck, 52 testes de integração com MySQL 8.4 e build) e job **Mobile** (typecheck e lint sem avisos). O merge só é liberado com os dois verdes.
+- Para não esperar o CI, rode o mesmo localmente antes de abrir o PR: `cd api && npm run typecheck && npm test` e `cd mobile && npx tsc --noEmit && npx expo lint --max-warnings 0`.
 - Nunca faça commit de arquivos `.env` nem coloque senhas, tokens ou chaves em issues, PRs, cards ou capturas de tela.

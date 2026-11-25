@@ -35,9 +35,14 @@ merge main ─▶ CD: API  → artefato → EC2 via AWS SSM → releases/<commit
 ## 3. Escopo, em fases (um PR por fase)
 
 ### Fase 1 · CI nos PRs
-- `.github/workflows/ci.yml`: job `api` (Node 22, `mysql:8.4` como *service*, `npm ci`, `npm run typecheck`,
-  `npm test` com `TEST_DATABASE_URL`) e job `mobile` (`npm ci`, `npx tsc --noEmit`, `npx expo lint`).
-- No GitHub (👤): proteção do `main` exigindo o CI verde para o merge.
+> **Status (25/11/2026):** workflow implementado; falta só a proteção do `main` no GitHub (👤).
+
+- `.github/workflows/ci.yml`: job **API** (Node 22, `mysql:8.4` como *service*, `npm ci`, `npm run typecheck`,
+  `npm test` com `TEST_DATABASE_URL`, `npm run build`) e job **Mobile** (`npm ci`, `npx tsc --noEmit`,
+  `npx expo lint --max-warnings 0`).
+- Actions fixadas por SHA do commit (com a versão no comentário), `permissions: contents: read`,
+  `persist-credentials: false` e cancelamento de execuções antigas do mesmo PR.
+- No GitHub (👤): proteção do `main` exigindo as verificações **API** e **Mobile** para o merge.
 - **Aceite:** um PR com teste quebrado fica bloqueado; um PR correto mostra os dois jobs verdes.
 
 ### Fase 2 · Releases + symlink na API (rollback em segundos)
